@@ -77,6 +77,19 @@
             overflow: hidden;
         }
         
+        @media print {
+            .header {
+                background: #2c3e50 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+                padding: 30px;
+            }
+            
+            .header::before {
+                display: none;
+            }
+        }
+        
         .header::before {
             content: '';
             position: absolute;
@@ -311,7 +324,207 @@
             font-size: 0.95em;
         }
         
-        @media (max-width: 768px) {
+        @media print {
+            @page {
+                size: A4;
+                margin: 0.5in;
+            }
+            
+            body {
+                background: white !important;
+                padding: 0;
+                margin: 0;
+                font-size: 11px;
+                line-height: 1.4;
+            }
+            
+            .resume-container {
+                max-width: none;
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+                animation: none;
+                width: 100%;
+            }
+            
+            .header {
+                background: #2c3e50 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+                padding: 20px;
+                page-break-after: avoid;
+            }
+            
+            .header::before {
+                display: none;
+            }
+            
+            .name {
+                font-size: 1.8em;
+                margin-bottom: 8px;
+            }
+            
+            .title {
+                font-size: 1.1em;
+                margin-bottom: 15px;
+            }
+            
+            .contact-info {
+                gap: 20px;
+                margin-top: 15px;
+            }
+            
+            .contact-item {
+                font-size: 0.9em;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr 280px;
+                gap: 0;
+            }
+            
+            .left-column {
+                padding: 25px;
+            }
+            
+            .right-column {
+                padding: 25px 20px;
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .section {
+                margin-bottom: 25px;
+                page-break-inside: avoid;
+            }
+            
+            .section-title {
+                font-size: 1.2em;
+                margin-bottom: 15px;
+                padding-bottom: 5px;
+            }
+            
+            .section-title::after {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .profile-text {
+                font-size: 0.95em;
+                line-height: 1.5;
+            }
+            
+            .experience-item {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+                padding: 15px;
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .experience-item:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            
+            .job-title {
+                font-size: 1.05em;
+                margin-bottom: 4px;
+            }
+            
+            .company {
+                font-size: 1em;
+                margin-bottom: 2px;
+            }
+            
+            .period {
+                font-size: 0.85em;
+                margin-bottom: 10px;
+            }
+            
+            .job-description {
+                font-size: 0.9em;
+                line-height: 1.4;
+            }
+            
+            .tech-stack {
+                margin-top: 8px;
+                gap: 6px;
+            }
+            
+            .tech-tag {
+                padding: 3px 8px;
+                font-size: 0.75em;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .projects-list {
+                margin-top: 8px;
+            }
+            
+            .project-link {
+                font-size: 0.8em;
+                margin-bottom: 3px;
+                color: #3498db !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .skills-grid {
+                gap: 15px;
+            }
+            
+            .skill-category {
+                background: white !important;
+                padding: 15px;
+                box-shadow: none;
+                border: 1px solid #e9ecef;
+                border-radius: 6px;
+            }
+            
+            .skill-category h4 {
+                font-size: 0.95em;
+                margin-bottom: 8px;
+            }
+            
+            .skill-tags {
+                gap: 6px;
+            }
+            
+            .skill-tag {
+                padding: 4px 8px;
+                font-size: 0.75em;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .skill-tag:hover {
+                background: #ecf0f1;
+                color: #2c3e50;
+                border-color: #bdc3c7;
+            }
+            
+            .education-item {
+                background: white !important;
+                padding: 12px;
+                margin-bottom: 12px;
+                box-shadow: none;
+                border: 1px solid #e9ecef;
+                border-radius: 6px;
+            }
+            
+            .education-year {
+                font-size: 0.9em;
+                margin-bottom: 4px;
+            }
+            
+            .education-school {
+                font-size: 0.85em;
+            }
+        }
             .main-content {
                 grid-template-columns: 1fr;
             }
