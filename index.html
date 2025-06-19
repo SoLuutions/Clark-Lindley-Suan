@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clark Lindley Suan - Web Developer Resume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .resume-container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .name {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        
+        .contact-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 0;
+        }
+        
+        .left-column {
+            padding: 40px;
+        }
+        
+        .right-column {
+            background: #f8f9fa;
+            padding: 40px 30px;
+            border-left: 1px solid #e9ecef;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .section-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid #3498db;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #e74c3c;
+        }
+        
+        .profile-text {
+            font-size: 1.05em;
+            line-height: 1.7;
+            color: #555;
+            text-align: justify;
+        }
+        
+        .experience-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .experience-item:hover {
+            transform: translateX(5px);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .job-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .company {
+            font-size: 1.1em;
+            color: #3498db;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .period {
+            color: #7f8c8d;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+        }
+        
+        .job-description {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .tech-stack {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tech-tag {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .projects-list {
+            margin-top: 12px;
+        }
+        
+        .project-link {
+            display: block;
+            color: #3498db;
+            text-decoration: none;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+        
+        .project-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        .skills-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .skill-category {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .skill-category h4 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .skill-tag {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            border: 1px solid #bdc3c7;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-tag:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .education-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .education-year {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        
+        .education-school {
+            color: #2c3e50;
+            font-size: 0.95em;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .right-column {
+                border-left: none;
+                border-top: 1px solid #e9ecef;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .name {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="resume-container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="name">CLARK LINDLEY SUAN</h1>
+                <p class="title">Full-Stack Web Developer & Digital Solutions Specialist</p>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span>📱</span>
+                        <span>+639669715889</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>✉️</span>
+                        <span>clarklindleysuan@gmail.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>📍</span>
+                        <span>Surigao City, Surigao Del Norte, Philippines</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="left-column">
+                <section class="section">
+                    <h2 class="section-title">PROFILE</h2>
+                    <p class="profile-text">
+                        Experienced full-stack web developer and digital solutions specialist with a proven track record in creating, maintaining, and optimizing e-commerce platforms, online learning systems, and portfolio websites. Skilled in both front-end and back-end development with expertise in modern web technologies and content management systems. Demonstrated ability to deliver comprehensive digital solutions across various industries while maintaining high standards of user experience and functionality.
+                    </p>
+                </section>
+                
+                <section class="section">
+                    <h2 class="section-title">PROFESSIONAL EXPERIENCE</h2>
+                    
+                    <div class="experience-item">
+                        <h3 class="job-title">Full-Stack Web Developer & Graphic Designer</h3>
+                        <p class="company">VCONNX VIRTUAL SOLUTIONS</p>
+                        <p class="period">August 2023 - Present</p>
+                        <div class="job-description">
+                            <p>Led comprehensive full-stack web development projects including front-end interface design and back-end system implementation for e-commerce platforms, online course systems, and portfolio websites. Specialized in creating responsive, user-friendly interfaces and robust backend solutions.</p>
+                            
+                            <div class="tech-stack">
+                                <span class="tech-tag">HTML5</span>
+                                <span class="tech-tag">CSS3</span>
+                                <span class="tech-tag">JavaScript</span>
+                                <span class="tech-tag">React</span>
+                                <span class="tech-tag">Svelte</span>
+                                <span class="tech-tag">PHP</span>
+                                <span class="tech-tag">WordPress</span>
+                                <span class="tech-tag">WooCommerce</span>
+                            </div>
+                            
+                            <p style="margin-top: 15px;"><strong>Platforms & Tools:</strong> GoDaddy, Wix, Thinkific, GitHub, ClickUp, Kajabi, MailChimp, Teachable, GMB Services</p>
+                            
+                            <p style="margin-top: 15px;"><strong>Key Projects:</strong></p>
+                            <div class="projects-list">
+                                <strong>E-commerce Sites:</strong>
+                                <a href="https://www.zflowers.com/ph/" class="project-link" target="_blank">• Z Flowers Philippines</a>
+                                <a href="https://thefreshpetals.com/" class="project-link" target="_blank">• The Fresh Petals</a>
+                                <a href="https://www.outlaw-fitness.com/shop" class="project-link" target="_blank">• Outlaw Fitness Shop</a>
+                                <a href="https://www.shoppers-advantage.com/" class="project-link" target="_blank">• Shoppers Advantage</a>
+                                
+                                <strong style="margin-top: 10px; display: block;">Online Learning Platforms:</strong>
+                                <a href="https://earthangelarii.com/" class="project-link" target="_blank">• Earth Angel Arii</a>
+                                <a href="#" class="project-link">• Unlock Lean Agile (Thinkific)</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="experience-item">
+                        <h3 class="job-title">Graphic Designer & Data Analyst</h3>
+                        <p class="company">LOKAL LAB SIARGAO INC.</p>
+                        <p class="period">December 2022 - April 2023</p>
+                        <div class="job-description">
+                            <p>Created internal graphics, designed reports and documents, and conducted data analysis to support business operations. Managed administrative tasks while developing visual materials for internal communications and documentation.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">Graphic Design</span>
+                                <span class="tech-tag">Data Analysis</span>
+                                <span class="tech-tag">Excel</span>
+                                <span class="tech-tag">Report Design</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="experience-item">
+                        <h3 class="job-title">Technical Staff & Digital Marketing Specialist</h3>
+                        <p class="company">BAYATAKAN FARM</p>
+                        <p class="period">March 2022 - August 2022</p>
+                        <div class="job-description">
+                            <p>Provided technical support and implemented digital solutions to improve farm operations. Managed SEO strategies and social media marketing to enhance online presence and customer engagement.</p>
+                            <div class="tech-stack">
+                                <span class="tech-tag">SEO</span>
+                                <span class="tech-tag">Social Media</span>
+                                <span class="tech-tag">Digital Marketing</span>
+                                <span class="tech-tag">Technical Support</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <div class="right-column">
+                <section class="section">
+                    <h2 class="section-title">TECHNICAL SKILLS</h2>
+                    <div class="skills-grid">
+                        <div class="skill-category">
+                            <h4>Frontend Development</h4>
+                            <div class="skill-tags">
+                                <span class="skill-tag">HTML5</span>
+                                <span class="skill-tag">CSS3</span>
+                                <span class="skill-tag">JavaScript</span>
+                                <span class="skill-tag">React</span>
+                                <span class="skill-tag">Svelte</span>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <h4>Backend Development</h4>
+                            <div class="skill-tags">
+                                <span class="skill-tag">PHP</span>
+                                <span class="skill-tag">WordPress</span>
+                                <span class="skill-tag">WooCommerce</span>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <h4>Platforms & CMS</h4>
+                            <div class="skill-tags">
+                                <span class="skill-tag">WordPress</span>
+                                <span class="skill-tag">Wix</span>
+                                <span class="skill-tag">Thinkific</span>
+                                <span class="skill-tag">Kajabi</span>
+                                <span class="skill-tag">Teachable</span>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <h4>Tools & Services</h4>
+                            <div class="skill-tags">
+                                <span class="skill-tag">GitHub</span>
+                                <span class="skill-tag">ClickUp</span>
+                                <span class="skill-tag">MailChimp</span>
+                                <span class="skill-tag">GMB Services</span>
+                                <span class="skill-tag">GoDaddy</span>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <h4>Digital Marketing</h4>
+                            <div class="skill-tags">
+                                <span class="skill-tag">SEO</span>
+                                <span class="skill-tag">Social Media</span>
+                                <span class="skill-tag">Content Marketing</span>
+                            </div>
+                        </div>
+                        
+                        <div class="skill-category">
+                            <h4>Additional Skills</h4>
+                            <div class="skill-tags">
+                                <span class="skill-tag">Excel</span>
+                                <span class="skill-tag">Graphic Design</span>
+                                <span class="skill-tag">Data Analysis</span>
+                                <span class="skill-tag">Admin Tasks</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="section">
+                    <h2 class="section-title">EDUCATION</h2>
+                    <div class="education-item">
+                        <div class="education-year">2021</div>
+                        <div class="education-school">Northeastern Mindanao Colleges</div>
+                    </div>
+                    <div class="education-item">
+                        <div class="education-year">2019</div>
+                        <div class="education-school">Mindanao State University</div>
+                    </div>
+                    <div class="education-item">
+                        <div class="education-year">2017</div>
+                        <div class="education-school">Taft National High School</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
