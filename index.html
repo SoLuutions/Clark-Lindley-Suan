@@ -15,9 +15,17 @@
             font-family: 'Arial', sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+        
+        @media screen {
+            body {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
         }
         
         .resume-container {
@@ -28,6 +36,25 @@
             border-radius: 12px;
             overflow: hidden;
             animation: slideUp 0.8s ease-out;
+        }
+        
+        @media print {
+            .resume-container {
+                max-width: none;
+                margin: 0;
+                box-shadow: none;
+                border-radius: 0;
+                animation: none;
+                page-break-inside: avoid;
+            }
+        }
+        
+        @media screen {
+            .resume-container {
+                margin: 0 auto;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                border-radius: 12px;
+            }
         }
         
         @keyframes slideUp {
