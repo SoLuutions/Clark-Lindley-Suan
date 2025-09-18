@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Thumb Gardens TX - Cold Call Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0d6a3f 0%, #1a936f 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .api-config {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .api-config label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2d3748;
+        }
+        
+        .api-config input, .api-config select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            min-width: 160px;
+        }
+        
+        .api-config input:focus, .api-config select:focus {
+            outline: none;
+            border-color: #1a936f;
+        }
+        
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-primary {
+            background: #1a936f;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a936f;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Spreadsheet Interface */
+        .spreadsheet-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 992px) {
+            .spreadsheet-container {
+                flex-direction: row;
+            }
+        }
+        
+        .prospects-list {
+            flex: 1;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .prospects-list h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .prospect-item {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
+        }
+        
+        .prospect-item:hover {
+            background: #f0f7ff;
+        }
+        
+        .prospect-item.selected {
+            background: #e6f7ff;
+            border-left: 3px solid #1a936f;
+        }
+        
+        .prospect-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+        
+        .prospect-address {
+            color: #718096;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+        
+        .prospect-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .neighborhood {
+            background: #e6fffa;
+            color: #234e52;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .status-ready {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .status-calling {
+            background: #fbb6ce;
+            color: #97266d;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-completed {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-error {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        
+        .call-controls {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 100%;
+        }
+        
+        @media (min-width: 992px) {
+            .call-controls {
+                width: 320px;
+            }
+        }
+        
+        .call-controls h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group h4 {
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+        
+        .selected-prospect-info {
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .selected-prospect-info .prospect-name {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .selected-prospect-info .prospect-detail {
+            display: flex;
+            margin-bottom: 6px;
+            gap: 8px;
+            align-items: flex-start;
+        }
+        
+        .selected-prospect-info .prospect-detail i {
+            color: #1a936f;
+            min-width: 16px;
+        }
+        
+        .call-status {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        
+        .status-ready {
+            background: #f6ffed;
+            color: #52c41a;
+            border: 1px solid #b7eb8f;
+        }
+        
+        .status-calling {
+            background: #fffbe6;
+            color: #faad14;
+            border: 1px solid #ffe58f;
+        }
+        
+        .call-log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .log-entry {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e8e8e8;
+        }
+        
+        .log-time {
+            color: #8c8c8c;
+            font-size: 0.75rem;
+            margin-bottom: 3px;
+        }
+        
+        /* Call Preview Modal */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .call-preview {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .call-preview.active {
+            display: block;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .preview-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2d3748;
+        }
+        
+        .close-btn {
+            background: #f56565;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .script-content {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.6;
+            color: #4a5568;
+            font-style: italic;
+            margin: 15px 0;
+            border-left: 3px solid #1a936f;
+        }
+        
+        .preview-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @media (max-width: 768px) {
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .api-config {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .bulk-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .call-preview {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-seedling"></i> Green Thumb Gardens TX - Cold Call Dashboard</h1>
+        <p>Production Environment - Prospect Management & Automated Outreach</p>
+    </div>
+    
+    <div class="container">
+        <!-- Stats Overview -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" id="totalProspects">12</div>
+                <div class="stat-label">Total Prospects</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="callsCompleted">7</div>
+                <div class="stat-label">Calls Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="successRate">58%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayCalls">3</div>
+                <div class="stat-label">Today's Calls</div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls-bar">
+            <div class="api-config">
+                <label for="apiKey"><i class="fas fa-key"></i> ElevenLabs API:</label>
+                <input type="password" id="apiKey" placeholder="API Key">
+                <select id="voiceId">
+                    <option value="21m00Tcm4TlvDq8ikWAM">Rachel (Professional)</option>
+                    <option value="AZnzlk1XvdvUeBnXmlld">Domi (Confident)</option>
+                    <option value="EXAVITQu4vr4xnSDxMaL">Bella (Young)</option>
+                    <option value="TxGEqnHWrfWFTfGW9XjX">Josh (Male Professional)</option>
+                </select>
+                <select id="callStyle">
+                    <option value="friendly">Friendly</option>
+                    <option value="professional">Professional</option>
+                    <option value="local">Local Focus</option>
+                    <option value="seasonal">Seasonal</option>
+                </select>
+            </div>
+            
+            <div class="bulk-actions">
+                <button class="btn btn-secondary" onclick="importProspects()">
+                    <i class="fas fa-file-import"></i> Import CSV
+                </button>
+                <button class="btn btn-primary" onclick="callSelected()">
+                    <i class="fas fa-phone"></i> Call Selected
+                </button>
+                <button class="btn btn-success" onclick="callAll()">
+                    <i class="fas fa-bolt"></i> Call All Ready
+                </button>
+            </div>
+        </div>
+        
+        <!-- Spreadsheet Interface -->
+        <div class="spreadsheet-container">
+            <div class="prospects-list">
+                <h3><i class="fas fa-list"></i> Prospect List</h3>
+                <div id="prospectsContainer">
+                    <!-- Prospect items will be populated here -->
+                </div>
+            </div>
+            
+            <div class="call-controls">
+                <h3><i class="fas fa-phone-volume"></i> Call Controls</h3>
+                
+                <div class="control-group">
+                    <h4>Selected Prospect</h4>
+                    <div id="selectedProspectInfo" class="selected-prospect-info">
+                        Select a prospect to call
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn btn-primary" style="width: 100%;" onclick="startCall()" id="callBtn">
+                        <i class="fas fa-phone"></i> Make Call
+                    </button>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 10px; display: none;" onclick="stopCall()" id="stopBtn">
+                        <i class="fas fa-stop"></i> Stop Call
+                    </button>
+                    
+                    <div class="call-status status-ready" id="callStatus">
+                        <i class="fas fa-check-circle"></i> Ready to call
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <h4>Call Log</h4>
+                    <div class="call-log" id="callLog">
+                        <div class="log-entry">
+                            <div class="log-time">Today, 10:30 AM</div>
+                            <div>Jennifer Chen: Call completed successfully</div>
+                        </div>
+                        <div class="log-entry">
+                            <div class="log-time">Today, 9:45 AM</div>
+                            <div>Michael Rodriguez: Call completed successfully</div>
+                        </div>
+                        <div class="log-entry">
+                            <div class="log-time">Yesterday, 3:15 PM</div>
+                            <div>Robert Johnson: Call completed successfully</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Call Preview Modal -->
+    <div class="overlay" id="overlay" onclick="closePreview()"></div>
+    <div class="call-preview" id="callPreview">
+        <div class="preview-header">
+            <h3 id="previewTitle"><i class="fas fa-phone"></i> Cold Call Preview</h3>
+            <button class="close-btn" onclick="closePreview()">×</button>
+        </div>
+        <div id="previewContent">
+            <!-- Preview content will be populated here -->
+        </div>
+    </div>
+
+    <script>
+        let currentAudio = null;
+        let callInProgress = false;
+        let selectedProspectId = null;
+        
+        const prospects = [
+            {
+                id: 1,
+                name: "Michael Rodriguez",
+                address: "2847 Maple Grove Lane, Dallas, TX 75201",
+                neighborhood: "Deep Ellum",
+                serviceInterest: "Complete Landscaping",
+                status: "ready",
+                lastContact: "Never",
+                selected: false
+            },
+            {
+                id: 2,
+                name: "Jennifer Chen",
+                address: "5632 Oak Forest Drive, Houston, TX 77092",
+                neighborhood: "Spring Branch",
+                serviceInterest: "Lawn Maintenance",
+                status: "completed",
+                lastContact: "2 days ago",
+                selected: false
+            },
+            {
+                id: 3,
+                name: "David Thompson",
+                address: "1429 Cedar Park Boulevard, Austin, TX 78613",
+                neighborhood: "Cedar Park",
+                serviceInterest: "Seasonal Cleanup",
+                status: "ready",
+                lastContact: "1 week ago",
+                selected: false
+            },
+            {
+                id: 4,
+                name: "Maria Gonzalez",
+                address: "3841 Riverwalk Terrace, San Antonio, TX 78205",
+                neighborhood: "Southtown",
+                serviceInterest: "Plant Installation",
+                status: "ready",
+                lastContact: "Never",
+                selected: false
+            },
+            {
+                id: 5,
+                name: "Robert Johnson",
+                address: "7265 Preston Ridge Circle, Plano, TX 75024",
+                neighborhood: "West Plano",
+                serviceInterest: "Sprinkler System",
+                status: "completed",
+                lastContact: "1 day ago",
+                selected: false
+            },
+            {
+                id: 6,
+                name: "Lisa Park",
+                address: "9834 Westheimer Road, Houston, TX 77063",
+                neighborhood: "Westchase",
+                serviceInterest: "Garden Design",
+                status: "ready",
+                lastContact: "3 days ago",
+                selected: false
+            },
+            {
+                id: 7,
+                name: "James Miller",
+                address: "4521 Forest Hills Drive, Fort Worth, TX 76109",
+                neighborhood: "Forest Hills",
+                serviceInterest: "Tree Removal",
+                status: "error",
+                lastContact: "5 days ago",
+                selected: false
+            },
+            {
+                id: 8,
+                name: "Amanda Wilson",
+                address: "6789 Lakewood Boulevard, Dallas, TX 75214",
+                neighborhood: "Lakewood",
+                serviceInterest: "Lawn Maintenance",
+                status: "completed",
+                lastContact: "3 hours ago",
+                selected: false
+            },
+            {
+                id: 9,
+                name: "Carlos Hernandez",
+                address: "1234 River Oaks Drive, Austin, TX 78704",
+                neighborhood: "South Austin",
+                serviceInterest: "Complete Landscaping",
+                status: "ready",
+                lastContact: "1 week ago",
+                selected: false
+            },
+            {
+                id: 10,
+                name: "Sarah Kim",
+                address: "8765 Highland Park Avenue, Dallas, TX 75205",
+                neighborhood: "Highland Park",
+                serviceInterest: "Seasonal Cleanup",
+                status: "ready",
+                lastContact: "Never",
+                selected: false
+            }
+        ];
+
+        // Call script templates
+        const callTemplates = {
+            friendly: {
+                intro: "Hi there! Is this {name}? Hi {name}, this is Sarah calling from Green Thumb Gardens here in Texas. I hope I'm not catching you at a bad time!",
+                connection: "I was actually in your neighborhood around {address} yesterday working on a beautiful {serviceType} project, and I couldn't help but notice your property.",
+                value: "We've been helping Texas homeowners transform their outdoor spaces for over 8 years now, and I thought you might be interested in learning about our {serviceType} services.",
+                offer: "What I'd love to do is stop by sometime this week to give you a completely free consultation and estimate. We're actually running a spring promotion for new customers in the {neighborhood} area.",
+                close: "Would you be available for a quick 15-minute chat this week? I promise it'll be worth your time, and there's absolutely no obligation. What works better for you - earlier in the week or towards the weekend?"
+            },
+            professional: {
+                intro: "Good {timeOfDay}, may I speak with {name}? This is Sarah from Green Thumb Gardens, a premier landscaping company serving the Texas area.",
+                connection: "I'm reaching out to homeowners in the {neighborhood} area regarding our {serviceType} services.",
+                value: "We specialize in creating stunning outdoor spaces that not only enhance your property's beauty but also increase its value significantly. Our clients typically see a 15-20% increase in property value.",
+                offer: "I'd like to offer you a complimentary property assessment where we'll provide you with a detailed plan and estimate at no cost whatsoever.",
+                close: "Are you available for a brief consultation this week? I have openings on Tuesday or Thursday afternoon. Which would work better for your schedule?"
+            },
+            local: {
+                intro: "Hello! Is this {name}? Hi {name}, this is Sarah from Green Thumb Gardens. We're a local Texas landscaping company, and I'm calling neighbors in your area today.",
+                connection: "We've been working with several families around {address} and {neighborhood}, and your neighbors have been raving about the transformations we've done.",
+                value: "As a local business, we really pride ourselves on being part of the community. We know Texas weather, Texas soil, and what plants thrive here year-round.",
+                offer: "Since we're already working in your neighborhood, I'd love to offer you our community discount - it's 20% off your first service when you schedule this month.",
+                close: "Could I swing by this week to show you some before-and-after photos of what we've done for your neighbors? I think you'd be amazed at the possibilities for your space."
+            },
+            seasonal: {
+                intro: "Hi {name}! This is Sarah calling from Green Thumb Gardens here in Texas. I hope you're enjoying this beautiful weather we've been having!",
+                connection: "I'm actually calling because this is the perfect time of year for {serviceType} in Texas, and I noticed your property at {address} has such great potential.",
+                value: "Right now, before the intense Texas heat hits, is the ideal window for getting your outdoor space ready for the growing season. The plants establish better, and you'll see amazing results by summer.",
+                offer: "We're booking spring projects now and offering early bird pricing - you can save up to 25% by scheduling before the end of the month.",
+                close: "I have a few slots open this week for free consultations. Would you prefer an appointment during the week or on the weekend? I'd love to show you what's possible for your outdoor space."
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProspectsList();
+            updateStats();
+            updateCallStatus();
+        });
+
+        // Render prospects in the list view
+        function renderProspectsList() {
+            const container = document.getElementById('prospectsContainer');
+            container.innerHTML = '';
+            
+            prospects.forEach(prospect => {
+                const item = document.createElement('div');
+                item.className = `prospect-item ${selectedProspectId === prospect.id ? 'selected' : ''}`;
+                item.innerHTML = `
+                    <div class="prospect-name">${prospect.name}</div>
+                    <div class="prospect-address">${prospect.address}</div>
+                    <div class="prospect-meta">
+                        <span class="neighborhood">${prospect.neighborhood}</span>
+                        <span class="status status-${prospect.status}">${getStatusText(prospect.status)}</span>
+                    </div>
+                `;
+                item.onclick = () => selectProspect(prospect.id);
+                container.appendChild(item);
+            });
+        }
+
+        // Get status text for display
+        function getStatusText(status) {
+            const statusMap = {
+                'ready': 'Ready',
+                'calling': 'Calling...',
+                'completed': 'Completed',
+                'error': 'Error'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Select a prospect
+        function selectProspect(id) {
+            selectedProspectId = id;
+            renderProspectsList();
+            updateSelectedProspectInfo();
+        }
+
+        // Update selected prospect info panel
+        function updateSelectedProspectInfo() {
+            const infoPanel = document.getElementById('selectedProspectInfo');
+            if (selectedProspectId === null) {
+                infoPanel.innerHTML = 'Select a prospect to call';
+                return;
+            }
+            
+            const prospect = prospects.find(p => p.id === selectedProspectId);
+            if (!prospect) return;
+            
+            infoPanel.innerHTML = `
+                <div class="prospect-name">${prospect.name}</div>
+                <div class="prospect-detail">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>${prospect.address}</span>
+                </div>
+                <div class="prospect-detail">
+                    <i class="fas fa-home"></i>
+                    <span>${prospect.neighborhood}</span>
+                </div>
+                <div class="prospect-detail">
+                    <i class="fas fa-leaf"></i>
+                    <span>${prospect.serviceInterest}</span>
+                </div>
+                <div class="prospect-detail">
+                    <i class="fas fa-clock"></i>
+                    <span>Last contact: ${prospect.lastContact}</span>
+                </div>
+            `;
+        }
+
+        // Update stats display
+        function updateStats() {
+            const total = prospects.length;
+            const completed = prospects.filter(p => p.status === 'completed').length;
+            const todayCount = Math.floor(Math.random() * 5) + 1; // Simulated
+            const successRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('totalProspects').textContent = total;
+            document.getElementById('callsCompleted').textContent = completed;
+            document.getElementById('successRate').textContent = successRate + '%';
+            document.getElementById('todayCalls').textContent = todayCount;
+        }
+
+        // Get current time of day
+        function getTimeOfDay() {
+            const hour = new Date().getHours();
+            if (hour < 12) return 'morning';
+            if (hour < 17) return 'afternoon';
+            return 'evening';
+        }
+
+        // Generate call script
+        function generateCallScript(prospect, style) {
+            const template = callTemplates[style];
+            const timeOfDay = getTimeOfDay();
+            
+            let script = template.intro.replace(/{name}/g, prospect.name).replace(/{timeOfDay}/g, timeOfDay);
+            script += " " + template.connection.replace(/{name}/g, prospect.name)
+                .replace(/{address}/g, prospect.address)
+                .replace(/{neighborhood}/g, prospect.neighborhood)
+                .replace(/{serviceType}/g, prospect.serviceInterest.toLowerCase());
+            script += " " + template.value.replace(/{serviceType}/g, prospect.serviceInterest.toLowerCase());
+            script += " " + template.offer.replace(/{neighborhood}/g, prospect.neighborhood)
+                .replace(/{serviceType}/g, prospect.serviceInterest.toLowerCase());
+            script += " " + template.close;
+            
+            return script;
+        }
+
+        // Start call
+        function startCall() {
+            if (selectedProspectId === null) {
+                alert('Please select a prospect first');
+                return;
+            }
+            
+            makeCall(selectedProspectId);
+        }
+
+        // Stop call
+        function stopCall() {
+            if (currentAudio) {
+                if (currentAudio instanceof Audio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                } else if (currentAudio instanceof SpeechSynthesisUtterance) {
+                    speechSynthesis.cancel();
+                }
+                currentAudio = null;
+            }
+            
+            callInProgress = false;
+            updateCallStatus();
+            logCallAction('Call stopped manually');
+        }
+
+        // Update call status display
+        function updateCallStatus() {
+            const callStatus = document.getElementById('callStatus');
+            const callBtn = document.getElementById('callBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            
+            if (callInProgress) {
+                callStatus.className = 'call-status status-calling';
+                callStatus.innerHTML = '<i class="fas fa-phone"></i> <span class="loading"></span> Calling now...';
+                callBtn.style.display = 'none';
+                stopBtn.style.display = 'block';
+            } else {
+                callStatus.className = 'call-status status-ready';
+                callStatus.innerHTML = '<i class="fas fa-check-circle"></i> Ready to call';
+                callBtn.style.display = 'block';
+                stopBtn.style.display = 'none';
+            }
+        }
+
+        // Log call action
+        function logCallAction(message) {
+            const logContainer = document.getElementById('callLog');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <div class="log-time">Today, ${timeString}</div>
+                <div>${message}</div>
+            `;
+            
+            logContainer.insertBefore(logEntry, logContainer.firstChild);
+        }
+
+        // Make call to prospect
+        async function makeCall(prospectId) {
+            const prospect = prospects.find(p => p.id === prospectId);
+            if (!prospect) return;
+            
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const voiceId = document.getElementById('voiceId').value;
+            const callStyle = document.getElementById('callStyle').value;
+            
+            // Update prospect status
+            prospect.status = 'calling';
+            callInProgress = true;
+            updateCallStatus();
+            logCallAction(`Calling ${prospect.name}...`);
+            
+            const script = generateCallScript(prospect, callStyle);
+            
+            // Show preview modal
+            showCallPreview(prospect, script);
+            
+            try {
+                if (apiKey) {
+                    await makeElevenLabsCall(script, apiKey, voiceId, prospect);
+                } else {
+                    makeWebSpeechCall(script, prospect);
+                }
+            } catch (error) {
+                console.error('Call error:', error);
+                prospect.status = 'error';
+                callInProgress = false;
+                updateCallStatus();
+                logCallAction(`Call to ${prospect.name} failed: ${error.message}`);
+                renderProspectsList();
+            }
+        }
+
+        // Complete call
+        function completeCall(prospect) {
+            prospect.status = 'completed';
+            prospect.lastContact = 'Just now';
+            callInProgress = false;
+            updateCallStatus();
+            logCallAction(`Call to ${prospect.name} completed successfully`);
+            renderProspectsList();
+            updateStats();
+        }
+
+        // Show call preview modal
+        function showCallPreview(prospect, script) {
+            const preview = document.getElementById('callPreview');
+            const overlay = document.getElementById('overlay');
+            const title = document.getElementById('previewTitle');
+            const content = document.getElementById('previewContent');
+            
+            title.innerHTML = `<i class="fas fa-phone"></i> Calling ${prospect.name}`;
+            content.innerHTML = `
+                <div style="background: #e6fffa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong><i class="fas fa-map-marker-alt"></i> Address:</strong> ${prospect.address}<br>
+                    <strong><i class="fas fa-home"></i> Area:</strong> ${prospect.neighborhood}<br>
+                    <strong><i class="fas fa-leaf"></i> Interest:</strong> ${prospect.serviceInterest}<br>
+                    <strong><i class="fas fa-phone"></i> Status:</strong> <span style="color: #e53e3e; font-weight: bold;">● LIVE CALL</span>
+                </div>
+                
+                <h4><i class="fas fa-scroll"></i> Call Script:</h4>
+                <div class="script-content">"${script}"</div>
+                
+                <div class="preview-controls">
+                    <button class="btn btn-secondary" onclick="stopCall()"><i class="fas fa-stop"></i> Stop Call</button>
+                    <button class="btn btn-primary" onclick="makeCall(${prospect.id})"><i class="fas fa-redo"></i> Replay</button>
+                </div>
+            `;
+            
+            preview.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        // Close preview modal
+        function closePreview() {
+            document.getElementById('callPreview').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            stopCall();
+        }
+
+        // Make call using ElevenLabs API
+        async function makeElevenLabsCall(script, apiKey, voiceId, prospect) {
+            try {
+                const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'audio/mpeg',
+                        'Content-Type': 'application/json',
+                        'xi-api-key': apiKey
+                    },
+                    body: JSON.stringify({
+                        text: script,
+                        model_id: "eleven_monolingual_v1",
+                        voice_settings: {
+                            stability: 0.7,
+                            similarity_boost: 0.8,
+                            style: 0.2,
+                            use_speaker_boost: true
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`ElevenLabs API error: ${response.status}`);
+                }
+
+                const audioBlob = await response.blob();
+                const audioUrl = URL.createObjectURL(audioBlob);
+                currentAudio = new Audio(audioUrl);
+                
+                currentAudio.play();
+                
+                currentAudio.onended = () => {
+                    completeCall(prospect);
+                };
+                
+            } catch (error) {
+                console.error('ElevenLabs error:', error);
+                makeWebSpeechCall(script, prospect);
+            }
+        }
+
+        // Make call using browser's speech synthesis
+        function makeWebSpeechCall(script, prospect) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(script);
+                
+                utterance.rate = 0.85;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                const voices = speechSynthesis.getVoices();
+                const femaleVoice = voices.find(voice => 
+                    voice.name.toLowerCase().includes('female') || 
+                    voice.name.toLowerCase().includes('karen') ||
+                    voice.name.toLowerCase().includes('samantha')
+                );
+                if (femaleVoice) {
+                    utterance.voice = femaleVoice;
+                }
+                
+                utterance.onend = () => {
+                    completeCall(prospect);
+                };
+                
+                currentAudio = utterance;
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('Web Speech API not supported in this browser. Please try a different browser.');
+                callInProgress = false;
+                updateCallStatus();
+            }
+        }
+
+        // Simulate importing prospects
+        function importProspects() {
+            logCallAction('Imported prospects from CSV file');
+            alert('Prospects imported successfully!');
+        }
+
+        // Simulate calling selected prospects
+        function callSelected() {
+            if (!selectedProspectId) {
+                alert('Please select a prospect first');
+                return;
+            }
+            startCall();
+        }
+
+        // Simulate calling all ready prospects
+        function callAll() {
+            const readyProspects = prospects.filter(p => p.status === 'ready');
+            if (readyProspects.length === 0) {
+                alert('No prospects are ready to call');
+                return;
+            }
+            
+            // For demo, just call the first ready prospect
+            selectProspect(readyProspects[0].id);
+            startCall();
+        }
+    </script>
+</body>
+</html>
