@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Outlaw Fitness — Modern Redesign</title>
+  <meta name="description" content="Modern, sporty, masculine, energetic redesign concept for Outlaw Fitness." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* Color palette (retained from current brand: black / white / red accents) */
+      --red-600:#D61F26; /* energetic red accent */
+      --red-700:#B11217;
+      --bg:#0b0b0b;      /* deep near-black */
+      --surface:#111;    /* card surface */
+      --muted:#888;
+      --text:#f5f5f5;    /* primary text */
+      --white:#ffffff;
+      --outline:#222;
+      --success:#25d366;
+      --warning:#ffb020;
+      --gradient: linear-gradient(135deg, var(--red-600), #ff4d4d 60%);
+      --radius: 18px;
+      --shadow: 0 10px 24px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+      color:var(--text); background:var(--bg);
+      line-height:1.6; 
+    }
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; display:block}
+    .container{width:min(1200px, 92%); margin-inline:auto}
+
+    /* --- Header --- */
+    header{position:sticky; top:0; z-index:50; background:rgba(11,11,11,.7); backdrop-filter:saturate(150%) blur(8px); border-bottom:1px solid var(--outline)}
+    .nav{display:flex; align-items:center; justify-content:space-between; padding:.9rem 0}
+    .brand{display:flex; align-items:center; gap:.75rem}
+    .brand .logo{width:42px; height:42px; border-radius:12px; background:var(--gradient); display:grid; place-items:center; box-shadow:var(--shadow)}
+    .brand .logo span{font-family:Oswald, sans-serif; font-weight:700; letter-spacing:.5px}
+    .brand .name{font-family:Oswald, sans-serif; font-size:1.15rem; font-weight:700; letter-spacing:.6px}
+    .nav a{opacity:.92}
+    .nav a:hover{opacity:1}
+    .menu{display:flex; align-items:center; gap:1.1rem}
+    .menu a{font-weight:600; font-size:.95rem}
+    .cta{display:flex; gap:.6rem}
+    .btn{display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1rem; border-radius:999px; border:1px solid var(--outline); font-weight:700}
+    .btn-primary{background:var(--gradient); color:var(--white); border:0}
+    .btn-ghost{background:transparent; color:var(--white)}
+    .hamburger{display:none; padding:.6rem .7rem; border:1px solid var(--outline); border-radius:12px; background:#0e0e0e}
+
+    /* --- Hero --- */
+    .hero{position:relative; overflow:hidden;}
+    .hero .wrap{display:grid; grid-template-columns:1.1fr .9fr; gap:2rem; align-items:center; padding:clamp(2rem, 4vw, 3rem) 0 2.5rem}
+    .hero h1{font-family:Oswald, sans-serif; font-size: clamp(2rem, 6vw, 4.2rem); line-height:1.05; letter-spacing:.6px; margin:0 0 .8rem}
+    .hero p{color:#d7d7d7; font-size: clamp(1rem, 1.2vw, 1.1rem)}
+    .badges{display:flex; flex-wrap:wrap; gap:.6rem; margin:1rem 0 1.5rem}
+    .badge{background:#151515; border:1px solid var(--outline); color:#cfcfcf; padding:.45rem .7rem; border-radius:999px; font-weight:600; font-size:.85rem}
+    .hero-cta{display:flex; gap:.8rem; flex-wrap:wrap}
+    .hero-media{position:relative; aspect-ratio: 4/5; border-radius:var(--radius); background: radial-gradient(80% 80% at 65% 35%, rgba(214,31,38,.3), transparent 60%), #0f0f10; border:1px solid var(--outline); box-shadow:var(--shadow)}
+    .hero-media::after{content:""; position:absolute; inset:0; background: url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1400&auto=format&fit=crop') center/cover no-repeat; mix-blend:screen; opacity:.4; border-radius:var(--radius)}
+
+    /* --- Stats --- */
+    .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:2rem 0 0}
+    .stat{background:#121212; border:1px solid var(--outline); padding:1.1rem; border-radius:var(--radius); text-align:center}
+    .stat .num{font-family:Oswald, sans-serif; font-size:2rem}
+    .stat .label{color:#bdbdbd; font-weight:600}
+
+    /* --- Section base --- */
+    section{padding:3.5rem 0}
+    section h2{font-family:Oswald, sans-serif; font-size: clamp(1.6rem, 3.6vw, 2.4rem); margin:0 0 .8rem}
+    .kicker{color:var(--red-600); font-weight:800; letter-spacing:.2em; text-transform:uppercase; font-size:.8rem}
+    .lead{color:#d3d3d3}
+
+    /* --- Services --- */
+    .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.5rem}
+    .card{background:linear-gradient(180deg, #141414, #0f0f0f); border:1px solid var(--outline); border-radius:var(--radius); overflow:hidden; position:relative}
+    .card .media{height:180px; background:#0c0c0c; border-bottom:1px solid var(--outline); display:grid; place-items:center}
+    .card .media::after{content:""; position:absolute; inset:0; background: radial-gradient(60% 60% at 65% 35%, rgba(214,31,38,.25), transparent 60%)}
+    .card .body{padding:1.1rem}
+    .chip{display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .6rem; border-radius:999px; font-weight:700; font-size:.75rem; background:rgba(214,31,38,.12); color:#ffcccc; border:1px solid rgba(214,31,38,.35)}
+
+    /* --- Testimonials (slider) --- */
+    .slider{position:relative; overflow:hidden; border-radius:var(--radius); border:1px solid var(--outline); background:#101010}
+    .slides{display:flex; transition:transform .5s ease}
+    .slide{min-width:100%; padding:1.5rem}
+    .quote{font-size:1.05rem; color:#e8e8e8}
+    .who{margin-top:.8rem; color:#bdbdbd; font-weight:700}
+    .slider .dots{display:flex; gap:.4rem; justify-content:center; padding:1rem}
+    .dot{width:9px; height:9px; border-radius:999px; background:#2a2a2a; border:1px solid var(--outline); cursor:pointer}
+    .dot.active{background:var(--red-600)}
+
+    /* --- Pricing --- */
+    .pricing{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:1.5rem}
+    .plan{background:linear-gradient(180deg, #151515, #0f0f0f); border:1px solid var(--outline); padding:1.25rem; border-radius:var(--radius)}
+    .plan h3{font-family:Oswald, sans-serif; margin:.2rem 0}
+    .price{font-family:Oswald, sans-serif; font-size:2.2rem}
+    .features{list-style:none; padding:0; margin:1rem 0}
+    .features li{padding:.35rem 0; border-bottom:1px dashed #222}
+
+    /* --- Contact --- */
+    form{display:grid; grid-template-columns:repeat(2,1fr); gap:.8rem}
+    form input, form textarea{width:100%; background:#0f0f0f; border:1px solid var(--outline); color:var(--text); padding:.9rem 1rem; border-radius:12px; font:inherit}
+    form textarea{grid-column:1/-1; min-height:140px}
+    form .form-actions{grid-column:1/-1; display:flex; gap:.6rem}
+
+    /* --- Footer --- */
+    footer{border-top:1px solid var(--outline); padding:2rem 0; color:#bdbdbd}
+    .footer-grid{display:grid; grid-template-columns:2fr 1fr 1fr; gap:1.25rem}
+    .social{display:flex; gap:.6rem; margin-top:.6rem}
+    .social a{display:grid; place-items:center; width:36px; height:36px; border:1px solid var(--outline); border-radius:10px}
+
+    /* --- Utilities --- */
+    .pill{padding:.25rem .5rem; border-radius:999px; border:1px solid var(--outline); color:#cfcfcf; font-weight:700; font-size:.7rem}
+    .emph{color:#fff; font-weight:800}
+    .accent{color:var(--red-600)}
+
+    /* --- Responsive --- */
+    @media (max-width: 980px){
+      .hero .wrap{grid-template-columns:1fr;}
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .cards{grid-template-columns:1fr 1fr}
+      .pricing{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr 1fr}
+      form{grid-template-columns:1fr}
+      .menu{display:none}
+      .hamburger{display:inline-grid}
+    }
+    @media (max-width: 560px){
+      .cards{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#">
+        <div class="logo"><span>OF</span></div>
+        <div class="name">OUTLAW FITNESS</div>
+      </a>
+      <nav class="menu" aria-label="Primary">
+        <a href="#services">Services</a>
+        <a href="#testimonials">Results</a>
+        <a href="#about">Coach</a>
+        <a href="#pricing">Plans</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="cta">
+        <a class="btn btn-ghost" href="#pricing">Plans</a>
+        <a class="btn btn-primary" href="#contact">Book Consultation</a>
+        <button class="hamburger" aria-label="Open menu" onclick="toggleMobileNav()">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile nav -->
+  <div id="mobileNav" style="display:none; border-bottom:1px solid var(--outline); background:#0e0e0e">
+    <div class="container" style="display:grid; gap:.6rem; padding: .8rem 0 1rem">
+      <a href="#services" onclick="toggleMobileNav()">Services</a>
+      <a href="#testimonials" onclick="toggleMobileNav()">Results</a>
+      <a href="#about" onclick="toggleMobileNav()">Coach</a>
+      <a href="#pricing" onclick="toggleMobileNav()">Plans</a>
+      <a href="#contact" onclick="toggleMobileNav()">Contact</a>
+    </div>
+  </div>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" aria-label="Hero">
+      <div class="container wrap">
+        <div>
+          <span class="kicker">LET'S GET MOVING</span>
+          <h1>Train harder. <span class="accent">Perform better</span>. Become unstoppable.</h1>
+          <p class="lead">Professional, certified training programs for lifestyle, competition prep, and nutrition — personalized to your goals. Built for intensity, focus, and results.</p>
+          <div class="badges">
+            <span class="badge">8+ yrs certified</span>
+            <span class="badge">1000+ lifestyle clients</span>
+            <span class="badge">250+ competition athletes</span>
+            <span class="badge">US Army Master Trainer</span>
+          </div>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#services">View Services</a>
+            <a class="btn" href="#contact">Book Now</a>
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="num" data-count="97">0%</div><div class="label">Client Satisfaction</div></div>
+            <div class="stat"><div class="num" data-count="1000">0</div><div class="label">Lifestyle Clients</div></div>
+            <div class="stat"><div class="num" data-count="250">0</div><div class="label">Bodybuilding Athletes</div></div>
+            <div class="stat"><div class="num" data-count="8">0+</div><div class="label">Years Certified</div></div>
+          </div>
+        </div>
+        <div class="hero-media" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" aria-label="Services">
+      <div class="container">
+        <span class="kicker">SERVICES & PROGRAMS</span>
+        <h2>Choose your path</h2>
+        <p class="lead">Whether you’re transforming your lifestyle, prepping for stage, or dialing in nutrition — pick the program aligned with your ambition.</p>
+        <div class="cards">
+          <article class="card">
+            <div class="media"><span class="pill">ONLINE</span></div>
+            <div class="body">
+              <h3>Online Lifestyle Transformation</h3>
+              <p>Custom training + nutrition, check-ins, and accountability to build a stronger, leaner you.</p>
+              <div style="display:flex; gap:.5rem; margin-top:.6rem">
+                <span class="chip">Meal Plans</span>
+                <span class="chip">Weekly Check-ins</span>
+                <span class="chip">Coach Support</span>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="media"><span class="pill">PRO</span></div>
+            <div class="body">
+              <h3>Online Competition Prep</h3>
+              <p>Stage-ready programming: periodized training, posing guidance, and peak week strategy.</p>
+              <div style="display:flex; gap:.5rem; margin-top:.6rem">
+                <span class="chip">Macro Cycling</span>
+                <span class="chip">Posing</span>
+                <span class="chip">Peak Week</span>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="media"><span class="pill">IN-PERSON</span></div>
+            <div class="body">
+              <h3>Personal / Semi‑Personal Training</h3>
+              <p>Hands-on coaching in Norcross, GA. Technique, intensity, and progressive overload — dialed.</p>
+              <div style="display:flex; gap:.5rem; margin-top:.6rem">
+                <span class="chip">Strength</span>
+                <span class="chip">Conditioning</span>
+                <span class="chip">Form Coaching</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" aria-label="Success Stories">
+      <div class="container">
+        <span class="kicker">SUCCESS STORIES</span>
+        <h2>Real clients. Real results.</h2>
+        <div class="slider" aria-roledescription="carousel">
+          <div class="slides" id="slides">
+            <div class="slide">
+              <p class="quote">“In just 5 months, I was in the best shape of my life — and a year later I’m still making remarkable progress.”</p>
+              <div class="who">Joshua Byrd — Muscle gaining & toning</div>
+            </div>
+            <div class="slide">
+              <p class="quote">“His ability to aid you in executing your goals is what you need when you need a push!”</p>
+              <div class="who">Nysha — Lifestyle client</div>
+            </div>
+            <div class="slide">
+              <p class="quote">“First competition season and I placed in all 3 classes. Dialed in from start to finish.”</p>
+              <div class="who">Diana Valdovinos — Competition prep</div>
+            </div>
+          </div>
+          <div class="dots" role="tablist" aria-label="Testimonial slides">
+            <button class="dot active" aria-label="Slide 1" onclick="goTo(0)"></button>
+            <button class="dot" aria-label="Slide 2" onclick="goTo(1)"></button>
+            <button class="dot" aria-label="Slide 3" onclick="goTo(2)"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" aria-label="About the Coach">
+      <div class="container">
+        <span class="kicker">COACH</span>
+        <h2>Coach Law</h2>
+        <p class="lead">Founder of <span class="emph">Break My 5th Law</span>. Specializes in weight loss, strength & conditioning, and competition prep. Master Fitness Trainer for the US Army.</p>
+        <div class="cards" style="grid-template-columns:2fr 1fr 1fr">
+          <article class="card">
+            <div class="body">
+              <h3>Philosophy</h3>
+              <p>Every client’s goals are unique. We meet you where you are, build discipline, and design a program that makes your vision in the mirror a reality.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="body">
+              <h3>Highlights</h3>
+              <ul class="features">
+                <li>8+ years as a certified trainer</li>
+                <li>1000+ lifestyle clients trained</li>
+                <li>250+ bodybuilding athletes coached</li>
+              </ul>
+            </div>
+          </article>
+          <article class="card">
+            <div class="body">
+              <h3>Corporate</h3>
+              <ul class="features">
+                <li>Georgia Power (3 locations)</li>
+                <li>Trace Apartment</li>
+                <li>Vonage</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing / Plans -->
+    <section id="pricing" aria-label="Plans">
+      <div class="container">
+        <span class="kicker">PLANS</span>
+        <h2>Commit to the work</h2>
+        <div class="pricing">
+          <article class="plan">
+            <h3>Starter</h3>
+            <div class="price">$49<span style="font-size:.9rem; color:#bbb">/mo</span></div>
+            <ul class="features">
+              <li>App access & basic templates</li>
+              <li>Email support</li>
+              <li>Monthly check‑in</li>
+            </ul>
+            <a class="btn btn-primary" href="#contact">Get Started</a>
+          </article>
+          <article class="plan" style="border:2px solid var(--red-600)">
+            <h3>Performance</h3>
+            <div class="price">$149<span style="font-size:.9rem; color:#bbb">/mo</span></div>
+            <ul class="features">
+              <li>Custom plan + macros</li>
+              <li>Weekly check‑ins</li>
+              <li>Priority chat support</li>
+            </ul>
+            <a class="btn btn-primary" href="#contact">Choose Performance</a>
+          </article>
+          <article class="plan">
+            <h3>Elite Prep</h3>
+            <div class="price">$299<span style="font-size:.9rem; color:#bbb">/mo</span></div>
+            <ul class="features">
+              <li>Periodized programming</li>
+              <li>Stage posing & peak week</li>
+              <li>Bi‑weekly zoom consults</li>
+            </ul>
+            <a class="btn btn-primary" href="#contact">Go Elite</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" aria-label="Contact">
+      <div class="container">
+        <span class="kicker">GET IN TOUCH</span>
+        <h2>Book a consultation</h2>
+        <p class="lead">6315 Spalding Dr, Norcross, Georgia 30092 • Tel: (470) 990‑1714 • teamoutlawfit@gmail.com</p>
+        <form onsubmit="submitForm(event)">
+          <input type="text" placeholder="First name" required>
+          <input type="text" placeholder="Last name" required>
+          <input type="email" placeholder="Email" required>
+          <input type="tel" placeholder="Phone">
+          <textarea placeholder="Message"></textarea>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn" onclick="scrollToTop()">Back to Top</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>
+        <div class="brand">
+          <div class="logo"><span>OF</span></div>
+          <div class="name">OUTLAW FITNESS</div>
+        </div>
+        <p style="margin:.6rem 0 0">© 2025 Outlaw Fitness. Concept redesign by VCONNX.</p>
+        <div class="social">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="YouTube">YT</a>
+          <a href="#" aria-label="Facebook">FB</a>
+        </div>
+      </div>
+      <div>
+        <strong>Programs</strong>
+        <ul class="features" style="border:0; margin:.5rem 0 0">
+          <li>Lifestyle Transformation</li>
+          <li>Competition Prep</li>
+          <li>Personal Training</li>
+        </ul>
+      </div>
+      <div>
+        <strong>Company</strong>
+        <ul class="features" style="border:0; margin:.5rem 0 0">
+          <li>About</li>
+          <li>Testimonials</li>
+          <li>Contact</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    function toggleMobileNav(){
+      const el = document.getElementById('mobileNav');
+      el.style.display = el.style.display === 'none' || !el.style.display ? 'block' : 'none';
+    }
+
+    // Simple counter animation
+    const counters = document.querySelectorAll('.num');
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          const el = entry.target; const target = +el.dataset.count; const isPercent = el.textContent.includes('%');
+          let cur = 0; const step = Math.max(1, Math.floor(target/100));
+          const int = setInterval(()=>{
+            cur += step; if(cur>=target){cur = target; clearInterval(int)}
+            el.textContent = isPercent ? cur + '%' : cur;
+          }, 12);
+          io.unobserve(el);
+        }
+      })
+    }, {threshold:.6});
+    counters.forEach(c=>io.observe(c));
+
+    // Testimonial slider
+    let currentSlide = 0;
+    function goTo(i){
+      currentSlide = i; updateSlider();
+    }
+    function updateSlider(){
+      const slides = document.getElementById('slides');
+      slides.style.transform = `translateX(-${currentSlide*100}%)`;
+      document.querySelectorAll('.dot').forEach((d,idx)=>{
+        d.classList.toggle('active', idx===currentSlide)
+      })
+    }
+    setInterval(()=>{ currentSlide = (currentSlide+1)%3; updateSlider(); }, 4500);
+
+    // Form stub
+    function submitForm(e){
+      e.preventDefault();
+      alert('Thanks! We\'ll be in touch shortly.');
+      e.target.reset();
+    }
+
+    function scrollToTop(){ window.scrollTo({top:0, behavior:'smooth'}) }
+  </script>
+</body>
+</html>

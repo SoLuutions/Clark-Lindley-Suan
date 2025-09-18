@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Dirt Army – Carpet Cleaning (ClickFunnels Version)</title>
+<style>
+/* ClickFunnels Override Styles - ADD THESE FIRST */
+.cf-wrapper, 
+.cf-page-wrapper,
+.cf-section-wrapper,
+.cf-container,
+.cf-row,
+.cf-element {
+  max-width: none !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Force full width on common ClickFunnels containers */
+div[id*="cf"], 
+div[class*="cf"],
+section[class*="cf"],
+.elPageContent,
+.elPageContainer {
+  max-width: none !important;
+  width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+}
+
+/* Reset any inherited styles from ClickFunnels */
+* {
+  box-sizing: border-box !important;
+}
+
+/* Your Original Styles */
+/* Services Grid */
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.service-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.service-card h3 {
+  margin-top: 12px;
+  font-size: 18px;
+  color: var(--brand-2);
+}
+
+.service-card p {
+  margin-top: 8px;
+  font-size: 15px;
+  color: var(--ink-2);
+}
+
+.service-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* FAQ */
+.faq {
+  margin-top: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.faq .item {
+  border: 1px solid #c3e6c3;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.faq .item:hover {
+  background: var(--muted);
+  border-color: var(--brand);
+}
+
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 16px 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink-2);
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.faq summary span {
+  flex: 1;
+}
+
+.faq summary i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+  color: var(--brand);
+}
+
+.faq details[open] summary {
+  color: var(--brand-2);
+}
+
+.faq details[open] summary i {
+  transform: rotate(180deg);
+}
+
+.faq .content {
+  padding: 0 20px 16px;
+  font-size: 15px;
+  color: var(--ink-2);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(-4px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+/* Gary Section */
+.gary-intro {
+  background: var(--muted);
+  border-top: 1px solid #c3e6c3;
+  border-bottom: 1px solid #c3e6c3;
+}
+
+.gary-content {
+  background: #fff;
+  border: 1px solid #c3e6c3;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.gary-content h2 {
+  color: var(--brand-2);
+  margin-bottom: 8px;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.gary-content h3 {
+  color: var(--brand);
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.gary-content .welcome-text {
+  font-weight: 700;
+  color: var(--ink-2);
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+.gary-content p {
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.gary-signature {
+  margin-top: 24px;
+  font-weight: 700;
+  color: var(--brand-2);
+}
+
+.gary-email {
+  color: var(--brand);
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.gary-serving {
+  font-style: italic;
+  color: var(--ink-2);
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* Theme Variables */
+:root {
+  --bg:#ffffff;--muted:#f0f9f1;--ink:#0f2419;--ink-2:#1e4d2b;
+  --brand:#125e14;--brand-2:#0d4a10;--accent:#e8f5e8;
+  --ring:#6b8e6b;--ok:#16a34a;--warn:#f59e0b;
+  --radius:16px;--shadow:0 6px 24px rgba(18,94,20,.12);
+}
+
+body {
+  margin:0 !important;
+  padding:0 !important;
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji" !important;
+  color:var(--ink) !important;
+  background:linear-gradient(#f8fdf8, #fff) !important;
+  width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* Custom container that ignores ClickFunnels constraints */
+.dirt-container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 16px;
+  width: 100% !important;
+}
+
+/* Topbar */
+.topbar{
+  background:#0a2e0c;
+  color:#fff;
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:8px 16px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:#d1e7d2;color:#0a2e0c;border-radius:999px;padding:4px 10px;font-weight:600;font-size:12px}
+
+/* Header - FIXED STICKY HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: saturate(1.2) blur(8px);
+  background: rgba(255,255,255,.8);
+  border-bottom: 1px solid #c3e6c3;
+  width: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brand{font-weight:900;letter-spacing:.5px}
+.nav-links{display:none;gap:20px}
+
+/* Buttons */
+.btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-radius:12px;
+  border:1px solid #c3e6c3;
+  background:#125e14;
+  color:#fff;
+  padding:12px 16px;
+  font-weight:700;
+  box-shadow:var(--shadow);
+}
+.btn.outline{background:transparent;color:var(--ink);border-color:#a3d4a3}
+
+/* Layout - Force full width sections */
+.section{
+  padding:64px 0;
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+}
+
+.hero{border-bottom:1px solid #c3e6c3}
+.grid{display:grid;gap:24px}
+.grid-2{grid-template-columns:1fr}
+.grid-3{grid-template-columns:1fr}
+.card{background:#fff;border:1px solid #c3e6c3;border-radius:var(--radius);box-shadow:var(--shadow)}
+.card .head{padding:18px 20px;border-bottom:1px solid #e8f5e8}
+.card .body{padding:18px 20px}
+
+/* Typography */
+.kicker{font-size:14px;color:var(--ink-2)}
+.kicke2{font-size:14px;color:white}
+h1{font-size:40px;line-height:1.1;margin:0}
+h2{font-size:32px;margin:0 0 6px}
+h3{margin:0}
+p{color:var(--ink-2)}
+
+/* Steps */
+.steps{display:grid;gap:16px}
+.step{border:1px solid #c3e6c3;border-radius:14px;padding:14px 16px;background:#fff}
+.step .num{display:inline-grid;place-items:center;background:#d1e7d2;border-radius:10px;width:28px;height:28px;font-weight:800;margin-bottom:8px}
+
+/* Sections */
+.muted{background:var(--muted);border-top:1px solid #c3e6c3;border-bottom:1px solid #c3e6c3}
+.reviews{display:grid;gap:20px}
+.stars{color:#f59e0b}
+.areas{display:grid;gap:20px}
+.areas ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quote{background:#0a2e0c;color:#fff}
+.quote .card{background:#fff;color:#0a2e0c}
+
+/* Form Fields */
+.field{display:flex;flex-direction:column;gap:6px}
+.input,.textarea{border:1px solid #a3d4a3;border-radius:12px;padding:12px 14px;font-size:16px}
+.textarea{min-height:110px}
+
+/* Footer */
+footer {
+  border-top:1px solid #c3e6c3;
+  background:#fff;
+  padding:40px 0 20px;
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+}
+
+.footer-grid {
+  display:grid;
+  gap:24px;
+  text-align:center;
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 16px;
+}
+
+.footer-grid h4 {
+  margin-bottom:12px;
+  font-size:16px;
+  font-weight:700;
+  color:var(--brand-2);
+}
+
+.footer-grid a {
+  display:block;
+  margin-bottom:8px;
+  color:var(--ink-2);
+  font-size:14px;
+  transition:color 0.3s ease;
+}
+
+.footer-grid a:hover {color:var(--brand);}
+
+.footer-grid p {
+  font-size:14px;
+  color:var(--ink-2);
+  line-height:1.5;
+}
+
+.footer-grid .social a {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:var(--muted);
+  margin:0 6px;
+  transition:background 0.3s ease, transform 0.3s ease;
+}
+
+.footer-grid .social a:hover {
+  background:var(--brand);
+  color:#fff;
+  transform:scale(1.1);
+}
+
+footer .copyright {
+  text-align:center;
+  margin-top:20px;
+  font-size:13px;
+  color:#6b8e6b;
+}
+
+/* Responsive */
+@media (min-width:768px){
+  .nav-links{display:flex}
+  .grid-2{grid-template-columns:1.2fr .8fr}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .reviews{grid-template-columns:repeat(3,1fr)}
+  .areas{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:2fr 1fr 1fr 1fr;text-align:left}
+  h1{font-size:56px}
+  .gary-content h2{font-size:32px}
+}
+
+/* Hide ClickFunnels default elements that might interfere */
+.cf-page-title,
+.cf-page-subtitle {
+  display: none !important;
+}
+</style>
+
+</head>
+<body>
+<!-- Main wrapper to break out of ClickFunnels constraints -->
+<div style="width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw;">
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="dirt-container topbar-inner" style="display:flex;align-items:center;justify-content:space-between;">
+    <!-- Left: Badge + Open Hours -->
+    <div>
+      <span class="badge">5-Star Rated Locally</span>
+      <span style="margin-left:12px;font-size:14px;opacity:.9">Open 24/7 • Same-Day Appointments</span>
+    </div>
+
+    <!-- Right: Phone + Socials -->
+    <div style="display:flex;align-items:center;gap:16px;">
+      <a href="tel:+19515725228" style="color:#fff;font-weight:700">(951) 572-5228</a>
+
+      <!-- Social Icons -->
+      <div style="display:flex;align-items:center;gap:12px;">
+        <!-- Load Font Awesome (only once in the page) -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <!-- Yelp -->
+        <a href="https://www.yelp.com/biz/the-dirt-army-murrieta" target="_blank" aria-label="Yelp">
+          <i class="fab fa-yelp" style="font-size:16px; color:white;"></i>
+        </a>
+
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/thedirtarmy" target="_blank" aria-label="Facebook">
+          <i class="fab fa-facebook" style="font-size:16px; color:white;"></i>
+        </a>
+
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@TheDirtArmy" target="_blank" aria-label="YouTube">
+          <i class="fab fa-youtube" style="font-size:16px; color:white;"></i>
+        </a>
+
+        <!-- Google -->
+        <a href="https://g.co/kgs/dUsoTW2" target="_blank" aria-label="Google">
+          <i class="fab fa-google" style="font-size:16px; color:white;"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Header - Now properly sticky -->
+<header>
+  <nav class="dirt-container">
+    <a href="#" class="brand" style="display:flex;align-items:center">
+<img 
+  src="https://thedirtarmy.com/wp-content/uploads/2023/03/Dirt-Army-White-Logo.png" 
+  alt="The Dirt Army Logo" 
+  style="height:40px;max-width:180px;object-fit:contain;filter: brightness(0) saturate(100%) invert(21%) sepia(62%) saturate(418%) hue-rotate(83deg) brightness(95%) contrast(97%);" />
+    </a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#gary">About Gary</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#areas">Service Area</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="btn" href="#quote">Get Free Quote</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="section hero">
+  <div class="dirt-container grid grid-2" style="align-items:center">
+    <div>
+      <h1>#1 Carpet Cleaner in Murrieta, CA</h1>
+      <p class="kicker" style="margin-top:12px">Say goodbye to stains & odors with our soap‑free 5‑step cleaning. No sticky residue. Just fresh, fast‑drying carpets.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+        <a class="btn" href="#quote">Get Free Quote</a>
+        <a class="btn outline" href="tel:+19515725228">Call Now</a>
+      </div>
+      <div style="display:flex;gap:16px;align-items:center;margin-top:28px;opacity:.9">
+        <img alt="BBB" src="https://thedirtarmy.com/wp-content/uploads/2023/03/bbb-300x123.png" height="40"/>
+        <img alt="Google Guaranteed" src="https://thedirtarmy.com/wp-content/uploads/2023/03/google-guaranteed-1-e1671433794399.jpg" height="40"/>
+        <img alt="5 star" src="https://thedirtarmy.com/wp-content/uploads/2023/03/top-rated-facebook-1.png" height="40"/>
+        <img alt="5 star" src="https://thedirtarmy.com/wp-content/uploads/2023/03/Top-Rated-On-Yelp.png" height="40"/>
+      </div>
+    </div>
+    <div>
+      <iframe 
+        width="100%" 
+        height="309" 
+        src="https://www.youtube.com/embed/SpxvX7RZDAk" 
+        title="DIRTY CARPET CLEANING in Temecula, CA" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" 
+        allowfullscreen
+        style="border-radius:24px;box-shadow:var(--shadow);">
+      </iframe>
+
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:var(--shadow);padding:10px 14px;display:inline-flex;gap:10px;align-items:center;transform:translate(12px, -22px)">
+        <span class="stars">★★★★★</span>
+        <div>
+          <div style="font-weight:700">5.0 Average Rating</div>
+          <div style="font-size:12px;color:#64748b">Hundreds of happy neighbors</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gary Introduction Section -->
+<section id="gary" class="section gary-intro">
+  <div class="dirt-container">
+    <div class="gary-content">
+      <h2>Hi, I'm Gary. I Want To Be Your New Favorite</h2>
+      <h3>Carpet Cleaner in Murrieta & Beyond</h3>
+      
+      <p class="welcome-text">Welcome to The Dirt Army Carpet Cleaning!</p>
+      
+      <p>We are excited to offer top-tier carpet cleaning services to the residents of Murrieta, CA and the surrounding areas. Our commitment to doing what it takes to get your carpet clean has earned us a 5-star rating, making us the preferred choice for carpet cleaning in the region.</p>
+      
+      <p>With nearly 20 years of hands-on experience and a dedicated team of carpet cleaning specialists, we bring you a meticulous 5-step carpet cleaning process designed to eliminate stains and odors, leaving your home spotless and healthier. No more sticky residues or hidden charges – just clean, fresh carpets every time.</p>
+      
+      <p>Our friendly, professional team will arrive on time and treat your home with the utmost respect. We pride ourselves on efficient service and outstanding results, ensuring your complete satisfaction.</p>
+      
+      <p>Discover why your neighbors in Murrieta and beyond trust The Dirt Army for their carpet cleaning needs.</p>
+      
+      <p>Call us today for a free quote: <a href="tel:+19515725228" style="color: var(--brand); font-weight: bold;">(951) 572-5228</a></p>
+      
+      <div class="gary-signature">
+        <p><strong>Thanks,</strong></p>
+        <p><strong>Gary @ The Dirt Army Carpet Cleaning</strong></p>
+      </div>
+      
+      <div class="gary-email">
+        <a href="mailto:dirtarmyhq@gmail.com">dirtarmyhq@gmail.com</a>
+      </div>
+      
+      <div class="gary-serving">
+        <em>Serving: Murrieta, Temecula, Oceanside & more!</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services" class="section">
+  <div class="container">
+    <h2>Our Services</h2>
+    <div class="service-grid">
+
+      <!-- Carpet Cleaning -->
+      <div class="service-card">
+        <img src="https://thedirtarmy.com/wp-content/uploads/2024/05/Carpet-Cleaning-Murrieta-CA14-768x448.jpg" alt="Carpet Cleaning" class="service-img">
+        <h3>Carpet Cleaning</h3>
+        <p>Our detailed 5-step soap-free process includes spot treatment, pH balancing, and powerful hot water extraction—leaving carpets fresh, clean, and odor-free.</p>
+        <a href="#" class="service-link">Learn More</a>
+      </div>
+
+      <!-- Commercial Carpet Cleaning -->
+      <div class="service-card">
+        <img src="https://thedirtarmy.com/wp-content/uploads/2024/05/Dirt-Army-Commercial-Carpet-Cleaning-768x448.png" alt="Commercial Carpet Cleaning" class="service-img">
+        <h3>Commercial Carpet Cleaning</h3>
+        <p>Keep your workplace spotless with our commercial carpet cleaning service. Our soap-free method prevents sticky residues while ensuring a professional, fresh result.</p>
+        <a href="#" class="service-link">Learn More</a>
+      </div>
+
+      <!-- Upholstery Cleaning -->
+      <div class="service-card">
+        <img src="https://thedirtarmy.com/wp-content/uploads/2024/05/Upholstery-Cleaning-Murrieta-CA6-768x432.jpg" alt="Upholstery Cleaning" class="service-img">
+        <h3>Upholstery Cleaning</h3>
+        <p>Refresh and restore your furniture with our upholstery cleaning service. We remove stains, dirt, body oils, and odors—bringing life back to sofas, chairs, and fabrics.</p>
+        <a href="#" class="service-link">Learn More</a>
+      </div>
+
+      <!-- Tile & Grout Cleaning -->
+      <div class="service-card">
+        <img src="https://thedirtarmy.com/wp-content/uploads/2024/05/Dirt-Army-Tile-and-Grout-Cleaning-768x448.png" alt="Tile and Grout Cleaning" class="service-img">
+        <h3>Tile &amp; Grout Cleaning</h3>
+        <p>Revitalize your floors with our tile &amp; grout cleaning service. We target dirt and grime in porous grout lines, leaving your surfaces shining and spotless.</p>
+        <a href="#" class="service-link">Learn More</a>
+      </div>
+
+      <!-- Commercial Tile & Grout Cleaning -->
+      <div class="service-card">
+        <img src="https://thedirtarmy.com/wp-content/uploads/2024/05/Tile-Grout-Cleaning-Murrieta-CA3-768x576.jpeg" alt="Commercial Tile and Grout Cleaning" class="service-img">
+        <h3>Commercial Tile &amp; Grout Cleaning</h3>
+        <p>Our specialized commercial tile &amp; grout cleaning service brings back the shine to your workplace flooring, eliminating grime buildup efficiently and effectively.</p>
+        <a href="#" class="service-link">Call For Quote</a>
+      </div>
+
+      <!-- Area Rug Cleaning -->
+      <div class="service-card">
+        <img src="https://thedirtarmy.com/wp-content/uploads/2024/05/Area-Rug-Cleaning-Murrieta-CA11-768x432.jpg" alt="Area Rug Cleaning" class="service-img">
+        <h3>Area Rug Cleaning</h3>
+        <p>Give your area rugs the care they deserve. Our process restores vibrance, protects fibers, and leaves your rugs looking refreshed and smelling great.</p>
+        <a href="#" class="service-link">Learn More</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Reviews -->
+<section id="reviews" class="section">
+  <div class="dirt-container">
+    <div style="display:flex;align-items:end;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <h2>Recent Reviews</h2>
+      <div style="opacity:.8;display:flex;gap:10px">
+        <a class="btn outline" href="#">Google</a>
+        <a class="btn outline" href="#">Facebook</a>
+        <a class="btn outline" href="#">Yelp</a>
+      </div>
+    </div>
+    <div class="reviews" style="margin-top:18px">
+      <div class="card"><div class="head"><div class="stars">★★★★★</div><h3>Ian R.</h3><p class="kicker">Temecula, CA</p></div><div class="body">New puppy, old stains—gone. Enzyme pre‑treat eliminated odors. Team was on time and professional.</div></div>
+      <div class="card"><div class="head"><div class="stars">★★★★★</div><h3>Martha G.</h3><p class="kicker">Murrieta, CA</p></div><div class="body">1000% quality service and dependable.</div></div>
+      <div class="card"><div class="head"><div class="stars">★★★★★</div><h3>Charlotte M.</h3><p class="kicker">Winchester, CA</p></div><div class="body">Friendly, cheerful at 8am, and meticulous. Booked tile next!</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Service Areas -->
+<section id="areas" class="section muted">
+  <div class="dirt-container areas">
+    <div>
+      <h2>Serving Murrieta & Nearby Cities</h2>
+      <ul style="margin-top:12px">
+        <li>📍 Murrieta, CA</li>
+        <li>📍 Temecula, CA</li>
+        <li>📍 Oceanside, CA</li>
+        <li>📍 Winchester, CA</li>
+        <li>📍 Wildomar, CA</li>
+        <li>📍 Menifee, CA</li>
+        <li>📍 Lake Elsinore, CA</li>
+        <li>📍 San Marcos, CA</li>
+        <li>📍 Canyon Lake, CA</li>
+        <li>📍 Corona, CA</li>
+        <li>📍 Eastvale, CA</li>
+        <li>📍 Escondido, CA</li>
+        <li>📍 San Jacinto, CA</li>
+        <li>📍 Moreno Valley, CA</li>
+      </ul>
+    </div>
+    <div>
+      <iframe 
+        loading="lazy"
+        src="https://maps.google.com/maps?q=the%20dirt%20army&amp;t=m&amp;z=9&amp;output=embed&amp;iwloc=near"
+        title="the dirt army"
+        aria-label="the dirt army"
+        style="width:100%;height:480px;border-radius:16px;border:1px solid #e2e8f0;">
+      </iframe>
+      <p class="kicker" style="margin-top:8px">Call to confirm availability in your neighborhood.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section">
+  <div class="dirt-container faq">
+    <h2>Frequently Asked Questions</h2>
+
+    <details class="item">
+      <summary>
+        <span>Which carpet cleaning method do you use?</span>
+        <i class="fa fa-chevron-down"></i>
+      </summary>
+      <div class="content">Hot water extraction (steam cleaning) with a truck-mounted system for deepest soil removal.</div>
+    </details>
+
+    <details class="item" open>
+      <summary>
+        <span>Do you use soap in your cleaning solution?</span>
+        <i class="fa fa-chevron-down"></i>
+      </summary>
+      <div class="content">No, we use an organic, enzyme-based solution—no sticky residue.</div>
+    </details>
+
+    <details class="item">
+      <summary>
+        <span>Is it safe for kids and pets?</span>
+        <i class="fa fa-chevron-down"></i>
+      </summary>
+      <div class="content">Yes. Our chemistry is non-toxic and family-safe.</div>
+    </details>
+
+    <details class="item">
+      <summary>
+        <span>How long does it take?</span>
+        <i class="fa fa-chevron-down"></i>
+      </summary>
+      <div class="content">Typical appointments are 30–90 minutes, depending on size and soil level.</div>
+    </details>
+
+    <details class="item">
+      <summary>
+        <span>How long to dry?</span>
+        <i class="fa fa-chevron-down"></i>
+      </summary>
+      <div class="content">Most carpets dry in 6–10 hours with proper airflow and low humidity.</div>
+    </details>
+  </div>
+</section>
+
+<!-- Quote Form -->
+<section id="quote" class="section quote">
+  <div class="dirt-container grid grid-2">
+    <div>
+      <h2>Request Your Fast, Free Quote</h2>
+      <p class="kicke2">Same‑day service often available. Call or send the form—we'll text you back.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+        <a class="btn" href="tel:+19515725228" style="background:#e2e8f0;color:#0b1220">Call (951) 572‑5228</a>
+        <a class="btn outline" href="mailto:support@thedirtarmy.com" style="color:#fff;border-color:#334155">Email Us</a>
+      </div>
+    </div>
+    <div class="card">
+      <div class="head"><h3>Free Quote</h3><p class="kicker">We'll reply by SMS or email.</p></div>
+      <div class="body">
+        <form id="quoteForm" class="grid" style="gap:12px">
+          <div class="grid" style="gap:12px;grid-template-columns:1fr 1fr">
+            <label class="field">Name<input class="input" required placeholder="Jane Doe"/></label>
+            <label class="field">Phone<input class="input" required type="tel" placeholder="(951) 555‑0123"/></label>
+          </div>
+          <div class="grid" style="gap:12px;grid-template-columns:1fr 1fr">
+            <label class="field">Email<input class="input" type="email" placeholder="you@email.com"/></label>
+            <label class="field">City<input class="input" placeholder="Murrieta"/></label>
+          </div>
+          <label class="field">What do you need cleaned?
+            <textarea class="textarea" placeholder="Carpet in 3 rooms, plus stairs. Any pet spots."></textarea>
+          </label>
+          <button class="btn" type="submit">Get My Free Quote</button>
+          <p class="kicker">By submitting, you agree to receive SMS or email responses. Msg &amp; data rates may apply.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="section" style="padding-top:32px">
+  <div class="dirt-container footer-grid">
+    <div>
+      <!-- Replace text with logo -->
+      <img src="https://thedirtarmy.com/wp-content/uploads/2023/03/Dirt-Army-Logo-1-1024x882.png" 
+           alt="The Dirt Army Logo" 
+           style="max-width:160px; height:auto;">
+
+      <p class="kicker" style="margin-top:12px">
+        With nearly 20 years of experience, we restore Carpet, Tile &amp; Grout, Upholstery and Area Rugs with the most thorough cleaning you've ever had.
+      </p>
+    </div>
+    
+    <div>
+      <h3>Quick Links</h3>
+      <div style="margin-top:8px;display:grid;gap:8px;font-size:14px">
+        <a href="#services">Services</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#quote">Get Quote</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <div style="margin-top:8px;display:grid;gap:8px;font-size:14px">
+        <div>📞 (951) 572-5228</div>
+        <a href="mailto:support@thedirtarmy.com">support@thedirtarmy.com</a>
+        <div>40040 Tennyson Rd, Murrieta, CA 92563</div>
+        <div>Open 24 Hours • 7 Days</div>
+      </div>
+    </div>
+    <div>
+      <h3>Follow</h3>
+      <div style="margin-top:8px;display:flex;gap:14px">
+        <!-- Yelp -->
+        <a href="https://www.yelp.com/biz/the-dirt-army-murrieta" target="_blank" aria-label="Yelp">
+          <i class="fab fa-yelp" style="font-size:22px; color:var(--brand);"></i>
+        </a>
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/thedirtarmy" target="_blank" aria-label="Facebook">
+          <i class="fab fa-facebook" style="font-size:22px; color:var(--brand);"></i>
+        </a>
+        <!-- YouTube -->
+        <a href="https://www.youtube.com/@TheDirtArmy" target="_blank" aria-label="YouTube">
+          <i class="fab fa-youtube" style="font-size:22px; color:var(--brand);"></i>
+        </a>
+        <!-- Google -->
+        <a href="https://g.co/kgs/dUsoTW2" target="_blank" aria-label="Google">
+          <i class="fab fa-google" style="font-size:22px; color:var(--brand);"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;padding-top:24px;color:#64748b;font-size:14px;max-width:1200px;margin:0 auto;padding-left:16px;padding-right:16px;">
+    © <span id="year"></span> The Dirt Army. All rights reserved.
+  </div>
+</footer>
+
+</div>
+<!-- End main wrapper -->
+
+<script>
+// Current year
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// Quote form: replace this with your webhook/CF action
+document.getElementById('quoteForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  alert("Thanks! We'll be in touch shortly.");
+  // Example: fetch('https://your-webhook.example', { method:'POST', body:new FormData(this) })
+});
+
+// Improve <details> behavior on CF if needed (ensures only one open at a time)
+const faq = document.querySelector('#faq');
+faq && faq.addEventListener('click', e => {
+  if(e.target.tagName.toLowerCase() === 'summary'){
+    const d = e.target.parentElement;
+    const all = faq.querySelectorAll('details');
+    all.forEach(x => { if(x!==d) x.removeAttribute('open'); });
+  }
+});
+
+// Additional script to ensure full width on ClickFunnels
+document.addEventListener('DOMContentLoaded', function() {
+  // Force remove any ClickFunnels constraints
+  const cfElements = document.querySelectorAll('[class*="cf"], [id*="cf"], .elPageContent, .elPageContainer');
+  cfElements.forEach(el => {
+    el.style.maxWidth = 'none';
+    el.style.width = '100%';
+    el.style.margin = '0';
+    el.style.padding = '0';
+  });
+});
+</script>
+</body>
+</html>
