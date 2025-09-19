@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Garden Quote Demo System</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -34,39 +30,16 @@
       text-align: center;
     }
 
-    .header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
+    .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .header p { font-size: 1.1rem; opacity: 0.9; }
 
-    .header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-    }
+    .content { padding: 40px; }
 
-    .content {
-      padding: 40px;
-    }
+    .page { display: none; }
+    .page.active { display: block; }
 
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .form-group {
-      margin-bottom: 25px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #333;
-      font-size: 1.1rem;
-    }
+    .form-group { margin-bottom: 25px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 1.1rem; }
 
     .form-group input,
     .form-group select,
@@ -87,11 +60,7 @@
       box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
     }
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
     .btn {
       background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
@@ -107,26 +76,12 @@
       text-decoration: none;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
-    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3); }
 
-    .btn-secondary {
-      background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
-    }
+    .btn-secondary { background: linear-gradient(135deg, #6c757d 0%, #545b62 100%); }
+    .btn-secondary:hover { box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3); }
 
-    .btn-secondary:hover {
-      box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
-    }
-
-    .api-toggle {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      border: 2px solid #e9ecef;
-    }
+    .api-toggle { background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 2px solid #e9ecef; }
 
     .results-table {
       width: 100%;
@@ -146,15 +101,8 @@
       font-weight: 600;
     }
 
-    .results-table td {
-      padding: 15px;
-      border-bottom: 1px solid #e1e1e1;
-      vertical-align: top;
-    }
-
-    .results-table tr:hover {
-      background: #f8f9fa;
-    }
+    .results-table td { padding: 15px; border-bottom: 1px solid #e1e1e1; vertical-align: top; }
+    .results-table tr:hover { background: #f8f9fa; }
 
     .email-content {
       background: #f8f9fa;
@@ -164,56 +112,18 @@
       font-family: monospace;
       max-height: 200px;
       overflow-y: auto;
+      white-space: pre-wrap;
     }
 
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 20px;
-    }
+    .loading { display: none; text-align: center; padding: 20px; }
+    .loading.show { display: block; }
 
-    .loading.show {
-      display: block;
-    }
+    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #4CAF50; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #4CAF50;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 15px;
-    }
+    .demo-note { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #333; padding: 15px; border-radius: 10px; margin-bottom: 25px; text-align: center; font-weight: 500; }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .demo-note {
-      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-      color: #333;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    @media (max-width: 768px) {
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .header h1 {
-        font-size: 2rem;
-      }
-
-      .results-table {
-        font-size: 0.9rem;
-      }
-    }
+    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } .header h1 { font-size: 2rem; } .results-table { font-size: 0.9rem; } }
   </style>
 </head>
 <body>
@@ -222,19 +132,15 @@
       <h1>🌿 Garden Quote System</h1>
       <p>Multi-Client Demo for AI Receptionist Integration</p>
     </div>
+
     <div class="content">
-      <!-- Form Page -->
       <div class="page active" id="page1">
-        <div class="demo-note">
-          <strong>Demo Note</strong> This showcases form handling and AI integration for the multi-client receptionist system
-        </div>
+        <div class="demo-note"><strong>Demo Note</strong> This showcases form handling and AI integration for the multi-client receptionist system</div>
 
         <div class="api-toggle">
-          <label>
-            <input type="checkbox" id="useOpenAI" onchange="toggleAPIMode()"> Use OpenAI API (I have an API key for live demo)
-          </label>
-          <div id="apiKeyInput" style="display: none; margin-top: 15px;">
-            <input type="password" id="openaiKey" placeholder="Enter OpenAI API Key (sk-...)" style="margin-right: 10px;">
+          <label><input type="checkbox" id="useOpenAI" onchange="toggleAPIMode()"> Use OpenAI API (I have an API key for live demo)</label>
+          <div id="apiKeyInput" style="display:none; margin-top:15px;">
+            <input type="password" id="openaiKey" placeholder="Enter OpenAI API Key (sk-...)" style="margin-right:10px;">
             <small>Your key is only used locally and not stored</small>
           </div>
         </div>
@@ -250,19 +156,101 @@
               <input type="email" id="email" name="email" required>
             </div>
           </div>
-          <!-- Add rest of form here -->
-          <button type="submit" class="btn">Get My Garden Quote</button>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+              <label for="address">Property Address</label>
+              <input type="text" id="address" name="address" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="yardSize">Yard Size (sq ft)</label>
+              <select id="yardSize" name="yardSize" required>
+                <option value="">Select yard size</option>
+                <option value="small">Small (Under 500 sq ft)</option>
+                <option value="medium">Medium (500-1500 sq ft)</option>
+                <option value="large">Large (1500-3000 sq ft)</option>
+                <option value="xlarge">Extra Large (3000+ sq ft)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="budget">Budget Range</label>
+              <select id="budget" name="budget">
+                <option value="">Select budget</option>
+                <option value="500-1000">$500 - $1,000</option>
+                <option value="1000-2500">$1,000 - $2,500</option>
+                <option value="2500-5000">$2,500 - $5,000</option>
+                <option value="5000+">$5,000+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="flowerTypes">Preferred Flowers / Plants</label>
+            <select id="flowerTypes" name="flowerTypes" required multiple style="height:120px;">
+              <option value="roses">Roses</option>
+              <option value="tulips">Tulips</option>
+              <option value="sunflowers">Sunflowers</option>
+              <option value="lavender">Lavender</option>
+              <option value="daisies">Daisies</option>
+              <option value="marigolds">Marigolds</option>
+              <option value="petunias">Petunias</option>
+              <option value="native-plants">Native Plants</option>
+            </select>
+            <small style="color:#666;">Hold Ctrl / Cmd to select multiple options</small>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="serviceType">Service Type</label>
+              <select id="serviceType" name="serviceType" required>
+                <option value="">Select service</option>
+                <option value="design-install">Design & Installation</option>
+                <option value="maintenance">Garden Maintenance</option>
+                <option value="consultation">Consultation Only</option>
+                <option value="full-service">Full Service Package</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="timeline">Preferred Timeline</label>
+              <select id="timeline" name="timeline">
+                <option value="">Select timeline</option>
+                <option value="asap">ASAP</option>
+                <option value="1-2weeks">1-2 weeks</option>
+                <option value="1month">Within 1 month</option>
+                <option value="flexible">Flexible</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="specialRequests">Special Requests or Notes</label>
+            <textarea id="specialRequests" name="specialRequests" rows="4" placeholder="Any specific requirements, allergies, or special requests..."></textarea>
+          </div>
+
+          <div style="text-align:center; margin-top:10px;">
+            <button type="submit" class="btn">Get My Garden Quote</button>
+          </div>
         </form>
       </div>
 
-      <!-- Results Page -->
       <div class="page" id="page2">
         <div class="loading" id="loading">
           <div class="spinner"></div>
           <p>Generating personalized quote and email...</p>
         </div>
-        <div id="results" style="display: none;">
-          <h2 style="margin-bottom: 20px; color: #333;">Quote Submission Results</h2>
+
+        <div id="results" style="display:none;">
+          <h2 style="margin-bottom:20px; color:#333;">Quote Submission Result</h2>
+
           <table class="results-table">
             <thead>
               <tr>
@@ -279,7 +267,8 @@
               </tr>
             </tbody>
           </table>
-          <div style="margin-top: 30px; text-align: center;">
+
+          <div style="margin-top:30px; text-align:center;">
             <button class="btn btn-secondary" onclick="goBack()">Submit Another Quote</button>
             <button class="btn" onclick="showDemo()">Reset Demo</button>
           </div>
@@ -288,88 +277,168 @@
     </div>
   </div>
 
-<script>
-let quotes = [];
+  <script>
+    let quotes = [];
 
-function toggleAPIMode() {
-  const useOpenAI = document.getElementById('useOpenAI').checked;
-  const apiKeyInput = document.getElementById('apiKeyInput');
-  apiKeyInput.style.display = useOpenAI ? 'block' : 'none';
-}
+    function toggleAPIMode() {
+      const useOpenAI = document.getElementById('useOpenAI').checked;
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      apiKeyInput.style.display = useOpenAI ? 'block' : 'none';
+    }
 
-async function submitQuote(event) {
-  event.preventDefault();
+    async function submitQuote(event) {
+      event.preventDefault();
 
-  // Show page 2 and loading
-  document.getElementById('page1').classList.remove('active');
-  document.getElementById('page2').classList.add('active');
-  document.getElementById('loading').classList.add('show');
-  document.getElementById('results').style.display = 'none';
+      // Switch pages / show loading
+      document.getElementById('page1').classList.remove('active');
+      document.getElementById('page2').classList.add('active');
+      document.getElementById('loading').classList.add('show');
+      document.getElementById('results').style.display = 'none';
 
-  // Get form data
-  const formData = new FormData(event.target);
-  const data = Object.fromEntries(formData.entries());
+      const form = event.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
 
-  // Handle multiple selections for flower types
-  const flowerTypes = Array.from(document.getElementById('flowerTypes')?.selectedOptions || [])
-    .map(option => option.value);
-  data.flowerTypes = flowerTypes;
+      // Handle multi-select flowerTypes
+      data.flowerTypes = Array.from(document.getElementById('flowerTypes').selectedOptions).map(o => o.value);
 
-  // Simulate processing delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
+      // Capture readable text for selects (for display)
+      function getSelectText(id) {
+        const el = document.getElementById(id);
+        return el && el.options[el.selectedIndex] ? el.options[el.selectedIndex].text : '';
+      }
+      data.yardSizeText = getSelectText('yardSize');
+      data.budgetText = getSelectText('budget');
+      data.timelineText = getSelectText('timeline');
 
-  // Generate email content
-  const emailContent = getTemplateEmail(data);
+      // Simulate processing
+      await new Promise(resolve => setTimeout(resolve, 800));
 
-  // Create quote record
-  const quote = {
-    id: Date.now(),
-    timestamp: new Date().toLocaleString(),
-    ...data,
-    emailContent
-  };
+      // Generate email (tries OpenAI if checked)
+      const emailContent = await generateEmail(data);
 
-  quotes.push(quote);
-  displayResults(quote);
+      const quote = {
+        id: Date.now(),
+        timestamp: new Date().toLocaleString(),
+        ...data,
+        emailContent
+      };
 
-  // Hide loading, show results
-  document.getElementById('loading').classList.remove('show');
-  document.getElementById('results').style.display = 'block';
-}
+      quotes.push(quote);
+      displayResults(quote);
 
-function getTemplateEmail(data) {
-  return `Subject: Your Garden Quote Request - ${data.address || 'Unknown Address'}\n\nDear ${data.name || 'Client'},\n\nThanks for your request! We'll be in touch soon.\n\nRegards,\nGreen Thumb Gardens Team`;
-}
+      document.getElementById('loading').classList.remove('show');
+      document.getElementById('results').style.display = 'block';
+    }
 
-function displayResults(quote) {
-  document.getElementById('clientInfo').innerHTML = `
-    <strong>${quote.name}</strong><br>
-    📧 ${quote.email}<br>
-    ${quote.phone ? `📞 ${quote.phone}<br>` : ''}
-    📍 ${quote.address || ''}<br>
-    <small>Submitted ${quote.timestamp}</small>
-  `;
+    async function generateEmail(data) {
+      const useOpenAI = document.getElementById('useOpenAI').checked;
+      if (useOpenAI) {
+        const apiKey = document.getElementById('openaiKey').value.trim();
+        if (!apiKey) {
+          return getTemplateEmail(data);
+        }
 
-  document.getElementById('quoteDetails').innerHTML = `
-    <strong>Yard Size:</strong> ${quote.yardSize || ''}<br>
-    <strong>Service:</strong> ${quote.serviceType || ''}<br>
-    <strong>Flowers:</strong> ${(quote.flowerTypes || []).join(', ')}
-  `;
+        const prompt = `Write a personalized email quote response for a garden service request. Client details:\nName: ${data.name}\nEmail: ${data.email}\nAddress: ${data.address}\nYard Size: ${data.yardSizeText || data.yardSize}\nBudget: ${data.budgetText || data.budget || 'Not specified'}\nFlowers: ${(data.flowerTypes || []).join(', ')}\nService: ${data.serviceType}\nTimeline: ${data.timelineText || data.timeline || 'Not specified'}\nSpecial Requests: ${data.specialRequests || 'None'}\n\nMake it professional, friendly, and include a rough estimate based on yard size. Sign it as Green Thumb Gardens Team.`;
 
-  document.getElementById('emailContent').innerHTML = `
-    <div class="email-content">${quote.emailContent.replace(/\n/g, '<br>')}</div>
-  `;
-}
+        try {
+          const res = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: 'gpt-3.5-turbo',
+              messages: [{ role: 'user', content: prompt }],
+              max_tokens: 500,
+              temperature: 0.7
+            })
+          });
 
-function goBack() {
-  document.getElementById('page2').classList.remove('active');
-  document.getElementById('page1').classList.add('active');
-}
+          if (!res.ok) {
+            const errText = await res.text();
+            console.error('OpenAI API error', res.status, errText);
+            return getTemplateEmail(data) + '\n\n[Note: OpenAI API returned an error and template was used.]';
+          }
 
-function showDemo() {
-  document.getElementById('quoteForm').reset();
-  goBack();
-}
-</script>
+          const json = await res.json();
+          if (json.choices && json.choices[0] && json.choices[0].message) {
+            return json.choices[0].message.content.trim();
+          } else {
+            console.warn('OpenAI returned unexpected shape', json);
+            return getTemplateEmail(data) + '\n\n[Note: OpenAI returned unexpected data format.]';
+          }
+        } catch (err) {
+          console.error('OpenAI fetch failed', err);
+          return getTemplateEmail(data) + '\n\n[Note: OpenAI request failed and template was used.]';
+        }
+      } else {
+        return getTemplateEmail(data);
+      }
+    }
+
+    function getTemplateEmail(data) {
+      const estimateRanges = {
+        small: '$800 - $1,200',
+        medium: '$1,500 - $2,500',
+        large: '$2,500 - $4,000',
+        xlarge: '$4,000 - $7,000'
+      };
+      const estimate = estimateRanges[data.yardSize] || '$1,000 - $3,000';
+
+      const timelineLine = data.timelineText ? `We noted your preferred timeline of ${data.timelineText}, and we'll work to accommodate your schedule.` : '';
+      const specialLine = data.specialRequests ? `We've also taken note of your special requirements: ${data.specialRequests}` : '';
+
+      return `Subject: Your Garden Quote Request - ${data.address || 'Property Address'}\n\nDear ${data.name || 'Client'},\n\nThank you for reaching out to Green Thumb Gardens! We're excited about the opportunity to transform your ${data.yardSizeText || data.yardSize || 'yard'} at ${data.address || 'your property'}.\n\nBased on your preferences for ${(data.flowerTypes || []).join(', ') || 'selected plants'} and your interest in ${data.serviceType || 'our services'}, we've prepared a preliminary estimate of ${estimate}.\n\n${timelineLine}\n\n${specialLine}\n\nOur team will contact you within 24 hours to schedule a free on-site consultation where we can provide a detailed quote and discuss your vision in depth.\n\nThank you for considering Green Thumb Gardens for your landscaping needs!\n\nBest regards,\nThe Green Thumb Gardens Team\n📞 (555) 123-GROW\n🌿 info@greenthumbgardens.com`;
+    }
+
+    function displayResults(quote) {
+      document.getElementById('clientInfo').innerHTML = `
+        <strong>${escapeHtml(quote.name)}</strong><br>
+        📧 ${escapeHtml(quote.email)}<br>
+        ${quote.phone ? `📞 ${escapeHtml(quote.phone)}<br>` : ''}
+        📍 ${escapeHtml(quote.address || '')}<br>
+        <small>Submitted ${quote.timestamp}</small>
+      `;
+
+      document.getElementById('quoteDetails').innerHTML = `
+        <strong>Yard Size</strong>: ${escapeHtml(quote.yardSizeText || quote.yardSize || '')}<br>
+        <strong>Service</strong>: ${escapeHtml(quote.serviceType || '')}<br>
+        <strong>Flowers</strong>: ${(quote.flowerTypes || []).map(escapeHtml).join(', ')}<br>
+        ${quote.budgetText ? `<strong>Budget</strong>: ${escapeHtml(quote.budgetText)}<br>` : ''}
+        ${quote.timelineText ? `<strong>Timeline</strong>: ${escapeHtml(quote.timelineText)}<br>` : ''}
+        ${quote.specialRequests ? `<strong>Notes</strong>: ${escapeHtml(quote.specialRequests)}<br>` : ''}
+      `;
+
+      document.getElementById('emailContent').innerHTML = `<div class="email-content">${(quote.emailContent || '').replace(/\n/g, '<br>')}</div>`;
+    }
+
+    // Simple HTML escape to avoid accidental injection in outputs
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function goBack() {
+      document.getElementById('page2').classList.remove('active');
+      document.getElementById('page1').classList.add('active');
+    }
+
+    function showDemo() {
+      document.getElementById('quoteForm').reset();
+      goBack();
+    }
+
+    window.addEventListener('load', function() {
+      console.log('Garden Quote Demo System Loaded');
+      console.log('Features: Form handling, OpenAI integration (optional), personalized responses');
+    });
+  </script>
 </body>
 </html>
