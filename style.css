@@ -1467,3 +1467,11 @@ textarea.form-input {
 
     .timeline-text { max-width: 700px; }
 }
+
+/* Service icons using Ionicons */
+.service-icon-box ion-icon{
+    font-size: 40px;
+    color: var(--orange-yellow-crayola);
+    display: block;
+    margin: 0 auto;
+}
