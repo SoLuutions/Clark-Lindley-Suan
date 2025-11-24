@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr. Zrinka Homepage - Low-Fidelity Mockup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #ffffff;
+            color: #000000;
+            line-height: 1.6;
+        }
+        
+        /* Download Button */
+        .download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #cc0000;
+            color: #ffffff;
+            padding: 16px 32px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(204, 0, 0, 0.3);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .download-btn:hover {
+            background: #a30000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(204, 0, 0, 0.4);
+        }
+
+        /* Optional: tighter print margins */
+        @page {
+            margin: 10mm;
+        }
+        
+        /* Print Styles for PDF */
+        @media print {
+            .download-btn {
+                display: none !important;
+            }
+            
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Let sections flow; no forced page chunking */
+            .mockup-container,
+            .section {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+        }
+        
+        /* Mockup Container */
+        .mockup-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 100px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .logo-placeholder {
+            width: 200px;
+            height: 60px;
+            border: 2px dashed #cccccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #999999;
+            font-weight: 500;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 48px;
+            align-items: center;
+        }
+        
+        .nav-item {
+            font-size: 15px;
+            font-weight: 500;
+            color: #000000;
+            text-decoration: none;
+            letter-spacing: 0.3px;
+        }
+        
+        .nav-cta {
+            background: #cc0000;
+            color: #ffffff;
+            padding: 12px 28px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 120px 100px 100px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 120px;
+            align-items: center;
+            min-height: 75vh;
+        }
+        
+        .hero-content {
+            max-width: 650px;
+        }
+        
+        .hero-subtitle {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #cc0000;
+            margin-bottom: 32px;
+        }
+        
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 68px;
+            font-weight: 700;
+            line-height: 1.1;
+            color: #000000;
+            margin-bottom: 40px;
+            letter-spacing: -1px;
+        }
+        
+        .hero-title .highlight {
+            color: #cc0000;
+            font-style: italic;
+        }
+        
+        .hero-position {
+            font-size: 24px;
+            font-weight: 500;
+            color: #000000;
+            margin-bottom: 32px;
+            letter-spacing: 0.5px;
+        }
+        
+        .hero-description {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333333;
+            margin-bottom: 48px;
+            font-weight: 400;
+        }
+        
+        .hero-cta-group {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+        
+        .btn-primary {
+            background: #cc0000;
+            color: #ffffff;
+            padding: 20px 48px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            border: 2px solid #cc0000;
+            display: inline-block;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #000000;
+            padding: 20px 48px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            border: 2px solid #000000;
+            display: inline-block;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 64px;
+            padding-top: 48px;
+            border-top: 2px solid #000000;
+        }
+        
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #cc0000;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #666666;
+        }
+        
+        /* Hero Visual */
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .visual-frame {
+            width: 100%;
+            max-width: 480px;
+            aspect-ratio: 3/4;
+            border: 3px solid #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #ffffff;
+        }
+        
+        .visual-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #666666;
+            margin-bottom: 8px;
+        }
+        
+        .visual-dimensions {
+            font-size: 12px;
+            color: #999999;
+        }
+        
+        .accent-badge {
+            position: absolute;
+            bottom: -30px;
+            right: -40px;
+            background: #cc0000;
+            color: #ffffff;
+            padding: 40px;
+            min-width: 280px;
+            border: 3px solid #000000;
+        }
+        
+        .badge-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        
+        .badge-text {
+            font-size: 14px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Generic Sections */
+        .section {
+            padding: 100px 100px 80px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .section.light {
+            background: #ffffff;
+        }
+
+        .section.gray {
+            background: #f8f8f8;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 48px;
+            gap: 40px;
+        }
+
+        .section-kicker {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #cc0000;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #555555;
+            max-width: 420px;
+        }
+
+        .section-link {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 4px;
+            color: #000000;
+            white-space: nowrap;
+        }
+
+        /* Academy Section */
+        .academy-grid {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 60px;
+        }
+
+        .academy-intro p {
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 16px;
+        }
+
+        .academy-note {
+            font-size: 13px;
+            color: #777777;
+        }
+
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .program-card {
+            border: 2px dashed #cccccc;
+            padding: 24px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .program-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #cc0000;
+            margin-bottom: 12px;
+        }
+
+        .program-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .program-meta {
+            font-size: 13px;
+            color: #777777;
+            line-height: 1.6;
+        }
+
+        /* Produkte Section */
+        .produkte-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 2fr;
+            gap: 60px;
+            align-items: flex-start;
+        }
+
+        .produkte-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .product-card {
+            border: 2px dashed #cccccc;
+            padding: 20px;
+            min-height: 180px;
+        }
+
+        .product-type {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #cc0000;
+            margin-bottom: 8px;
+        }
+
+        .product-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .product-note {
+            font-size: 13px;
+            color: #777777;
+        }
+
+        .produkte-side-note {
+            font-size: 14px;
+            color: #444444;
+        }
+
+        /* Blog Section */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .blog-card {
+            border-top: 2px solid #000000;
+            padding-top: 24px;
+        }
+
+        .blog-meta {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #999999;
+            margin-bottom: 10px;
+        }
+
+        .blog-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .blog-excerpt {
+            font-size: 14px;
+            color: #555555;
+        }
+
+        /* Events Section */
+        .events-layout {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 60px;
+            align-items: flex-start;
+        }
+
+        .events-hero-card {
+            border: 2px dashed #cccccc;
+            padding: 24px;
+            min-height: 220px;
+        }
+
+        .event-tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: #cc0000;
+            margin-bottom: 8px;
+        }
+
+        .event-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .event-meta {
+            font-size: 13px;
+            color: #777777;
+            margin-bottom: 12px;
+        }
+
+        .event-note {
+            font-size: 13px;
+            color: #555555;
+        }
+
+        .events-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .event-row {
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .event-date {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .event-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .event-location {
+            font-size: 13px;
+            color: #777777;
+            text-align: right;
+        }
+
+        /* Über Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 2fr;
+            gap: 60px;
+            align-items: flex-start;
+        }
+
+        .about-photo {
+            border: 3px solid #000000;
+            aspect-ratio: 3 / 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #999999;
+        }
+
+        .about-text p {
+            font-size: 16px;
+            color: #333333;
+            margin-bottom: 16px;
+        }
+
+        .about-list {
+            font-size: 14px;
+            color: #555555;
+            list-style: none;
+        }
+
+        .about-list li::before {
+            content: "— ";
+        }
+
+        /* Kontakt / CTA Section */
+        .contact-section-inner {
+            border: 2px solid #000000;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 2fr 1.5fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .contact-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .contact-text {
+            font-size: 15px;
+            color: #444444;
+            margin-bottom: 24px;
+        }
+
+        .contact-meta {
+            font-size: 13px;
+            color: #777777;
+        }
+
+        .contact-form-placeholder {
+            border: 2px dashed #cccccc;
+            padding: 24px;
+            font-size: 13px;
+            color: #777777;
+            min-height: 160px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 100px 60px;
+            border-top: 2px solid #000000;
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 1.5fr;
+            gap: 40px;
+            font-size: 13px;
+        }
+
+        .footer-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: #000000;
+        }
+
+        .footer-note {
+            color: #777777;
+        }
+
+        /* Design Notes Section */
+        .design-notes {
+            background: #f8f8f8;
+            padding: 60px 100px;
+            border-top: 3px solid #000000;
+            margin-top: 80px;
+        }
+        
+        .notes-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 32px;
+        }
+        
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+        
+        .note-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .note-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #cc0000;
+        }
+        
+        .note-value {
+            font-size: 15px;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .header, .hero, .section, .design-notes, .footer {
+                padding-left: 60px;
+                padding-right: 60px;
+            }
+            
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 80px;
+            }
+            
+            .hero-visual {
+                order: -1;
+            }
+
+            .academy-grid,
+            .produkte-grid,
+            .events-layout,
+            .about-grid,
+            .contact-section-inner {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .download-btn {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+            
+            .header, .hero, .section, .design-notes, .footer {
+                padding-left: 32px;
+                padding-right: 32px;
+            }
+            
+            .hero-title {
+                font-size: 48px;
+            }
+            
+            .hero-cta-group {
+                flex-direction: column;
+            }
+            
+            .notes-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .program-grid,
+            .produkte-list,
+            .blog-grid,
+            .footer {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                grid-template-columns: 1fr;
+            }
+        }</style>
+</head>
+<body>
+    
+    <div class="mockup-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-area">
+                <div class="logo-placeholder">
+                    [DR. ZRINKA LOGO]
+                </div>
+            </div>
+            <nav class="nav">
+                <a href="#academy" class="nav-item">Academy</a>
+                <a href="#produkte" class="nav-item">Produkte</a>
+                <a href="#blog" class="nav-item">Blog</a>
+                <a href="#events" class="nav-item">Events</a>
+                <a href="#about" class="nav-item">Über</a>
+                <a href="#kontakt" class="nav-item nav-cta">Kontakt</a>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-subtitle">LEADERSHIP & TRANSFORMATION</div>
+                
+                <h1 class="hero-title">
+                    Starke Frauen.<br>
+                    Starke <span class="highlight">Unternehmen.</span>
+                </h1>
+                
+                <div class="hero-position">
+                    Dr. Zrinka — Writer & Transformation Advisor
+                </div>
+                
+                <p class="hero-description">
+                    Ganzheitliche Leadership-Programme für eine neue Ära – wo strategische Exzellenz auf neurobiologische Erkenntnisse trifft. Female Empowerment meets KI-gestütztes Learning & Development.
+                </p>
+                
+                <div class="hero-cta-group">
+                    <a href="#kontakt" class="btn-primary">Beratung Buchen</a>
+                    <a href="#academy" class="btn-secondary">Mehr Erfahren</a>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-box">
+                        <div class="stat-number">1500+</div>
+                        <div class="stat-label">Unternehmer</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">67</div>
+                        <div class="stat-label">Länder</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">Jahre</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="visual-frame">
+                    <div class="visual-label">[PROFESSIONAL PORTRAIT]</div>
+                    <div class="visual-dimensions">480 × 640px | 3:4 ratio</div>
+                </div>
+                <div class="accent-badge">
+                    <div class="badge-title">Female Empowerment</div>
+                    <div class="badge-text">
+                        KI-gestütztes Learning für moderne Führungskräfte
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Academy Section -->
+        <section id="academy" class="section light">
+            <div class="section-header">
+                <div>
+                    <div class="section-kicker">ACADEMY</div>
+                    <h2 class="section-title">Leadership-Programme für eine neue Arbeitswelt</h2>
+                </div>
+                <div class="section-subtitle">
+                    Modularer Aufbau, intensives Sparring, praxisnahe Transformation – online, hybrid oder inhouse.
+                </div>
+            </div>
+
+            <div class="academy-grid">
+                <div class="academy-intro">
+                    <p>
+                        Die Dr. Zrinka Academy bündelt neurobiologische Erkenntnisse, systemisches Denken und Female Leadership in klar strukturierten Lernpfaden.
+                    </p>
+                    <p>
+                        Ideal für Gründerinnen, Führungskräfte und HR-Teams, die echte Kulturveränderung gestalten wollen.
+                    </p>
+                    <div class="academy-note">
+                        [Platzhalter für Programm-Übersicht, Curriculum-Grafik oder Timeline]
+                    </div>
+                </div>
+                <div class="program-grid">
+                    <div class="program-card">
+                        <div>
+                            <div class="program-label">Programm 01</div>
+                            <div class="program-title">Neuroleadership Essentials</div>
+                            <div class="program-meta">
+                                6-wöchiges Online-Programm<br>
+                                Fokus: Selbstführung, Stressregulation, Entscheidungsstärke.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="program-card">
+                        <div>
+                            <div class="program-label">Programm 02</div>
+                            <div class="program-title">Female Leadership Labs</div>
+                            <div class="program-meta">
+                                Hybrid-Format für Führungsteams<br>
+                                Fokus: Gender Dynamics, psychologische Sicherheit, Teamkultur.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="program-card">
+                        <div>
+                            <div class="program-label">Programm 03</div>
+                            <div class="program-title">Executive Sparring</div>
+                            <div class="program-meta">
+                                1:1 Advisory für C-Level & Gründer:innen<br>
+                                Fokus: Strategie, Storytelling, persönliche Klarheit.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Produkte Section -->
+        <section id="produkte" class="section gray">
+            <div class="section-header">
+                <div>
+                    <div class="section-kicker">PRODUKTE</div>
+                    <h2 class="section-title">Tools, Bücher & digitale Formate</h2>
+                </div>
+                <a href="#" class="section-link">Alle Produkte ansehen</a>
+            </div>
+
+            <div class="produkte-grid">
+                <div class="produkte-side-note">
+                    <p>
+                        Hier entsteht eine klare Übersicht über alle Produkte: Buch, Workbook, Online-Kurse, Templates und Corporate Packages.
+                    </p>
+                    <p>
+                        Die Sektion dient als visuelle Landkarte, bevor Detailseiten im Shop oder in der Academy übernehmen.
+                    </p>
+                </div>
+                <div class="produkte-list">
+                    <div class="product-card">
+                        <div class="product-type">Buch</div>
+                        <div class="product-title">[Arbeitstitel Buch]</div>
+                        <div class="product-note">
+                            Platzhalter für Buchcover, Untertitel und kurze Positionierung.
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-type">Workbook</div>
+                        <div class="product-title">Leadership Playbook</div>
+                        <div class="product-note">
+                            Downloadbares PDF mit Reflexionsfragen, Übungen und Methoden.
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-type">Digital</div>
+                        <div class="product-title">On-Demand Kurs</div>
+                        <div class="product-note">
+                            Selbstlernformat mit Video-Lektionen und KI-gestützten Prompts.
+                        </div>
+                    </div>
+                    <div class="product-card">
+                        <div class="product-type">Corporate</div>
+                        <div class="product-title">Team Packages</div>
+                        <div class="product-note">
+                            Lizenzmodelle und Inhouse-Pakete für HR & L&D Teams.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Section -->
+        <section id="blog" class="section light">
+            <div class="section-header">
+                <div>
+                    <div class="section-kicker">BLOG</div>
+                    <h2 class="section-title">Gedanken an der Schnittstelle von Gehirn, Gesellschaft & Geschäft</h2>
+                </div>
+                <a href="#" class="section-link">Zum Blog</a>
+            </div>
+
+            <div class="blog-grid">
+                <div class="blog-card">
+                    <div class="blog-meta">NEUROBIOLOGIE • LEADERSHIP</div>
+                    <div class="blog-title">Warum das Nervensystem die geheime KPI im Leadership ist</div>
+                    <div class="blog-excerpt">
+                        Platzhalter für 2–3 Zeilen Teasertext, der zum Weiterlesen animiert.
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <div class="blog-meta">FEMALE EMPOWERMENT</div>
+                    <div class="blog-title">Die unsichtbaren Kosten von perfektem Funktionieren</div>
+                    <div class="blog-excerpt">
+                        Platzhalter für Kurzbeschreibung rund um Overachieving, Stress & Rollenbilder.
+                    </div>
+                </div>
+                <div class="blog-card">
+                    <div class="blog-meta">KI & LEARNING</div>
+                    <div class="blog-title">Wie KI Learning & Development neu schreibt</div>
+                    <div class="blog-excerpt">
+                        Skizze eines Artikels über KI-gestützte Lernpfade, Ethik und Human-Centered Design.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events" class="section gray">
+            <div class="section-header">
+                <div>
+                    <div class="section-kicker">EVENTS</div>
+                    <h2 class="section-title">Keynotes, Workshops & Live-Formate</h2>
+                </div>
+                <a href="#" class="section-link">Alle Termine</a>
+            </div>
+
+            <div class="events-layout">
+                <div class="events-hero-card">
+                    <div class="event-tag">FEATURED EVENT</div>
+                    <div class="event-title">[Signature Keynote Title]</div>
+                    <div class="event-meta">
+                        Datum: [TT.MM.JJJJ] · Format: Online / Hybrid<br>
+                        Zielgruppe: Führungskräfte, HR, Gründer:innen
+                    </div>
+                    <div class="event-note">
+                        Platzhalter für Kurzbeschreibung des Haupt-Events oder der Keynote-Reihe.
+                    </div>
+                </div>
+                <div class="events-list">
+                    <div class="event-row">
+                        <div class="event-date">März 2026</div>
+                        <div class="event-name">Workshop: Nervensystem & Führung</div>
+                        <div class="event-location">Berlin / Online</div>
+                    </div>
+                    <div class="event-row">
+                        <div class="event-date">April 2026</div>
+                        <div class="event-name">Masterclass: Female Founders & Resilienz</div>
+                        <div class="event-location">Online</div>
+                    </div>
+                    <div class="event-row">
+                        <div class="event-date">Auf Anfrage</div>
+                        <div class="event-name">Inhouse-Workshops für Unternehmen</div>
+                        <div class="event-location">International</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Über Section -->
+        <section id="about" class="section light">
+            <div class="section-header">
+                <div>
+                    <div class="section-kicker">ÜBER</div>
+                    <h2 class="section-title">Dr. Zrinka – an der Schnittstelle von Schreiben & Transformation</h2>
+                </div>
+                <div class="section-subtitle">
+                    Kurze, klare Positionierung als Autorin, Denkerin und Advisorin für eine neue Art von Führung.
+                </div>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-photo">
+                    [PORTRAIT / COLLAGE PLATZHALTER]
+                </div>
+                <div class="about-text">
+                    <p>
+                        Hier entsteht ein prägnanter Fließtext über Hintergrund, Forschungsschwerpunkte und Arbeitsweise von Dr. Zrinka.
+                    </p>
+                    <p>
+                        Fokus auf: wissenschaftliche Tiefe, klare Sprache, radikale Ehrlichkeit und Begleitung von Menschen in Übergangsphasen.
+                    </p>
+                    <ul class="about-list">
+                        <li>Promotion / wissenschaftlicher Hintergrund in [Fachgebiet]</li>
+                        <li>Beratung von Gründer:innen, Führungskräften & kreativen Köpfen</li>
+                        <li>Fokus auf Female Leadership, Neurobiologie & Kulturwandel</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kontakt / CTA Section -->
+        <section id="kontakt" class="section gray">
+            <div class="section-header">
+                <div>
+                    <div class="section-kicker">KONTAKT</div>
+                    <h2 class="section-title">Lass uns über echte Veränderung sprechen</h2>
+                </div>
+            </div>
+
+            <div class="contact-section-inner">
+                <div>
+                    <div class="contact-title">Beratungsgespräch anfragen</div>
+                    <div class="contact-text">
+                        Ob Academy-Programm, Keynote oder individuelles Sparring – hier startet die Zusammenarbeit. 
+                        Ein klares Kontaktformular oder ein direkter Calendly-Link kann hier integriert werden.
+                    </div>
+                    <div class="contact-meta">
+                        [Platzhalter für E-Mail, Social Links, ggf. Impressum/Datenschutz-Hinweis]
+                    </div>
+                </div>
+                <div class="contact-form-placeholder">
+                    [FORMULAR-PLATZHALTER]<br><br>
+                    • Feld: Name<br>
+                    • Feld: E-Mail<br>
+                    • Dropdown: Anliegen (Keynote, Workshop, 1:1 etc.)<br>
+                    • Textfeld: Nachricht<br>
+                    • Button: Anfrage senden
+                </div>
+            </div>
+        </section>
+
+        <!-- Design Notes -->
+        <section class="design-notes">
+            <h2 class="notes-title">Wireframe Design Notes</h2>
+            <div class="notes-grid">
+                <div class="note-item">
+                    <div class="note-label">Color Palette</div>
+                    <div class="note-value">
+                        Black (#000000)<br>
+                        Red (#cc0000)<br>
+                        White (#ffffff)
+                    </div>
+                </div>
+                
+                <div class="note-item">
+                    <div class="note-label">Typography</div>
+                    <div class="note-value">
+                        Headings: Playfair Display (68px / 36px)<br>
+                        Body: Montserrat (18px / 16px)<br>
+                        Klarer, editorialer Aufbau.
+                    </div>
+                </div>
+                
+                <div class="note-item">
+                    <div class="note-label">Spacing Logic</div>
+                    <div class="note-value">
+                        Section padding: 100–120px vertikal<br>
+                        Content padding: 100px horizontal (Desktop)<br>
+                        Elementabstände: 32–64px
+                    </div>
+                </div>
+                
+                <div class="note-item">
+                    <div class="note-label">White Space</div>
+                    <div class="note-value">
+                        Magazinartiger Look<br>
+                        Viel Luft um Headlines & Key Messages<br>
+                        Klarer Fokus pro Section
+                    </div>
+                </div>
+                
+                <div class="note-item">
+                    <div class="note-label">Layout Grid</div>
+                    <div class="note-value">
+                        Zwei- & Drei-Spalten-Layouts<br>
+                        Content-first, visuelle Hierarchie<br>
+                        Breakpoints: 1200px, 768px
+                    </div>
+                </div>
+                
+                <div class="note-item">
+                    <div class="note-label">Brand Position</div>
+                    <div class="note-value">
+                        "Writer & Transformation Advisor"<br>
+                        Female Leadership & Neuroleadership<br>
+                        KI-gestütztes Lernen als Differenzierung
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div>
+                <div class="footer-title">DR. ZRINKA</div>
+                <div class="footer-note">
+                    Platzhalter für Claim, kurze Zusammenfassung der Arbeit und ggf. Copyright-Hinweis.
+                </div>
+            </div>
+            <div>
+                <div class="footer-title">Navigation</div>
+                <ul class="footer-links">
+                    <li><a href="#academy">Academy</a></li>
+                    <li><a href="#produkte">Produkte</a></li>
+                    <li><a href="#blog">Blog</a></li>
+                    <li><a href="#events">Events</a></li>
+                    <li><a href="#about">Über</a></li>
+                    <li><a href="#kontakt">Kontakt</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-title">Kontakt</div>
+                <div class="footer-note">
+                    [E-Mail-Adresse]<br>
+                    [LinkedIn / Instagram]<br>
+                    [Impressum / Datenschutz Links]
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Add print functionality with better PDF formatting
+        window.addEventListener('beforeprint', function() {
+            document.body.style.background = '#ffffff';
+        });
+        
+        window.addEventListener('afterprint', function() {
+            document.body.style.background = '#ffffff';
+        });
+    </script>
+</body>
+</html>
