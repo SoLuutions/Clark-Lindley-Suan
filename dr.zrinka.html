@@ -1,246 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Zrinka Homepage - Low-Fidelity Mockup</title>
+    <title>Dr. Zrinka Homepage - V2 Cinematic</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>        * {
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Montserrat', sans-serif;
             background: #ffffff;
             color: #000000;
             line-height: 1.6;
         }
-        
+
         /* Download Button */
         .download-btn {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #cc0000;
+            background: #E03631;
             color: #ffffff;
             padding: 16px 32px;
-            border-radius: 6px;
+            border-radius: 0;
             text-decoration: none;
             font-weight: 700;
             font-size: 15px;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(204, 0, 0, 0.3);
             transition: all 0.3s;
             cursor: pointer;
             border: none;
             font-family: 'Montserrat', sans-serif;
         }
-        
+
         .download-btn:hover {
-            background: #a30000;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(204, 0, 0, 0.4);
+            background: #000000;
         }
 
         /* Optional: tighter print margins */
         @page {
             margin: 10mm;
         }
-        
+
         /* Print Styles for PDF */
         @media print {
             .download-btn {
                 display: none !important;
             }
-            
+
             body {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
 
-            /* Let sections flow; no forced page chunking */
             .mockup-container,
             .section {
                 page-break-inside: auto;
                 break-inside: auto;
             }
         }
-        
+
         /* Mockup Container */
         .mockup-container {
             max-width: 1400px;
             margin: 0 auto;
             background: #ffffff;
         }
-        
+
         /* Header */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 40px 100px;
-            border-bottom: 1px solid #e0e0e0;
         }
-        
+
         .logo-area {
             display: flex;
             align-items: center;
             gap: 16px;
         }
-        
+
         .logo-placeholder {
             width: 200px;
             height: 60px;
-            border: 2px dashed #cccccc;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #999999;
-            font-weight: 500;
+            justify-content: flex-start;
+            font-size: 14px;
+            color: #000000;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
-        
+
         .nav {
             display: flex;
             gap: 48px;
             align-items: center;
         }
-        
+
         .nav-item {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             color: #000000;
             text-decoration: none;
-            letter-spacing: 0.3px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        
+
         .nav-cta {
-            background: #cc0000;
+            background: #000000;
             color: #ffffff;
-            padding: 12px 28px;
-            border-radius: 4px;
-            font-weight: 600;
+            padding: 12px 24px;
         }
-        
-        /* Hero Section */
+
+        /* Hero Section Styles */
         .hero {
-            padding: 120px 100px 100px;
+            position: relative;
+            /* CRITICAL: Added for scroll indicator positioning */
+            padding: 50px 100px 100px;
             display: grid;
             grid-template-columns: 1.2fr 1fr;
             gap: 120px;
             align-items: center;
-            min-height: 75vh;
+            min-height: 85vh;
         }
-        
-        .hero-content {
-            max-width: 650px;
-        }
-        
+
         .hero-subtitle {
+            font-family: 'Montserrat', sans-serif;
             font-size: 13px;
             font-weight: 700;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            color: #cc0000;
+            color: #E03631;
             margin-bottom: 32px;
         }
-        
+
         .hero-title {
             font-family: 'Playfair Display', serif;
-            font-size: 68px;
+            font-size: 72px;
             font-weight: 700;
             line-height: 1.1;
             color: #000000;
             margin-bottom: 40px;
             letter-spacing: -1px;
         }
-        
+
         .hero-title .highlight {
-            color: #cc0000;
+            color: #E03631;
             font-style: italic;
         }
-        
+
         .hero-position {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 500;
             color: #000000;
             margin-bottom: 32px;
             letter-spacing: 0.5px;
+            border-left: 3px solid #E03631;
+            padding-left: 20px;
         }
-        
+
         .hero-description {
             font-size: 18px;
             line-height: 1.8;
             color: #333333;
             margin-bottom: 48px;
             font-weight: 400;
+            max-width: 90%;
         }
-        
+
         .hero-cta-group {
             display: flex;
             gap: 24px;
             margin-bottom: 80px;
         }
-        
+
         .btn-primary {
-            background: #cc0000;
+            background: #E03631;
             color: #ffffff;
             padding: 20px 48px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             text-decoration: none;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
-            border: 2px solid #cc0000;
+            border-radius: 0;
+            letter-spacing: 1px;
+            border: 2px solid #E03631;
             display: inline-block;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
-        
+
+        .btn-primary:hover {
+            background: #ffffff;
+            color: #E03631;
+        }
+
         .btn-secondary {
             background: transparent;
             color: #000000;
             padding: 20px 48px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             text-decoration: none;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
+            border-radius: 0;
+            letter-spacing: 1px;
             border: 2px solid #000000;
             display: inline-block;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
-        
+
+        .btn-secondary:hover {
+            background: #000000;
+            color: #ffffff;
+        }
+
         .hero-stats {
             display: flex;
             gap: 64px;
             padding-top: 48px;
-            border-top: 2px solid #000000;
+            border-top: 1px solid #e0e0e0;
         }
-        
+
         .stat-box {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-        
+
         .stat-number {
             font-family: 'Playfair Display', serif;
             font-size: 48px;
             font-weight: 700;
-            color: #cc0000;
+            color: #E03631;
             line-height: 1;
         }
-        
+
         .stat-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: #666666;
+            color: #000000;
         }
-        
+
         /* Hero Visual */
         .hero-visual {
             position: relative;
@@ -248,43 +263,45 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .visual-frame {
             width: 100%;
             max-width: 480px;
             aspect-ratio: 3/4;
-            border: 3px solid #000000;
+            background: #f5f5f5;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
-            background: #ffffff;
         }
-        
+
         .visual-label {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
-            color: #666666;
+            color: #999999;
             margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
+
         .visual-dimensions {
             font-size: 12px;
-            color: #999999;
+            color: #cccccc;
         }
-        
+
         .accent-badge {
             position: absolute;
             bottom: -30px;
             right: -40px;
-            background: #cc0000;
-            color: #ffffff;
+            background: #ffffff;
+            color: #000000;
             padding: 40px;
             min-width: 280px;
-            border: 3px solid #000000;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #E03631;
         }
-        
+
         .badge-title {
             font-family: 'Playfair Display', serif;
             font-size: 22px;
@@ -292,17 +309,18 @@
             margin-bottom: 12px;
             line-height: 1.2;
         }
-        
+
         .badge-text {
             font-size: 14px;
             line-height: 1.6;
             font-weight: 400;
+            color: #555555;
         }
 
         /* Generic Sections */
         .section {
-            padding: 100px 100px 80px;
-            border-top: 1px solid #e0e0e0;
+            padding: 120px 100px;
+            border-top: 1px solid #f0f0f0;
         }
 
         .section.light {
@@ -310,14 +328,14 @@
         }
 
         .section.gray {
-            background: #f8f8f8;
+            background: #fafafa;
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 48px;
+            margin-bottom: 64px;
             gap: 40px;
         }
 
@@ -326,51 +344,61 @@
             font-weight: 700;
             letter-spacing: 3px;
             text-transform: uppercase;
-            color: #cc0000;
-            margin-bottom: 12px;
+            color: #E03631;
+            margin-bottom: 16px;
         }
 
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: 36px;
+            font-size: 42px;
             font-weight: 700;
             letter-spacing: -0.5px;
+            color: #000000;
         }
 
         .section-subtitle {
             font-size: 16px;
             color: #555555;
             max-width: 420px;
+            line-height: 1.8;
         }
 
         .section-link {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
             text-decoration: none;
-            border-bottom: 1px solid #000000;
+            border-bottom: 2px solid #E03631;
             padding-bottom: 4px;
             color: #000000;
             white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .section-link:hover {
+            color: #E03631;
         }
 
         /* Academy Section */
         .academy-grid {
             display: grid;
             grid-template-columns: 2fr 3fr;
-            gap: 60px;
+            gap: 80px;
         }
 
         .academy-intro p {
-            font-size: 16px;
+            font-size: 18px;
             color: #333333;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
+            line-height: 1.8;
         }
 
         .academy-note {
             font-size: 13px;
-            color: #777777;
+            color: #999999;
+            font-style: italic;
+            margin-top: 24px;
         }
 
         .program-grid {
@@ -380,12 +408,19 @@
         }
 
         .program-card {
-            border: 2px dashed #cccccc;
-            padding: 24px;
-            min-height: 220px;
+            border: 1px solid #e0e0e0;
+            padding: 32px 24px;
+            min-height: 240px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: all 0.3s;
+            background: #ffffff;
+        }
+
+        .program-card:hover {
+            border-color: #000000;
+            transform: translateY(-4px);
         }
 
         .program-label {
@@ -393,19 +428,20 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #cc0000;
-            margin-bottom: 12px;
+            color: #E03631;
+            margin-bottom: 16px;
         }
 
         .program-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
 
         .program-meta {
             font-size: 13px;
-            color: #777777;
+            color: #666666;
             line-height: 1.6;
         }
 
@@ -413,20 +449,26 @@
         .produkte-grid {
             display: grid;
             grid-template-columns: 1.5fr 2fr;
-            gap: 60px;
+            gap: 80px;
             align-items: flex-start;
         }
 
         .produkte-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+            gap: 32px;
         }
 
         .product-card {
-            border: 2px dashed #cccccc;
-            padding: 20px;
-            min-height: 180px;
+            border: 1px solid #e0e0e0;
+            padding: 32px;
+            min-height: 200px;
+            background: #ffffff;
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            border-color: #E03631;
         }
 
         .product-type {
@@ -434,36 +476,39 @@
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: #cc0000;
-            margin-bottom: 8px;
+            color: #E03631;
+            margin-bottom: 12px;
         }
 
         .product-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
 
         .product-note {
-            font-size: 13px;
-            color: #777777;
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.6;
         }
 
         .produkte-side-note {
-            font-size: 14px;
+            font-size: 16px;
             color: #444444;
+            line-height: 1.8;
         }
 
         /* Blog Section */
         .blog-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
+            gap: 40px;
         }
 
         .blog-card {
-            border-top: 2px solid #000000;
-            padding-top: 24px;
+            border-top: 1px solid #000000;
+            padding-top: 32px;
         }
 
         .blog-meta {
@@ -471,32 +516,36 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             color: #999999;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
         }
 
         .blog-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.3;
         }
 
         .blog-excerpt {
-            font-size: 14px;
+            font-size: 15px;
             color: #555555;
+            line-height: 1.7;
         }
 
         /* Events Section */
         .events-layout {
             display: grid;
             grid-template-columns: 2fr 3fr;
-            gap: 60px;
+            gap: 80px;
             align-items: flex-start;
         }
 
         .events-hero-card {
-            border: 2px dashed #cccccc;
-            padding: 24px;
-            min-height: 220px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            padding: 40px;
+            min-height: 280px;
         }
 
         .event-tag {
@@ -504,47 +553,51 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 700;
-            color: #cc0000;
-            margin-bottom: 8px;
+            color: #E03631;
+            margin-bottom: 16px;
         }
 
         .event-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
 
         .event-meta {
-            font-size: 13px;
-            color: #777777;
-            margin-bottom: 12px;
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 16px;
+            line-height: 1.6;
         }
 
         .event-note {
-            font-size: 13px;
+            font-size: 14px;
             color: #555555;
         }
 
         .events-list {
             display: grid;
-            gap: 16px;
+            gap: 24px;
         }
 
         .event-row {
             display: grid;
             grid-template-columns: 1fr 3fr 1fr;
-            gap: 16px;
-            padding: 16px 0;
+            gap: 24px;
+            padding: 24px 0;
             border-bottom: 1px solid #e0e0e0;
+            align-items: center;
         }
 
         .event-date {
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000000;
         }
 
         .event-name {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 500;
         }
 
@@ -552,18 +605,20 @@
             font-size: 13px;
             color: #777777;
             text-align: right;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Über Section */
         .about-grid {
             display: grid;
             grid-template-columns: 1.4fr 2fr;
-            gap: 60px;
+            gap: 80px;
             align-items: flex-start;
         }
 
         .about-photo {
-            border: 3px solid #000000;
+            background: #f5f5f5;
             aspect-ratio: 3 / 4;
             display: flex;
             align-items: center;
@@ -573,72 +628,84 @@
         }
 
         .about-text p {
-            font-size: 16px;
+            font-size: 18px;
             color: #333333;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
+            line-height: 1.8;
         }
 
         .about-list {
-            font-size: 14px;
+            font-size: 15px;
             color: #555555;
             list-style: none;
+            margin-top: 32px;
+        }
+
+        .about-list li {
+            margin-bottom: 12px;
         }
 
         .about-list li::before {
             content: "— ";
+            color: #E03631;
+            margin-right: 8px;
         }
 
         /* Kontakt / CTA Section */
         .contact-section-inner {
-            border: 2px solid #000000;
-            padding: 40px;
+            background: #ffffff;
+            border: 1px solid #000000;
+            padding: 60px;
             display: grid;
             grid-template-columns: 2fr 1.5fr;
-            gap: 40px;
+            gap: 60px;
             align-items: center;
         }
 
         .contact-title {
             font-family: 'Playfair Display', serif;
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .contact-text {
-            font-size: 15px;
-            color: #444444;
             margin-bottom: 24px;
         }
 
+        .contact-text {
+            font-size: 16px;
+            color: #444444;
+            margin-bottom: 32px;
+            line-height: 1.7;
+        }
+
         .contact-meta {
-            font-size: 13px;
+            font-size: 14px;
             color: #777777;
         }
 
         .contact-form-placeholder {
-            border: 2px dashed #cccccc;
-            padding: 24px;
-            font-size: 13px;
+            background: #f9f9f9;
+            padding: 32px;
+            font-size: 14px;
             color: #777777;
-            min-height: 160px;
+            min-height: 200px;
         }
 
         /* Footer */
         .footer {
-            padding: 40px 100px 60px;
-            border-top: 2px solid #000000;
+            padding: 80px 100px;
+            background: #000000;
+            color: #ffffff;
             display: grid;
             grid-template-columns: 2fr 1.5fr 1.5fr;
-            gap: 40px;
-            font-size: 13px;
+            gap: 60px;
+            font-size: 14px;
         }
 
         .footer-title {
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-weight: 700;
+            margin-bottom: 24px;
             text-transform: uppercase;
             letter-spacing: 2px;
+            color: #E03631;
         }
 
         .footer-links {
@@ -646,72 +713,168 @@
         }
 
         .footer-links li {
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .footer-links a {
             text-decoration: none;
-            color: #000000;
+            color: #ffffff;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
         }
 
         .footer-note {
-            color: #777777;
+            color: #999999;
+            line-height: 1.6;
         }
 
         /* Design Notes Section */
         .design-notes {
-            background: #f8f8f8;
+            background: #ffffff;
             padding: 60px 100px;
-            border-top: 3px solid #000000;
-            margin-top: 80px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 0;
         }
-        
+
         .notes-title {
             font-family: 'Playfair Display', serif;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             color: #000000;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
         }
-        
+
         .notes-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 40px;
         }
-        
+
         .note-item {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-        
+
         .note-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #cc0000;
+            color: #E03631;
         }
-        
+
         .note-value {
-            font-size: 15px;
+            font-size: 14px;
             color: #333333;
             line-height: 1.6;
         }
 
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-up {
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+
+        .delay-600 {
+            animation-delay: 0.6s;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 100px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1s;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: #E03631;
+        }
+
+        .scroll-text {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #000000;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+        }
+
+        /* Responsive adjustments for scroll indicator */
+        @media (max-width: 1200px) {
+            .scroll-indicator {
+                left: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .scroll-indicator {
+                display: none;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
-            .header, .hero, .section, .design-notes, .footer {
+
+            .header,
+            .hero,
+            .section,
+            .design-notes,
+            .footer {
                 padding-left: 60px;
                 padding-right: 60px;
             }
-            
+
             .hero {
                 grid-template-columns: 1fr;
                 gap: 80px;
+                padding-top: 120px;
             }
-            
+
             .hero-visual {
                 order: -1;
             }
@@ -724,26 +887,34 @@
                 grid-template-columns: 1fr;
             }
         }
-        
+
         @media (max-width: 768px) {
             .download-btn {
                 padding: 12px 24px;
                 font-size: 14px;
             }
-            
-            .header, .hero, .section, .design-notes, .footer {
+
+            .header,
+            .hero,
+            .section,
+            .design-notes,
+            .footer {
                 padding-left: 32px;
                 padding-right: 32px;
             }
-            
+
+            .hero {
+                padding-top: 100px;
+            }
+
             .hero-title {
                 font-size: 48px;
             }
-            
+
             .hero-cta-group {
                 flex-direction: column;
             }
-            
+
             .notes-grid {
                 grid-template-columns: 1fr;
                 gap: 24px;
@@ -759,16 +930,18 @@
             .footer {
                 grid-template-columns: 1fr;
             }
-        }</style>
+        }
+    </style>
 </head>
+
 <body>
-    
+
     <div class="mockup-container">
         <!-- Header -->
-        <header class="header">
+        <header class="header animate-fade-up">
             <div class="logo-area">
                 <div class="logo-placeholder">
-                    [DR. ZRINKA LOGO]
+                    DR. ZRINKA
                 </div>
             </div>
             <nav class="nav">
@@ -784,27 +957,28 @@
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
-                <div class="hero-subtitle">LEADERSHIP & TRANSFORMATION</div>
-                
-                <h1 class="hero-title">
+                <div class="hero-subtitle animate-fade-up delay-100">Leadership & Transformation</div>
+
+                <h1 class="hero-title animate-fade-up delay-200">
                     Starke Frauen.<br>
                     Starke <span class="highlight">Unternehmen.</span>
                 </h1>
-                
-                <div class="hero-position">
+
+                <div class="hero-position animate-fade-up delay-300">
                     Dr. Zrinka — Writer & Transformation Advisor
                 </div>
-                
-                <p class="hero-description">
-                    Ganzheitliche Leadership-Programme für eine neue Ära – wo strategische Exzellenz auf neurobiologische Erkenntnisse trifft. Female Empowerment meets KI-gestütztes Learning & Development.
+
+                <p class="hero-description animate-fade-up delay-400">
+                    Ganzheitliche Leadership-Programme für eine neue Ära – wo strategische Exzellenz auf
+                    neurobiologische Erkenntnisse trifft. Female Empowerment meets KI-gestütztes Learning & Development.
                 </p>
-                
-                <div class="hero-cta-group">
+
+                <div class="hero-cta-group animate-fade-up delay-500">
                     <a href="#kontakt" class="btn-primary">Beratung Buchen</a>
                     <a href="#academy" class="btn-secondary">Mehr Erfahren</a>
                 </div>
-                
-                <div class="hero-stats">
+
+                <div class="hero-stats animate-fade-up delay-600">
                     <div class="stat-box">
                         <div class="stat-number">1500+</div>
                         <div class="stat-label">Unternehmer</div>
@@ -819,11 +993,11 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="hero-visual">
+
+            <div class="hero-visual animate-fade-up delay-300">
                 <div class="visual-frame">
-                    <div class="visual-label">[PROFESSIONAL PORTRAIT]</div>
-                    <div class="visual-dimensions">480 × 640px | 3:4 ratio</div>
+                    <div class="visual-label">Professional Portrait</div>
+                    <div class="visual-dimensions">Cinematic Shot</div>
                 </div>
                 <div class="accent-badge">
                     <div class="badge-title">Female Empowerment</div>
@@ -838,7 +1012,7 @@
         <section id="academy" class="section light">
             <div class="section-header">
                 <div>
-                    <div class="section-kicker">ACADEMY</div>
+                    <div class="section-kicker">Academy</div>
                     <h2 class="section-title">Leadership-Programme für eine neue Arbeitswelt</h2>
                 </div>
                 <div class="section-subtitle">
@@ -849,10 +1023,12 @@
             <div class="academy-grid">
                 <div class="academy-intro">
                     <p>
-                        Die Dr. Zrinka Academy bündelt neurobiologische Erkenntnisse, systemisches Denken und Female Leadership in klar strukturierten Lernpfaden.
+                        Die Dr. Zrinka Academy bündelt neurobiologische Erkenntnisse, systemisches Denken und Female
+                        Leadership in klar strukturierten Lernpfaden.
                     </p>
                     <p>
-                        Ideal für Gründerinnen, Führungskräfte und HR-Teams, die echte Kulturveränderung gestalten wollen.
+                        Ideal für Gründerinnen, Führungskräfte und HR-Teams, die echte Kulturveränderung gestalten
+                        wollen.
                     </p>
                     <div class="academy-note">
                         [Platzhalter für Programm-Übersicht, Curriculum-Grafik oder Timeline]
@@ -897,7 +1073,7 @@
         <section id="produkte" class="section gray">
             <div class="section-header">
                 <div>
-                    <div class="section-kicker">PRODUKTE</div>
+                    <div class="section-kicker">Produkte</div>
                     <h2 class="section-title">Tools, Bücher & digitale Formate</h2>
                 </div>
                 <a href="#" class="section-link">Alle Produkte ansehen</a>
@@ -906,10 +1082,12 @@
             <div class="produkte-grid">
                 <div class="produkte-side-note">
                     <p>
-                        Hier entsteht eine klare Übersicht über alle Produkte: Buch, Workbook, Online-Kurse, Templates und Corporate Packages.
+                        Hier entsteht eine klare Übersicht über alle Produkte: Buch, Workbook, Online-Kurse, Templates
+                        und Corporate Packages.
                     </p>
                     <p>
-                        Die Sektion dient als visuelle Landkarte, bevor Detailseiten im Shop oder in der Academy übernehmen.
+                        Die Sektion dient als visuelle Landkarte, bevor Detailseiten im Shop oder in der Academy
+                        übernehmen.
                     </p>
                 </div>
                 <div class="produkte-list">
@@ -949,7 +1127,7 @@
         <section id="blog" class="section light">
             <div class="section-header">
                 <div>
-                    <div class="section-kicker">BLOG</div>
+                    <div class="section-kicker">Blog</div>
                     <h2 class="section-title">Gedanken an der Schnittstelle von Gehirn, Gesellschaft & Geschäft</h2>
                 </div>
                 <a href="#" class="section-link">Zum Blog</a>
@@ -957,21 +1135,21 @@
 
             <div class="blog-grid">
                 <div class="blog-card">
-                    <div class="blog-meta">NEUROBIOLOGIE • LEADERSHIP</div>
+                    <div class="blog-meta">Neurobiologie • Leadership</div>
                     <div class="blog-title">Warum das Nervensystem die geheime KPI im Leadership ist</div>
                     <div class="blog-excerpt">
                         Platzhalter für 2–3 Zeilen Teasertext, der zum Weiterlesen animiert.
                     </div>
                 </div>
                 <div class="blog-card">
-                    <div class="blog-meta">FEMALE EMPOWERMENT</div>
+                    <div class="blog-meta">Female Empowerment</div>
                     <div class="blog-title">Die unsichtbaren Kosten von perfektem Funktionieren</div>
                     <div class="blog-excerpt">
                         Platzhalter für Kurzbeschreibung rund um Overachieving, Stress & Rollenbilder.
                     </div>
                 </div>
                 <div class="blog-card">
-                    <div class="blog-meta">KI & LEARNING</div>
+                    <div class="blog-meta">KI & Learning</div>
                     <div class="blog-title">Wie KI Learning & Development neu schreibt</div>
                     <div class="blog-excerpt">
                         Skizze eines Artikels über KI-gestützte Lernpfade, Ethik und Human-Centered Design.
@@ -984,7 +1162,7 @@
         <section id="events" class="section gray">
             <div class="section-header">
                 <div>
-                    <div class="section-kicker">EVENTS</div>
+                    <div class="section-kicker">Events</div>
                     <h2 class="section-title">Keynotes, Workshops & Live-Formate</h2>
                 </div>
                 <a href="#" class="section-link">Alle Termine</a>
@@ -992,7 +1170,7 @@
 
             <div class="events-layout">
                 <div class="events-hero-card">
-                    <div class="event-tag">FEATURED EVENT</div>
+                    <div class="event-tag">Featured Event</div>
                     <div class="event-title">[Signature Keynote Title]</div>
                     <div class="event-meta">
                         Datum: [TT.MM.JJJJ] · Format: Online / Hybrid<br>
@@ -1026,7 +1204,7 @@
         <section id="about" class="section light">
             <div class="section-header">
                 <div>
-                    <div class="section-kicker">ÜBER</div>
+                    <div class="section-kicker">Über</div>
                     <h2 class="section-title">Dr. Zrinka – an der Schnittstelle von Schreiben & Transformation</h2>
                 </div>
                 <div class="section-subtitle">
@@ -1036,14 +1214,16 @@
 
             <div class="about-grid">
                 <div class="about-photo">
-                    [PORTRAIT / COLLAGE PLATZHALTER]
+                    [Portrait / Collage Platzhalter]
                 </div>
                 <div class="about-text">
                     <p>
-                        Hier entsteht ein prägnanter Fließtext über Hintergrund, Forschungsschwerpunkte und Arbeitsweise von Dr. Zrinka.
+                        Hier entsteht ein prägnanter Fließtext über Hintergrund, Forschungsschwerpunkte und Arbeitsweise
+                        von Dr. Zrinka.
                     </p>
                     <p>
-                        Fokus auf: wissenschaftliche Tiefe, klare Sprache, radikale Ehrlichkeit und Begleitung von Menschen in Übergangsphasen.
+                        Fokus auf: wissenschaftliche Tiefe, klare Sprache, radikale Ehrlichkeit und Begleitung von
+                        Menschen in Übergangsphasen.
                     </p>
                     <ul class="about-list">
                         <li>Promotion / wissenschaftlicher Hintergrund in [Fachgebiet]</li>
@@ -1058,7 +1238,7 @@
         <section id="kontakt" class="section gray">
             <div class="section-header">
                 <div>
-                    <div class="section-kicker">KONTAKT</div>
+                    <div class="section-kicker">Kontakt</div>
                     <h2 class="section-title">Lass uns über echte Veränderung sprechen</h2>
                 </div>
             </div>
@@ -1067,7 +1247,7 @@
                 <div>
                     <div class="contact-title">Beratungsgespräch anfragen</div>
                     <div class="contact-text">
-                        Ob Academy-Programm, Keynote oder individuelles Sparring – hier startet die Zusammenarbeit. 
+                        Ob Academy-Programm, Keynote oder individuelles Sparring – hier startet die Zusammenarbeit.
                         Ein klares Kontaktformular oder ein direkter Calendly-Link kann hier integriert werden.
                     </div>
                     <div class="contact-meta">
@@ -1075,7 +1255,7 @@
                     </div>
                 </div>
                 <div class="contact-form-placeholder">
-                    [FORMULAR-PLATZHALTER]<br><br>
+                    [Formular-Platzhalter]<br><br>
                     • Feld: Name<br>
                     • Feld: E-Mail<br>
                     • Dropdown: Anliegen (Keynote, Workshop, 1:1 etc.)<br>
@@ -1087,59 +1267,32 @@
 
         <!-- Design Notes -->
         <section class="design-notes">
-            <h2 class="notes-title">Wireframe Design Notes</h2>
+            <h2 class="notes-title">V2 Design Notes</h2>
             <div class="notes-grid">
                 <div class="note-item">
-                    <div class="note-label">Color Palette</div>
+                    <div class="note-label">Palette</div>
                     <div class="note-value">
-                        Black (#000000)<br>
-                        Red (#cc0000)<br>
-                        White (#ffffff)
+                        Ignition Red (#E03631)<br>
+                        Authority Black (#000000)<br>
+                        White (#FFFFFF)
                     </div>
                 </div>
-                
+
                 <div class="note-item">
                     <div class="note-label">Typography</div>
                     <div class="note-value">
-                        Headings: Playfair Display (68px / 36px)<br>
-                        Body: Montserrat (18px / 16px)<br>
-                        Klarer, editorialer Aufbau.
+                        Headline: Playfair Display<br>
+                        Subhead: Montserrat<br>
+                        Body: Montserrat
                     </div>
                 </div>
-                
+
                 <div class="note-item">
-                    <div class="note-label">Spacing Logic</div>
+                    <div class="note-label">Style</div>
                     <div class="note-value">
-                        Section padding: 100–120px vertikal<br>
-                        Content padding: 100px horizontal (Desktop)<br>
-                        Elementabstände: 32–64px
-                    </div>
-                </div>
-                
-                <div class="note-item">
-                    <div class="note-label">White Space</div>
-                    <div class="note-value">
-                        Magazinartiger Look<br>
-                        Viel Luft um Headlines & Key Messages<br>
-                        Klarer Fokus pro Section
-                    </div>
-                </div>
-                
-                <div class="note-item">
-                    <div class="note-label">Layout Grid</div>
-                    <div class="note-value">
-                        Zwei- & Drei-Spalten-Layouts<br>
-                        Content-first, visuelle Hierarchie<br>
-                        Breakpoints: 1200px, 768px
-                    </div>
-                </div>
-                
-                <div class="note-item">
-                    <div class="note-label">Brand Position</div>
-                    <div class="note-value">
-                        "Writer & Transformation Advisor"<br>
-                        Female Leadership & Neuroleadership<br>
-                        KI-gestütztes Lernen als Differenzierung
+                        Cinematic, Ultra-Clean<br>
+                        Increased Negative Space<br>
+                        No Extra Elements
                     </div>
                 </div>
             </div>
@@ -1148,7 +1301,7 @@
         <!-- Footer -->
         <footer class="footer">
             <div>
-                <div class="footer-title">DR. ZRINKA</div>
+                <div class="footer-title">Dr. Zrinka</div>
                 <div class="footer-note">
                     Platzhalter für Claim, kurze Zusammenfassung der Arbeit und ggf. Copyright-Hinweis.
                 </div>
@@ -1177,13 +1330,14 @@
 
     <script>
         // Add print functionality with better PDF formatting
-        window.addEventListener('beforeprint', function() {
+        window.addEventListener('beforeprint', function () {
             document.body.style.background = '#ffffff';
         });
-        
-        window.addEventListener('afterprint', function() {
+
+        window.addEventListener('afterprint', function () {
             document.body.style.background = '#ffffff';
         });
     </script>
 </body>
+
 </html>
