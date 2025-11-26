@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Zrinka Homepage - V2 Cinematic</title>
+    <title>Dr. Zrinka Homepage - V3 Cinematic</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -20,7 +20,7 @@
         body {
             font-family: 'Montserrat', sans-serif;
             background: #ffffff;
-            color: #000000;
+            color: #111111;
             line-height: 1.6;
         }
 
@@ -44,7 +44,8 @@
         }
 
         .download-btn:hover {
-            background: #000000;
+            background: #ffffff;
+            color: #E03631;
         }
 
         /* Optional: tighter print margins */
@@ -83,6 +84,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 40px 100px;
+            background: black;
         }
 
         .logo-area {
@@ -98,7 +100,7 @@
             align-items: center;
             justify-content: flex-start;
             font-size: 14px;
-            color: #000000;
+            color: white;
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -113,28 +115,62 @@
         .nav-item {
             font-size: 14px;
             font-weight: 500;
-            color: #000000;
+            color: white;
             text-decoration: none;
             letter-spacing: 1px;
             text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-item:hover {
+            color: #E03631;
         }
 
         .nav-cta {
-            background: #000000;
+            background: #E03631;
             color: #ffffff;
             padding: 12px 24px;
+            transition: all 0.3s;
         }
 
-        /* Hero Section Styles */
+        .nav-cta:hover {
+            background: #ffffff;
+            color: #E03631;
+        }
+
+        /* Hero Section Styles - UPDATED */
         .hero {
             position: relative;
-            /* CRITICAL: Added for scroll indicator positioning */
-            padding: 50px 100px 100px;
+            padding: 10px 100px 120px;
             display: grid;
             grid-template-columns: 1.2fr 1fr;
             gap: 120px;
             align-items: center;
             min-height: 85vh;
+            background: #000000; /* Hero remains black */
+            overflow: hidden;
+        }
+
+        /* Gradient Transition from Hero to Content (black -> white) */
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(to bottom,
+                    rgba(0, 0, 0, 0) 0%,
+                    rgba(0, 0, 0, 0.6) 35%,
+                    rgba(0, 0, 0, 0.9) 60%,
+                    #ffffff 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
         }
 
         .hero-subtitle {
@@ -149,23 +185,36 @@
 
         .hero-title {
             font-family: 'Playfair Display', serif;
-            font-size: 72px;
+            font-size: 88px;
             font-weight: 700;
             line-height: 1.1;
-            color: #000000;
+            color: #ffffff;
             margin-bottom: 40px;
             letter-spacing: -1px;
+            position: relative;
+        }
+
+        /* Extended Red Accent Line */
+        .hero-title::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 520px; /* Extended to comfortably cover "Unternehmen" */
+            height: 3px;
+            background: #E03631;
         }
 
         .hero-title .highlight {
             color: #E03631;
             font-style: italic;
+            position: relative;
         }
 
         .hero-position {
             font-size: 20px;
             font-weight: 500;
-            color: #000000;
+            color: #ffffff;
             margin-bottom: 32px;
             letter-spacing: 0.5px;
             border-left: 3px solid #E03631;
@@ -175,7 +224,7 @@
         .hero-description {
             font-size: 18px;
             line-height: 1.8;
-            color: #333333;
+            color: #cccccc;
             margin-bottom: 48px;
             font-weight: 400;
             max-width: 90%;
@@ -209,29 +258,29 @@
 
         .btn-secondary {
             background: transparent;
-            color: #000000;
+            color: #ffffff;
             padding: 20px 48px;
             font-size: 15px;
             font-weight: 600;
             text-decoration: none;
             border-radius: 0;
             letter-spacing: 1px;
-            border: 2px solid #000000;
+            border: 2px solid #ffffff;
             display: inline-block;
             text-transform: uppercase;
             transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
-            background: #000000;
-            color: #ffffff;
+            background: #ffffff;
+            color: #000000;
         }
 
         .hero-stats {
             display: flex;
             gap: 64px;
             padding-top: 48px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .stat-box {
@@ -253,7 +302,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: #000000;
+            color: #ffffff;
         }
 
         /* Hero Visual */
@@ -262,44 +311,48 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 3;
         }
 
         .visual-frame {
+            top: -120px;
             width: 100%;
             max-width: 480px;
             aspect-ratio: 3/4;
-            background: #f5f5f5;
+            background: #1a1a1a;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             position: relative;
+            border: 1px solid #333333;
+            color: #cccccc;
         }
 
         .visual-label {
             font-size: 14px;
             font-weight: 500;
-            color: #999999;
-            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-bottom: 8px;
         }
 
         .visual-dimensions {
             font-size: 12px;
-            color: #cccccc;
+            opacity: 0.7;
         }
 
         .accent-badge {
             position: absolute;
-            bottom: -30px;
+            bottom: 80px;
             right: -40px;
-            background: #ffffff;
-            color: #000000;
+            background: #000000;
+            color: #ffffff;
             padding: 40px;
             min-width: 280px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border-left: 4px solid #E03631;
+            border: 1px solid #333333;
         }
 
         .badge-title {
@@ -308,27 +361,49 @@
             font-weight: 700;
             margin-bottom: 12px;
             line-height: 1.2;
+            color: #ffffff;
         }
 
         .badge-text {
             font-size: 14px;
             line-height: 1.6;
             font-weight: 400;
-            color: #555555;
+            color: #cccccc;
         }
 
-        /* Generic Sections */
+        /* Ghost Hat Silhouette - SVG version */
+        .ghost-hat-svg {
+            position: absolute;
+            top: 30%;
+            right: 12%;
+            width: 220px;
+            height: 140px;
+            opacity: 0.65;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Content Sections - now on white */
         .section {
             padding: 120px 100px;
-            border-top: 1px solid #f0f0f0;
+            border-top: 1px solid #e5e5e5;
+            background: #ffffff;
+            color: #111111;
+            position: relative;
         }
 
         .section.light {
             background: #ffffff;
+            color: #111111;
         }
+/* Remove top border on first content section so gradient isn't blocked */
+#academy.section {
+    border-top: none;
+}
 
         .section.gray {
-            background: #fafafa;
+            background: #ffffff;
+            color: #111111;
         }
 
         .section-header {
@@ -350,10 +425,22 @@
 
         .section-title {
             font-family: 'Playfair Display', serif;
-            font-size: 42px;
+            font-size: 52px;
             font-weight: 700;
             letter-spacing: -0.5px;
-            color: #000000;
+            color: #111111;
+            line-height: 1.2;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 80px;
+            height: 2px;
+            background: #E03631;
         }
 
         .section-subtitle {
@@ -371,7 +458,7 @@
             text-decoration: none;
             border-bottom: 2px solid #E03631;
             padding-bottom: 4px;
-            color: #000000;
+            color: #111111;
             white-space: nowrap;
             transition: all 0.3s;
         }
@@ -389,14 +476,14 @@
 
         .academy-intro p {
             font-size: 18px;
-            color: #333333;
+            color: #444444;
             margin-bottom: 24px;
             line-height: 1.8;
         }
 
         .academy-note {
             font-size: 13px;
-            color: #999999;
+            color: #888888;
             font-style: italic;
             margin-top: 24px;
         }
@@ -408,7 +495,7 @@
         }
 
         .program-card {
-            border: 1px solid #e0e0e0;
+            border: 1px solid #e5e5e5;
             padding: 32px 24px;
             min-height: 240px;
             display: flex;
@@ -419,7 +506,7 @@
         }
 
         .program-card:hover {
-            border-color: #000000;
+            border-color: #E03631;
             transform: translateY(-4px);
         }
 
@@ -437,6 +524,7 @@
             font-size: 20px;
             font-weight: 700;
             margin-bottom: 16px;
+            color: #111111;
         }
 
         .program-meta {
@@ -460,7 +548,7 @@
         }
 
         .product-card {
-            border: 1px solid #e0e0e0;
+            border: 1px solid #e5e5e5;
             padding: 32px;
             min-height: 200px;
             background: #ffffff;
@@ -469,6 +557,7 @@
 
         .product-card:hover {
             border-color: #E03631;
+            transform: translateY(-2px);
         }
 
         .product-type {
@@ -485,6 +574,7 @@
             font-size: 20px;
             font-weight: 700;
             margin-bottom: 12px;
+            color: #111111;
         }
 
         .product-note {
@@ -507,7 +597,7 @@
         }
 
         .blog-card {
-            border-top: 1px solid #000000;
+            border-top: 1px solid #E03631;
             padding-top: 32px;
         }
 
@@ -515,7 +605,7 @@
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #999999;
+            color: #888888;
             margin-bottom: 16px;
         }
 
@@ -525,11 +615,12 @@
             font-weight: 700;
             margin-bottom: 16px;
             line-height: 1.3;
+            color: #111111;
         }
 
         .blog-excerpt {
             font-size: 15px;
-            color: #555555;
+            color: #666666;
             line-height: 1.7;
         }
 
@@ -543,7 +634,7 @@
 
         .events-hero-card {
             background: #ffffff;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #e5e5e5;
             padding: 40px;
             min-height: 280px;
         }
@@ -562,18 +653,19 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 16px;
+            color: #111111;
         }
 
         .event-meta {
             font-size: 14px;
-            color: #666666;
+            color: #777777;
             margin-bottom: 16px;
             line-height: 1.6;
         }
 
         .event-note {
             font-size: 14px;
-            color: #555555;
+            color: #444444;
         }
 
         .events-list {
@@ -586,19 +678,20 @@
             grid-template-columns: 1fr 3fr 1fr;
             gap: 24px;
             padding: 24px 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e5e5e5;
             align-items: center;
         }
 
         .event-date {
             font-size: 14px;
             font-weight: 700;
-            color: #000000;
+            color: #111111;
         }
 
         .event-name {
             font-size: 16px;
             font-weight: 500;
+            color: #111111;
         }
 
         .event-location {
@@ -625,18 +718,19 @@
             justify-content: center;
             font-size: 14px;
             color: #999999;
+            border: 1px solid #e5e5e5;
         }
 
         .about-text p {
             font-size: 18px;
-            color: #333333;
+            color: #444444;
             margin-bottom: 24px;
             line-height: 1.8;
         }
 
         .about-list {
             font-size: 15px;
-            color: #555555;
+            color: #666666;
             list-style: none;
             margin-top: 32px;
         }
@@ -654,7 +748,7 @@
         /* Kontakt / CTA Section */
         .contact-section-inner {
             background: #ffffff;
-            border: 1px solid #000000;
+            border: 1px solid #e5e5e5;
             padding: 60px;
             display: grid;
             grid-template-columns: 2fr 1.5fr;
@@ -667,6 +761,7 @@
             font-size: 32px;
             font-weight: 700;
             margin-bottom: 24px;
+            color: #111111;
         }
 
         .contact-text {
@@ -682,14 +777,15 @@
         }
 
         .contact-form-placeholder {
-            background: #f9f9f9;
+            background: #fafafa;
             padding: 32px;
             font-size: 14px;
             color: #777777;
             min-height: 200px;
+            border: 1px solid #e5e5e5;
         }
 
-        /* Footer */
+       /* Footer */
         .footer {
             padding: 80px 100px;
             background: #000000;
@@ -732,11 +828,12 @@
             line-height: 1.6;
         }
 
+
         /* Design Notes Section */
         .design-notes {
             background: #ffffff;
             padding: 60px 100px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid #e5e5e5;
             margin-top: 0;
         }
 
@@ -744,7 +841,7 @@
             font-family: 'Playfair Display', serif;
             font-size: 24px;
             font-weight: 700;
-            color: #000000;
+            color: #111111;
             margin-bottom: 40px;
         }
 
@@ -770,7 +867,7 @@
 
         .note-value {
             font-size: 14px;
-            color: #333333;
+            color: #444444;
             line-height: 1.6;
         }
 
@@ -826,6 +923,7 @@
             gap: 12px;
             opacity: 0;
             animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1s;
+            z-index: 3;
         }
 
         .scroll-line {
@@ -839,7 +937,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #000000;
+            color: #ffffff;
             writing-mode: vertical-rl;
             transform: rotate(180deg);
         }
@@ -911,6 +1009,11 @@
                 font-size: 48px;
             }
 
+            /* Adjust red line for mobile */
+            .hero-title::after {
+                width: 280px; /* Shorter for mobile */
+            }
+
             .hero-cta-group {
                 flex-direction: column;
             }
@@ -931,6 +1034,35 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* NEW Abstract Ghost Background */
+        .ghost-bg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.8; /* Adjust overall visibility here */
+        }
+        
+        /* The Ghost blobs */
+        .ghost-blob {
+            transform-origin: center;
+            animation: floatGhost 20s infinite ease-in-out alternate;
+        }
+        
+        .ghost-blob:nth-child(2) {
+            animation-duration: 25s;
+            animation-direction: alternate-reverse;
+        }
+
+        @keyframes floatGhost {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.05); }
+            100% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+
     </style>
 </head>
 
@@ -955,7 +1087,34 @@
         </header>
 
         <!-- Hero Section -->
-        <section class="hero">
+<section class="hero">
+            
+            <div class="ghost-bg-container">
+                <svg width="100%" height="100%" viewBox="0 0 1000 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="ghostBlur" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="60" />
+                        </filter>
+                    </defs>
+                    
+                    <g class="ghost-blob" style="opacity: 0.4;">
+                        <path d="M750,200 C850,200 950,300 900,450 C850,600 700,650 600,550 C500,450 650,200 750,200 Z" 
+                              fill="#E03631" 
+                              filter="url(#ghostBlur)" />
+                    </g>
+
+                    <g class="ghost-blob" style="opacity: 0.15;">
+                        <path d="M200,400 C350,350 500,450 450,600 C400,750 200,800 100,700 C0,600 50,450 200,400 Z" 
+                              fill="#FFFFFF" 
+                              filter="url(#ghostBlur)" />
+                    </g>
+                    
+                    <g class="ghost-blob" style="opacity: 0.1;">
+                        <circle cx="100" cy="100" r="250" fill="#E03631" filter="url(#ghostBlur)" />
+                    </g>
+                </svg>
+            </div>
+
             <div class="hero-content">
                 <div class="hero-subtitle animate-fade-up delay-100">Leadership & Transformation</div>
 
@@ -1076,7 +1235,7 @@
                     <div class="section-kicker">Produkte</div>
                     <h2 class="section-title">Tools, Bücher & digitale Formate</h2>
                 </div>
-                <a href="#" class="section-link">Alle Produkte ansehen</a>
+            <a href="#" class="section-link">Alle Produkte ansehen</a>
             </div>
 
             <div class="produkte-grid">
@@ -1267,32 +1426,35 @@
 
         <!-- Design Notes -->
         <section class="design-notes">
-            <h2 class="notes-title">V2 Design Notes</h2>
+            <h2 class="notes-title">V3 Cinematic Refinement</h2>
             <div class="notes-grid">
                 <div class="note-item">
-                    <div class="note-label">Palette</div>
+                    <div class="note-label">Complete Theme</div>
                     <div class="note-value">
-                        Ignition Red (#E03631)<br>
-                        Authority Black (#000000)<br>
-                        White (#FFFFFF)
+                        Authority Black hero<br>
+                        Ignition Red accents throughout<br>
+                        Increased headline sizes<br>
+                        Ghost-hat silhouette<br>
+                        Enhanced negative space
                     </div>
                 </div>
 
                 <div class="note-item">
                     <div class="note-label">Typography</div>
                     <div class="note-value">
-                        Headline: Playfair Display<br>
-                        Subhead: Montserrat<br>
-                        Body: Montserrat
+                        Hero: Playfair Display 88px<br>
+                        Section: Playfair Display 52px<br>
+                        Body: Montserrat on white
                     </div>
                 </div>
 
                 <div class="note-item">
                     <div class="note-label">Style</div>
                     <div class="note-value">
-                        Cinematic, Ultra-Clean<br>
-                        Increased Negative Space<br>
-                        No Extra Elements
+                        Cinematic, Vogue Energy<br>
+                        High contrast hero<br>
+                        Clean white content canvas<br>
+                        Subtle brand layering
                     </div>
                 </div>
             </div>
