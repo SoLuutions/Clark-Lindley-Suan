@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Cover Voting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .covers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .cover-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .cover-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .cover-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        .cover-image {
+            width: 100%;
+            height: 380px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .cover-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .voting-buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .vote-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f5f5f5;
+        }
+
+        .vote-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .vote-btn.thumbs-up {
+            color: #10b981;
+        }
+
+        .vote-btn.thumbs-up:hover {
+            background: #d1fae5;
+        }
+
+        .vote-btn.neutral {
+            color: #f59e0b;
+        }
+
+        .vote-btn.neutral:hover {
+            background: #fef3c7;
+        }
+
+        .vote-btn.thumbs-down {
+            color: #ef4444;
+        }
+
+        .vote-btn.thumbs-down:hover {
+            background: #fee2e2;
+        }
+
+        .vote-counts {
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .vote-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            padding: 40px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .vote-success {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Book Cover Voting</h1>
+        <p class="subtitle">Vote for your favorite book cover design!</p>
+
+        <div id="loading" class="loading">Loading voting data...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="covers" class="covers-grid"></div>
+    </div>
+
+    <div id="voteSuccess" class="vote-success">Vote recorded! ✓</div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqDRg5Gs-9xUakpqCyv2OD-bfYkU4SJRMjDE3qJolNIjfEvdzwBKv-4n-9UoPoqYhaIw/exec';
+        
+        const COVER_IMAGES = {
+            'Cover 1': 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(1).png',
+            'Cover 2': 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(2).png',
+            'Cover 3': 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(3).png',
+            'Cover 4': 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(4).png',
+            'Cover 5': 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(5).png'
+        };
+
+        async function loadVotes() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                displayCovers(data);
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').textContent = 'Error loading votes. Please refresh the page.';
+                document.getElementById('error').style.display = 'block';
+                console.error('Error:', error);
+            }
+        }
+
+        function displayCovers(data) {
+            const coversDiv = document.getElementById('covers');
+            coversDiv.innerHTML = '';
+
+            data.forEach(cover => {
+                const card = document.createElement('div');
+                card.className = 'cover-card';
+                
+                const imageUrl = COVER_IMAGES[cover.name];
+
+                card.innerHTML = `
+                    <div class="cover-title">${cover.name}</div>
+                    <div class="cover-image">
+                        <img src="${imageUrl}" alt="${cover.name}">
+                    </div>
+                    <div class="voting-buttons">
+                        <button class="vote-btn thumbs-up" onclick="vote('${cover.name}', 'up')">👍</button>
+                        <button class="vote-btn neutral" onclick="vote('${cover.name}', 'neutral')">👌</button>
+                        <button class="vote-btn thumbs-down" onclick="vote('${cover.name}', 'down')">👎</button>
+                    </div>
+                    <div class="vote-counts">
+                        <div class="vote-count">👍 <strong>${cover.thumbsUp}</strong></div>
+                        <div class="vote-count">👌 <strong>${cover.neutral}</strong></div>
+                        <div class="vote-count">👎 <strong>${cover.thumbsDown}</strong></div>
+                    </div>
+                `;
+                
+                coversDiv.appendChild(card);
+            });
+        }
+
+        async function vote(coverName, voteType) {
+            try {
+                const formData = new FormData();
+                formData.append('coverName', coverName);
+                formData.append('voteType', voteType);
+
+                await fetch(SCRIPT_URL + '?coverName=' + encodeURIComponent(coverName) + '&voteType=' + voteType, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Show success message
+                const successMsg = document.getElementById('voteSuccess');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 2000);
+
+                // Wait a moment then reload to show updated counts
+                setTimeout(() => {
+                    loadVotes();
+                }, 1000);
+            } catch (error) {
+                console.error('Error voting:', error);
+                alert('Error submitting vote. Please try again.');
+            }
+        }
+
+        // Load votes when page loads
+        loadVotes();
+    </script>
+</body>
+</html>
