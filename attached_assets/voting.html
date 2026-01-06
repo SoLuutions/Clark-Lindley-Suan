@@ -265,9 +265,29 @@
     let scriptCounter = 0;
 
     function vote(coverName, voteType) {
+      // Check if user has already voted for this cover
+      const votedCovers = JSON.parse(localStorage.getItem('votedCovers') || '{}');
+      
+      if (votedCovers[coverName]) {
+        showNotification('You already voted for this cover!', true);
+        return;
+      }
+      
       const callbackName = 'voteCallback' + (++scriptCounter);
       
       window[callbackName] = function(data) {
+        // Mark this cover as voted
+        votedCovers[coverName] = voteType;
+        localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
+        
+        // Disable buttons for this cover
+        const card = document.querySelector(`[data-cover="${coverName}"]`);
+        card.querySelectorAll('.vote-btn').forEach(btn => {
+          btn.disabled = true;
+          btn.style.opacity = '0.5';
+          btn.style.cursor = 'not-allowed';
+        });
+        
         showNotification('Vote recorded! ✓');
         loadVotes();
         delete window[callbackName];
@@ -287,12 +307,23 @@
       const callbackName = 'loadCallback' + (++scriptCounter);
       
       window[callbackName] = function(votes) {
+        const votedCovers = JSON.parse(localStorage.getItem('votedCovers') || '{}');
+        
         votes.forEach(vote => {
           const card = document.querySelector(`[data-cover="${vote.name}"]`);
           if (card) {
             card.querySelector('.thumbs-up .count').textContent = vote.thumbsUp;
             card.querySelector('.neutral .count').textContent = vote.neutral;
             card.querySelector('.thumbs-down .count').textContent = vote.thumbsDown;
+            
+            // Disable buttons if user already voted for this cover
+            if (votedCovers[vote.name]) {
+              card.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+              });
+            }
           }
         });
         delete window[callbackName];
