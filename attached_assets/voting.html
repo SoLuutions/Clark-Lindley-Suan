@@ -94,6 +94,10 @@
       font-size: 1.1em;
     }
 
+    .vote-btn:disabled {
+      pointer-events: none;
+    }
+
     .vote-btn:hover {
       transform: scale(1.05);
     }
@@ -273,34 +277,53 @@
         return;
       }
       
+      // INSTANT UI UPDATE - Update immediately before server responds
+      const card = document.querySelector(`[data-cover="${coverName}"]`);
+      const voteButton = voteType === 'up' ? '.thumbs-up' : (voteType === 'neutral' ? '.neutral' : '.thumbs-down');
+      const countElement = card.querySelector(`${voteButton} .count`);
+      const currentCount = parseInt(countElement.textContent);
+      countElement.textContent = currentCount + 1;
+      
+      // Disable all buttons immediately
+      card.querySelectorAll('.vote-btn').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+      });
+      
+      // Show instant feedback
+      showNotification('Vote recorded! ✓');
+      
+      // Mark as voted immediately
+      votedCovers[coverName] = voteType;
+      localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
+      
+      // Send to server in background
       const callbackName = 'voteCallback' + (++scriptCounter);
       
       window[callbackName] = function(data) {
-        // Mark this cover as voted
-        votedCovers[coverName] = voteType;
-        localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
-        
-        // Disable buttons for this cover
-        const card = document.querySelector(`[data-cover="${coverName}"]`);
-        card.querySelectorAll('.vote-btn').forEach(btn => {
-          btn.disabled = true;
-          btn.style.opacity = '0.5';
-          btn.style.cursor = 'not-allowed';
-        });
-        
-        showNotification('Vote recorded! ✓');
-        loadVotes();
+        // Server confirmed - refresh all votes to sync
+        setTimeout(() => loadVotes(), 500);
         delete window[callbackName];
       };
       
       const script = document.createElement('script');
       script.src = `${SCRIPT_URL}?coverName=${encodeURIComponent(coverName)}&voteType=${voteType}&callback=${callbackName}`;
       script.onerror = function() {
-        showNotification('Error recording vote', true);
+        // If server fails, revert the count
+        countElement.textContent = currentCount;
+        card.querySelectorAll('.vote-btn').forEach(btn => {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+        });
+        delete votedCovers[coverName];
+        localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
+        showNotification('Error - please try again', true);
         delete window[callbackName];
       };
       document.body.appendChild(script);
-      setTimeout(() => script.remove(), 1000);
+      setTimeout(() => script.remove(), 5000);
     }
 
     function loadVotes() {
