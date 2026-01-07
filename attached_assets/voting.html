@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Book Cover Voting</title>
+
   <style>
     * {
       margin: 0;
@@ -28,7 +29,6 @@
       color: white;
       font-size: 3em;
       margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
 
     .subtitle {
@@ -42,7 +42,6 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 30px;
-      margin-bottom: 40px;
     }
 
     .cover-card {
@@ -50,12 +49,11 @@
       border-radius: 20px;
       padding: 25px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s ease;
     }
 
     .cover-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
     }
 
     .cover-image {
@@ -96,10 +94,8 @@
 
     .vote-btn:disabled {
       pointer-events: none;
-    }
-
-    .vote-btn:hover {
-      transform: scale(1.05);
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .thumbs-up {
@@ -117,13 +113,11 @@
       color: white;
     }
 
-    .vote-btn:active {
-      transform: scale(0.95);
-    }
-
+    /* 🔒 HIDE COUNTS BY DEFAULT */
     .count {
       font-size: 1.5em;
       font-weight: bold;
+      visibility: hidden;
     }
 
     .notification {
@@ -147,116 +141,45 @@
       background: #ff4444;
       color: white;
     }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2em;
-      }
-      
-      .covers-grid {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>📚 Book Cover Voting</h1>
-    <p class="subtitle">Vote for your favorite cover design!</p>
+    <p class="subtitle">Vote without seeing prior results</p>
 
-    <div class="covers-grid" id="coversGrid">
+    <div class="covers-grid">
+
+      <!-- COVER TEMPLATE -->
+      <!-- Duplicate as needed -->
+
       <div class="cover-card" data-cover="Cover 1">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(1).png" alt="Cover 1" class="cover-image">
+        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(1).png" class="cover-image">
         <div class="cover-title">Cover 1</div>
         <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 1', 'up')">
-            <span>👍</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn neutral" onclick="vote('Cover 1', 'neutral')">
-            <span>👌</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 1', 'down')">
-            <span>👎</span>
-            <span class="count">0</span>
-          </button>
+          <button class="vote-btn thumbs-up" onclick="vote('Cover 1','up')">👍 <span class="count">0</span></button>
+          <button class="vote-btn neutral" onclick="vote('Cover 1','neutral')">👌 <span class="count">0</span></button>
+          <button class="vote-btn thumbs-down" onclick="vote('Cover 1','down')">👎 <span class="count">0</span></button>
         </div>
       </div>
 
       <div class="cover-card" data-cover="Cover 2">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(2).png" alt="Cover 2" class="cover-image">
+        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(2).png" class="cover-image">
         <div class="cover-title">Cover 2</div>
         <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 2', 'up')">
-            <span>👍</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn neutral" onclick="vote('Cover 2', 'neutral')">
-            <span>👌</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 2', 'down')">
-            <span>👎</span>
-            <span class="count">0</span>
-          </button>
+          <button class="vote-btn thumbs-up" onclick="vote('Cover 2','up')">👍 <span class="count">0</span></button>
+          <button class="vote-btn neutral" onclick="vote('Cover 2','neutral')">👌 <span class="count">0</span></button>
+          <button class="vote-btn thumbs-down" onclick="vote('Cover 2','down')">👎 <span class="count">0</span></button>
         </div>
       </div>
-
       <div class="cover-card" data-cover="Cover 3">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(3).png" alt="Cover 3" class="cover-image">
+        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(3).png" class="cover-image">
         <div class="cover-title">Cover 3</div>
         <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 3', 'up')">
-            <span>👍</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn neutral" onclick="vote('Cover 3', 'neutral')">
-            <span>👌</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 3', 'down')">
-            <span>👎</span>
-            <span class="count">0</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="cover-card" data-cover="Cover 4">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(4).png" alt="Cover 4" class="cover-image">
-        <div class="cover-title">Cover 4</div>
-        <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 4', 'up')">
-            <span>👍</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn neutral" onclick="vote('Cover 4', 'neutral')">
-            <span>👌</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 4', 'down')">
-            <span>👎</span>
-            <span class="count">0</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="cover-card" data-cover="Cover 5">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(5).png" alt="Cover 5" class="cover-image">
-        <div class="cover-title">Cover 5</div>
-        <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 5', 'up')">
-            <span>👍</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn neutral" onclick="vote('Cover 5', 'neutral')">
-            <span>👌</span>
-            <span class="count">0</span>
-          </button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 5', 'down')">
-            <span>👎</span>
-            <span class="count">0</span>
-          </button>
+          <button class="vote-btn thumbs-up" onclick="vote('Cover 2','up')">👍 <span class="count">0</span></button>
+          <button class="vote-btn neutral" onclick="vote('Cover 2','neutral')">👌 <span class="count">0</span></button>
+          <button class="vote-btn thumbs-down" onclick="vote('Cover 2','down')">👎 <span class="count">0</span></button>
         </div>
       </div>
     </div>
@@ -269,109 +192,73 @@
     let scriptCounter = 0;
 
     function vote(coverName, voteType) {
-      // Check if user has already voted for this cover
       const votedCovers = JSON.parse(localStorage.getItem('votedCovers') || '{}');
-      
+
       if (votedCovers[coverName]) {
         showNotification('You already voted for this cover!', true);
         return;
       }
-      
-      // INSTANT UI UPDATE - Update immediately before server responds
+
       const card = document.querySelector(`[data-cover="${coverName}"]`);
-      const voteButton = voteType === 'up' ? '.thumbs-up' : (voteType === 'neutral' ? '.neutral' : '.thumbs-down');
-      const countElement = card.querySelector(`${voteButton} .count`);
-      const currentCount = parseInt(countElement.textContent);
-      countElement.textContent = currentCount + 1;
-      
-      // Disable all buttons immediately
-      card.querySelectorAll('.vote-btn').forEach(btn => {
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        btn.style.cursor = 'not-allowed';
-      });
-      
-      // Show instant feedback
-      showNotification('Vote recorded! ✓');
-      
-      // Mark as voted immediately
+      const btn = card.querySelector(`.${voteType === 'up' ? 'thumbs-up' : voteType === 'neutral' ? 'neutral' : 'thumbs-down'}`);
+      const count = btn.querySelector('.count');
+
+      count.textContent = parseInt(count.textContent) + 1;
+
+      // 🔓 REVEAL COUNTS AFTER VOTE
+      card.querySelectorAll('.count').forEach(c => c.style.visibility = 'visible');
+
+      card.querySelectorAll('.vote-btn').forEach(b => b.disabled = true);
+
       votedCovers[coverName] = voteType;
       localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
-      
-      // Send to server in background
+
+      showNotification('Vote recorded ✓');
+
       const callbackName = 'voteCallback' + (++scriptCounter);
-      
-      window[callbackName] = function(data) {
-        // Server confirmed - refresh all votes to sync
-        setTimeout(() => loadVotes(), 500);
-        delete window[callbackName];
-      };
-      
+      window[callbackName] = () => loadVotes();
+
       const script = document.createElement('script');
       script.src = `${SCRIPT_URL}?coverName=${encodeURIComponent(coverName)}&voteType=${voteType}&callback=${callbackName}`;
-      script.onerror = function() {
-        // If server fails, revert the count
-        countElement.textContent = currentCount;
-        card.querySelectorAll('.vote-btn').forEach(btn => {
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          btn.style.cursor = 'pointer';
-        });
-        delete votedCovers[coverName];
-        localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
-        showNotification('Error - please try again', true);
-        delete window[callbackName];
-      };
       document.body.appendChild(script);
       setTimeout(() => script.remove(), 5000);
     }
 
     function loadVotes() {
       const callbackName = 'loadCallback' + (++scriptCounter);
-      
+
       window[callbackName] = function(votes) {
         const votedCovers = JSON.parse(localStorage.getItem('votedCovers') || '{}');
-        
+
         votes.forEach(vote => {
           const card = document.querySelector(`[data-cover="${vote.name}"]`);
-          if (card) {
-            card.querySelector('.thumbs-up .count').textContent = vote.thumbsUp;
-            card.querySelector('.neutral .count').textContent = vote.neutral;
-            card.querySelector('.thumbs-down .count').textContent = vote.thumbsDown;
-            
-            // Disable buttons if user already voted for this cover
-            if (votedCovers[vote.name]) {
-              card.querySelectorAll('.vote-btn').forEach(btn => {
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
-              });
-            }
+          if (!card) return;
+
+          card.querySelector('.thumbs-up .count').textContent = vote.thumbsUp;
+          card.querySelector('.neutral .count').textContent = vote.neutral;
+          card.querySelector('.thumbs-down .count').textContent = vote.thumbsDown;
+
+          if (votedCovers[vote.name]) {
+            card.querySelectorAll('.count').forEach(c => c.style.visibility = 'visible');
+            card.querySelectorAll('.vote-btn').forEach(b => b.disabled = true);
           }
         });
-        delete window[callbackName];
       };
-      
+
       const script = document.createElement('script');
       script.src = `${SCRIPT_URL}?callback=${callbackName}`;
-      script.onerror = function() {
-        console.error('Error loading votes');
-        delete window[callbackName];
-      };
       document.body.appendChild(script);
-      setTimeout(() => script.remove(), 1000);
+      setTimeout(() => script.remove(), 2000);
     }
 
-    function showNotification(message, isError = false) {
-      const notification = document.getElementById('notification');
-      notification.textContent = message;
-      notification.className = 'notification' + (isError ? ' error' : '');
-      
-      setTimeout(() => notification.classList.add('show'), 10);
-      setTimeout(() => notification.classList.remove('show'), 3000);
+    function showNotification(msg, error = false) {
+      const n = document.getElementById('notification');
+      n.textContent = msg;
+      n.className = 'notification' + (error ? ' error' : '');
+      setTimeout(() => n.classList.add('show'), 10);
+      setTimeout(() => n.classList.remove('show'), 3000);
     }
 
-    // Load votes when page loads
     window.addEventListener('load', loadVotes);
   </script>
 </body>
