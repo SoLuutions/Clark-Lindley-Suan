@@ -4,222 +4,292 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Book Cover Voting</title>
-
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(20px) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) translateY(0);
+      }
     }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 40px 20px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
     }
 
-    h1 {
-      text-align: center;
-      color: white;
-      font-size: 3em;
-      margin-bottom: 20px;
+    .notification-show {
+      animation: slideIn 0.3s ease forwards;
     }
 
-    .subtitle {
-      text-align: center;
-      color: rgba(255,255,255,0.9);
-      font-size: 1.2em;
-      margin-bottom: 50px;
+    .notification-hide {
+      animation: slideIn 0.3s ease reverse forwards;
     }
 
-    .covers-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
+    .card-animate {
+      animation: fadeIn 0.5s ease forwards;
     }
 
-    .cover-card {
-      background: white;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease;
+    .count-reveal {
+      animation: scaleIn 0.3s ease forwards;
     }
 
-    .cover-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .cover-image {
-      width: 100%;
-      height: 400px;
-      object-fit: cover;
-      border-radius: 15px;
-      margin-bottom: 20px;
-    }
-
-    .cover-title {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    .voting-buttons {
-      display: flex;
-      justify-content: space-around;
-      gap: 10px;
-    }
-
-    .vote-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 15px 10px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1.1em;
-    }
-
-    .vote-btn:disabled {
-      pointer-events: none;
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .thumbs-up {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .neutral {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-    }
-
-    .thumbs-down {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      color: white;
-    }
-
-    /* 🔒 HIDE COUNTS BY DEFAULT */
-    .count {
-      font-size: 1.5em;
-      font-weight: bold;
+    .vote-count {
       visibility: hidden;
     }
 
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: white;
-      padding: 20px 30px;
-      border-radius: 10px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-      transform: translateX(400px);
-      transition: transform 0.3s ease;
-      z-index: 1000;
+    .vote-count.revealed {
+      visibility: visible;
     }
 
-    .notification.show {
-      transform: translateX(0);
+    .pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
-    .notification.error {
-      background: #ff4444;
-      color: white;
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
   </style>
 </head>
 
-<body>
-  <div class="container">
-    <h1>📚 Book Cover Voting</h1>
-    <p class="subtitle">Vote without seeing prior results</p>
-
-    <div class="covers-grid">
-
-      <!-- COVER TEMPLATE -->
-      <!-- Duplicate as needed -->
-
-      <div class="cover-card" data-cover="Cover 1">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(1).png" class="cover-image">
-        <div class="cover-title">Cover 1</div>
-        <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 1','up')">👍 <span class="count">0</span></button>
-          <button class="vote-btn neutral" onclick="vote('Cover 1','neutral')">👌 <span class="count">0</span></button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 1','down')">👎 <span class="count">0</span></button>
+<body class="min-h-screen bg-gradient-to-b from-stone-50 to-stone-100">
+  
+  <!-- Header -->
+  <header class="bg-white border-b border-stone-200">
+    <div class="max-w-6xl mx-auto px-6 py-8">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <div class="p-2.5 bg-stone-900 rounded-xl">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
         </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight">
+          Book Cover Selection
+        </h1>
       </div>
+      <p class="text-center text-stone-600 max-w-xl mx-auto">
+        Help us choose the perfect cover design. Your feedback is valuable in making this decision.
+      </p>
+    </div>
+  </header>
 
-      <div class="cover-card" data-cover="Cover 2">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(2).png" class="cover-image">
-        <div class="cover-title">Cover 2</div>
-        <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 2','up')">👍 <span class="count">0</span></button>
-          <button class="vote-btn neutral" onclick="vote('Cover 2','neutral')">👌 <span class="count">0</span></button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 2','down')">👎 <span class="count">0</span></button>
+  <!-- Stats Bar -->
+  <div class="bg-white/50 border-b border-stone-200/50">
+    <div class="max-w-6xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-center gap-8 text-sm">
+        <div class="flex items-center gap-2 text-stone-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span><strong class="text-stone-900" id="totalVoters">0</strong> participants</span>
         </div>
-      </div>
-      <div class="cover-card" data-cover="Cover 3">
-        <img src="https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(3).png" class="cover-image">
-        <div class="cover-title">Cover 3</div>
-        <div class="voting-buttons">
-          <button class="vote-btn thumbs-up" onclick="vote('Cover 3','up')">👍 <span class="count">0</span></button>
-          <button class="vote-btn neutral" onclick="vote('Cover 3','neutral')">👌 <span class="count">0</span></button>
-          <button class="vote-btn thumbs-down" onclick="vote('Cover 3','down')">👎 <span class="count">0</span></button>
+        <div class="flex items-center gap-2 text-stone-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          <span><strong class="text-stone-900" id="totalVotes">0</strong> votes cast</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="notification" id="notification"></div>
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-6 py-12">
+    <!-- Instructions -->
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-10">
+      <h2 class="font-semibold text-amber-900 mb-2">How to Participate</h2>
+      <ul class="text-sm text-amber-800 space-y-1">
+        <li>• Review each book cover design carefully</li>
+        <li>• Click 👍 Like, ➖ Neutral, or 👎 Dislike for each cover</li>
+        <li>• Vote counts are revealed only after you submit your vote</li>
+        <li>• Each person can vote once per cover</li>
+      </ul>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl overflow-hidden">
+        <div class="aspect-[3/4] bg-stone-200 pulse"></div>
+        <div class="p-6 space-y-4">
+          <div class="h-5 bg-stone-200 rounded w-2/3 mx-auto pulse"></div>
+          <div class="h-4 bg-stone-100 rounded w-1/2 mx-auto pulse"></div>
+          <div class="flex gap-2">
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl overflow-hidden">
+        <div class="aspect-[3/4] bg-stone-200 pulse"></div>
+        <div class="p-6 space-y-4">
+          <div class="h-5 bg-stone-200 rounded w-2/3 mx-auto pulse"></div>
+          <div class="h-4 bg-stone-100 rounded w-1/2 mx-auto pulse"></div>
+          <div class="flex gap-2">
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl overflow-hidden">
+        <div class="aspect-[3/4] bg-stone-200 pulse"></div>
+        <div class="p-6 space-y-4">
+          <div class="h-5 bg-stone-200 rounded w-2/3 mx-auto pulse"></div>
+          <div class="h-4 bg-stone-100 rounded w-1/2 mx-auto pulse"></div>
+          <div class="flex gap-2">
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+            <div class="flex-1 h-20 bg-stone-100 rounded-xl pulse"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cover Grid -->
+    <div id="coversGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 hidden"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-stone-200 bg-white/50 mt-auto">
+    <div class="max-w-6xl mx-auto px-6 py-6 text-center">
+      <p class="text-sm text-stone-500">
+        Thank you for participating in this cover selection process.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Notification -->
+  <div id="notification" class="fixed top-6 right-6 z-50 hidden"></div>
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqDRg5Gs-9xUakpqCyv2OD-bfYkU4SJRMjDE3qJolNIjfEvdzwBKv-4n-9UoPoqYhaIw/exec';
     let scriptCounter = 0;
 
+    const BOOK_COVERS = [
+      {
+        id: 'Cover 1',
+        name: 'Cover 1',
+        subtitle: 'Design Option A',
+        image: 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(1).png'
+      },
+      {
+        id: 'Cover 2',
+        name: 'Cover 2',
+        subtitle: 'Design Option B',
+        image: 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(2).png'
+      },
+      {
+        id: 'Cover 3',
+        name: 'Cover 3',
+        subtitle: 'Design Option C',
+        image: 'https://raw.githubusercontent.com/SoLuutions/Clark-Lindley-Suan/refs/heads/main/attached_assets/cover%20(3).png'
+      }
+    ];
+
+    function createCoverCard(cover, index) {
+      const votedCovers = JSON.parse(localStorage.getItem('votedCovers') || '{}');
+      const hasVoted = !!votedCovers[cover.id];
+      const userVote = votedCovers[cover.id];
+
+      return `
+        <div class="card-animate bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-200/60 hover:shadow-lg transition-shadow duration-300" style="animation-delay: ${index * 0.1}s" data-cover="${cover.id}">
+          <div class="relative aspect-[3/4] overflow-hidden bg-stone-100">
+            <img src="${cover.image}" alt="${cover.name}" class="w-full h-full object-cover">
+            ${hasVoted ? '<div class="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm"><span class="text-xs font-medium text-stone-600">Voted ✓</span></div>' : ''}
+          </div>
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-stone-800 mb-1 text-center">${cover.name}</h3>
+            <p class="text-sm text-stone-500 mb-5 text-center">${cover.subtitle}</p>
+            <div class="flex gap-2">
+              <button 
+                onclick="vote('${cover.id}', 'up')" 
+                ${hasVoted ? 'disabled' : ''}
+                class="flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-all duration-200 ${hasVoted ? (userVote === 'up' ? 'bg-emerald-600 text-white' : 'bg-stone-100 text-stone-400') : 'bg-emerald-600 hover:bg-emerald-700 text-white'} ${hasVoted ? 'cursor-default' : 'cursor-pointer hover:scale-105'}"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                </svg>
+                <span class="text-xs font-medium">Like</span>
+                <span class="vote-count text-sm font-bold count-reveal ${hasVoted ? 'revealed' : ''}" data-type="up">0</span>
+              </button>
+              <button 
+                onclick="vote('${cover.id}', 'neutral')" 
+                ${hasVoted ? 'disabled' : ''}
+                class="flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-all duration-200 ${hasVoted ? (userVote === 'neutral' ? 'bg-amber-500 text-white' : 'bg-stone-100 text-stone-400') : 'bg-amber-500 hover:bg-amber-600 text-white'} ${hasVoted ? 'cursor-default' : 'cursor-pointer hover:scale-105'}"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                </svg>
+                <span class="text-xs font-medium">Neutral</span>
+                <span class="vote-count text-sm font-bold count-reveal ${hasVoted ? 'revealed' : ''}" data-type="neutral">0</span>
+              </button>
+              <button 
+                onclick="vote('${cover.id}', 'down')" 
+                ${hasVoted ? 'disabled' : ''}
+                class="flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl transition-all duration-200 ${hasVoted ? (userVote === 'down' ? 'bg-rose-500 text-white' : 'bg-stone-100 text-stone-400') : 'bg-rose-500 hover:bg-rose-600 text-white'} ${hasVoted ? 'cursor-default' : 'cursor-pointer hover:scale-105'}"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"/>
+                </svg>
+                <span class="text-xs font-medium">Dislike</span>
+                <span class="vote-count text-sm font-bold count-reveal ${hasVoted ? 'revealed' : ''}" data-type="down">0</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCovers() {
+      const grid = document.getElementById('coversGrid');
+      grid.innerHTML = BOOK_COVERS.map((cover, index) => createCoverCard(cover, index)).join('');
+      document.getElementById('loadingState').classList.add('hidden');
+      grid.classList.remove('hidden');
+    }
+
+    function getVoterId() {
+      let voterId = localStorage.getItem('voterId');
+      if (!voterId) {
+        voterId = 'voter_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+        localStorage.setItem('voterId', voterId);
+      }
+      return voterId;
+    }
+
     function vote(coverName, voteType) {
       const votedCovers = JSON.parse(localStorage.getItem('votedCovers') || '{}');
 
       if (votedCovers[coverName]) {
-        showNotification('You already voted for this cover!', true);
+        showNotification('You have already voted for this cover.', 'error');
         return;
       }
 
-      const card = document.querySelector(`[data-cover="${coverName}"]`);
-      const btn = card.querySelector(`.${voteType === 'up' ? 'thumbs-up' : voteType === 'neutral' ? 'neutral' : 'thumbs-down'}`);
-      const count = btn.querySelector('.count');
-
-      count.textContent = parseInt(count.textContent) + 1;
-
-      // 🔓 REVEAL COUNTS AFTER VOTE
-      card.querySelectorAll('.count').forEach(c => c.style.visibility = 'visible');
-
-      card.querySelectorAll('.vote-btn').forEach(b => b.disabled = true);
-
-      votedCovers[coverName] = voteType;
-      localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
-
-      showNotification('Vote recorded ✓');
-
+      const voterId = getVoterId();
       const callbackName = 'voteCallback' + (++scriptCounter);
-      window[callbackName] = () => loadVotes();
+      window[callbackName] = () => {
+        votedCovers[coverName] = voteType;
+        localStorage.setItem('votedCovers', JSON.stringify(votedCovers));
+        
+        showNotification('Your vote has been recorded!', 'success');
+        
+        // Re-render the card to show updated state
+        renderCovers();
+        loadVotes();
+      };
 
       const script = document.createElement('script');
-      script.src = `${SCRIPT_URL}?coverName=${encodeURIComponent(coverName)}&voteType=${voteType}&callback=${callbackName}`;
+      script.src = `${SCRIPT_URL}?coverName=${encodeURIComponent(coverName)}&voteType=${voteType}&voterId=${encodeURIComponent(voterId)}&callback=${callbackName}`;
       document.body.appendChild(script);
       setTimeout(() => script.remove(), 5000);
     }
@@ -229,37 +299,84 @@
 
       window[callbackName] = function(votes) {
         const votedCovers = JSON.parse(localStorage.getItem('votedCovers') || '{}');
+        let totalVotes = 0;
+        let uniqueVoters = new Set();
 
         votes.forEach(vote => {
           const card = document.querySelector(`[data-cover="${vote.name}"]`);
           if (!card) return;
 
-          card.querySelector('.thumbs-up .count').textContent = vote.thumbsUp;
-          card.querySelector('.neutral .count').textContent = vote.neutral;
-          card.querySelector('.thumbs-down .count').textContent = vote.thumbsDown;
+          const upCount = card.querySelector('[data-type="up"]');
+          const neutralCount = card.querySelector('[data-type="neutral"]');
+          const downCount = card.querySelector('[data-type="down"]');
+
+          if (upCount) upCount.textContent = vote.thumbsUp || 0;
+          if (neutralCount) neutralCount.textContent = vote.neutral || 0;
+          if (downCount) downCount.textContent = vote.thumbsDown || 0;
+
+          totalVotes += (vote.thumbsUp || 0) + (vote.neutral || 0) + (vote.thumbsDown || 0);
+
+          // Collect unique voters if available
+          if (vote.voters && Array.isArray(vote.voters)) {
+            vote.voters.forEach(v => uniqueVoters.add(v));
+          }
 
           if (votedCovers[vote.name]) {
-            card.querySelectorAll('.count').forEach(c => c.style.visibility = 'visible');
-            card.querySelectorAll('.vote-btn').forEach(b => b.disabled = true);
+            card.querySelectorAll('.vote-count').forEach(c => c.classList.add('revealed'));
           }
         });
+
+        document.getElementById('totalVotes').textContent = totalVotes;
+        // Use unique voters count if available, otherwise estimate
+        const voterCount = uniqueVoters.size > 0 ? uniqueVoters.size : Object.keys(votedCovers).length;
+        document.getElementById('totalVoters').textContent = voterCount || Math.max(1, Math.floor(totalVotes / 3));
       };
 
       const script = document.createElement('script');
       script.src = `${SCRIPT_URL}?callback=${callbackName}`;
       document.body.appendChild(script);
-      setTimeout(() => script.remove(), 2000);
+      setTimeout(() => script.remove(), 5000);
     }
 
-    function showNotification(msg, error = false) {
-      const n = document.getElementById('notification');
-      n.textContent = msg;
-      n.className = 'notification' + (error ? ' error' : '');
-      setTimeout(() => n.classList.add('show'), 10);
-      setTimeout(() => n.classList.remove('show'), 3000);
+    function showNotification(message, type = 'success') {
+      const notification = document.getElementById('notification');
+      const isError = type === 'error';
+      
+      notification.innerHTML = `
+        <div class="flex items-center gap-3 px-5 py-4 rounded-xl shadow-lg backdrop-blur-sm ${isError ? 'bg-rose-50 border border-rose-200 text-rose-800' : 'bg-emerald-50 border border-emerald-200 text-emerald-800'}">
+          ${isError ? 
+            '<svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' :
+            '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+          }
+          <span class="font-medium text-sm">${message}</span>
+          <button onclick="hideNotification()" class="ml-2 p-1 rounded-full hover:bg-black/5 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      `;
+      
+      notification.classList.remove('hidden');
+      notification.classList.add('notification-show');
+      
+      setTimeout(() => hideNotification(), 3000);
     }
 
-    window.addEventListener('load', loadVotes);
+    function hideNotification() {
+      const notification = document.getElementById('notification');
+      notification.classList.remove('notification-show');
+      notification.classList.add('notification-hide');
+      setTimeout(() => {
+        notification.classList.add('hidden');
+        notification.classList.remove('notification-hide');
+      }, 300);
+    }
+
+    window.addEventListener('load', () => {
+      renderCovers();
+      loadVotes();
+    });
   </script>
 </body>
 </html>
