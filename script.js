@@ -151,3 +151,67 @@ navigationLinks.forEach(link => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   });
 });
+
+
+// === SEAMLESS INFINITE SCROLL WITHOUT DUPLICATION ===
+// Add this script to your page
+
+const clientsList = document.querySelector('.clients-list');
+
+// Configuration
+const scrollSpeed = 1; // pixels per frame (adjust for speed)
+let scrollPosition = 0;
+let isHovering = false;
+let animationFrameId = null;
+
+// Pause on hover
+clientsList.addEventListener('mouseenter', () => {
+  isHovering = true;
+});
+
+clientsList.addEventListener('mouseleave', () => {
+  isHovering = false;
+});
+
+// Main animation loop
+function animateScroll() {
+  if (!isHovering) {
+    scrollPosition += scrollSpeed;
+    
+    // Get the scroll width and visible width
+    const maxScroll = clientsList.scrollWidth - clientsList.clientWidth;
+    
+    // Reset when we've scrolled past the end
+    if (scrollPosition >= maxScroll) {
+      scrollPosition = 0;
+    }
+    
+    // Apply the scroll
+    clientsList.scrollLeft = scrollPosition;
+  }
+  
+  // Continue the animation
+  animationFrameId = requestAnimationFrame(animateScroll);
+}
+
+// Start the animation
+animateScroll();
+
+// Optional: Stop animation when user manually scrolls
+let userScrollTimeout;
+clientsList.addEventListener('scroll', (e) => {
+  // Detect if user initiated the scroll (not our animation)
+  if (Math.abs(clientsList.scrollLeft - scrollPosition) > 2) {
+    // User is manually scrolling
+    cancelAnimationFrame(animationFrameId);
+    
+    // Update our position to match user's scroll
+    scrollPosition = clientsList.scrollLeft;
+    
+    // Resume auto-scroll after user stops
+    clearTimeout(userScrollTimeout);
+    userScrollTimeout = setTimeout(() => {
+      animateScroll();
+    }, 2000); // Resume after 2 seconds of no user interaction
+  }
+});
