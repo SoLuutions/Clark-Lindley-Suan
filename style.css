@@ -1499,3 +1499,60 @@ textarea.form-input {
     object-fit: contain;
     display: block;
 }
+/* === CLIENT LOGO NORMALIZATION === */
+
+.clients-list {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.clients-item {
+    min-width: 170px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clients-item a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Base logo behavior */
+.clients-item img {
+    max-width: 140px;
+    max-height: 60px;
+    object-fit: contain;
+    display: block;
+}
+
+/* === DEAD THREADS FIX (SVG visibility) === */
+.clients-item a[href*="deadthreads"] img {
+    filter: invert(1);
+}
+
+/* === LUCCI MONTE FIX (contrast + background) === */
+.clients-item a[href*="luccimonte"] {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 8px 14px;
+}
+
+.clients-item a[href*="luccimonte"] img {
+    max-height: 50px;
+}
+
+/* Optional: subtle hover polish */
+.clients-item a {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.clients-item a:hover {
+    transform: scale(1.05);
+    opacity: 1;
+}
