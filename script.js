@@ -153,65 +153,60 @@ navigationLinks.forEach(link => {
 });
 
 
-// === SEAMLESS INFINITE SCROLL WITHOUT DUPLICATION ===
-// Add this script to your page
-
+// === SEAMLESS INFINITE SCROLL WITH DUPLICATION ===
 const clientsList = document.querySelector('.clients-list');
 
-// Configuration
-const scrollSpeed = 1; // pixels per frame (adjust for speed)
-let scrollPosition = 0;
-let isHovering = false;
-let animationFrameId = null;
+if (clientsList) {
+  // Clone all items and append them for seamless loop
+  const items = Array.from(clientsList.children);
+  items.forEach(item => {
+    const clone = item.cloneNode(true);
+    clientsList.appendChild(clone);
+  });
 
-// Pause on hover
-clientsList.addEventListener('mouseenter', () => {
-  isHovering = true;
-});
+  // Configuration
+  const scrollSpeed = 0.5; // pixels per frame (lower = smoother)
+  let scrollPosition = 0;
+  let isHovering = false;
+  let animationFrameId = null;
 
-clientsList.addEventListener('mouseleave', () => {
-  isHovering = false;
-});
+  // Pause on hover
+  clientsList.addEventListener('mouseenter', () => {
+    isHovering = true;
+  });
 
-// Main animation loop
-function animateScroll() {
-  if (!isHovering) {
-    scrollPosition += scrollSpeed;
-    
-    // Get the scroll width and visible width
-    const maxScroll = clientsList.scrollWidth - clientsList.clientWidth;
-    
-    // Reset when we've scrolled past the end
-    if (scrollPosition >= maxScroll) {
-      scrollPosition = 0;
+  clientsList.addEventListener('mouseleave', () => {
+    isHovering = false;
+  });
+
+  // Main animation loop
+  function animateScroll() {
+    if (!isHovering) {
+      scrollPosition += scrollSpeed;
+      
+      // Get the original content width (half of total since we duplicated)
+      const originalWidth = clientsList.scrollWidth / 2;
+      
+      // Reset seamlessly when we've scrolled through original content
+      if (scrollPosition >= originalWidth) {
+        scrollPosition = 0;
+      }
+      
+      // Apply the scroll using transform for smoother animation
+      clientsList.style.transform = `translateX(-${scrollPosition}px)`;
     }
     
-    // Apply the scroll
-    clientsList.scrollLeft = scrollPosition;
+    // Continue the animation
+    animationFrameId = requestAnimationFrame(animateScroll);
   }
-  
-  // Continue the animation
-  animationFrameId = requestAnimationFrame(animateScroll);
+
+  // Start the animation
+  animateScroll();
+
+  // Optional: Pause when user hovers over individual items
+  const allItems = clientsList.querySelectorAll('.clients-item');
+  allItems.forEach(item => {
+    item.addEventListener('mouseenter', () => isHovering = true);
+    item.addEventListener('mouseleave', () => isHovering = false);
+  });
 }
-
-// Start the animation
-animateScroll();
-
-// Optional: Stop animation when user manually scrolls
-let userScrollTimeout;
-clientsList.addEventListener('scroll', (e) => {
-  // Detect if user initiated the scroll (not our animation)
-  if (Math.abs(clientsList.scrollLeft - scrollPosition) > 2) {
-    // User is manually scrolling
-    cancelAnimationFrame(animationFrameId);
-    
-    // Update our position to match user's scroll
-    scrollPosition = clientsList.scrollLeft;
-    
-    // Resume auto-scroll after user stops
-    clearTimeout(userScrollTimeout);
-    userScrollTimeout = setTimeout(() => {
-      animateScroll();
-    }, 2000); // Resume after 2 seconds of no user interaction
-  }
-});
