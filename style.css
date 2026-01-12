@@ -1532,3 +1532,14 @@ textarea.form-input {
 .clients-item a:hover {
     transform: scale(1.04);
 }
+
+/* === HAPPY BARGAIN BIN — REDUCE EMPTY SPACE === */
+.clients-item a[href*="happybargainbin"] {
+    min-width: 110px;
+}
+
+.clients-item a[href*="happybargainbin"] img {
+    max-width: 120px;
+    max-height: 60px;
+}
+
