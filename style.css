@@ -1475,3 +1475,27 @@ textarea.form-input {
     display: block;
     margin: 0 auto;
 }
+
+/* Clients logo alignment fix */
+.clients-list {
+    display: flex;
+    align-items: center;
+    gap: 32px; /* consistent spacing */
+}
+
+.clients-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px;   /* keeps spacing consistent */
+    height: 80px;       /* uniform row height */
+}
+
+.clients-item img {
+    max-width: 140px;
+    max-height: 60px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
