@@ -122,6 +122,46 @@ modalCloseBtn?.addEventListener('click', testimonialsModalToggle);
 overlay?.addEventListener('click', testimonialsModalToggle);
 
 /* =====================
+   Blog modal
+===================== */
+const blogItems = document.querySelectorAll('[data-blog-item]');
+const blogModalContainer = document.querySelector('[data-blog-modal-container]');
+const blogModalCloseBtn = document.querySelector('[data-blog-modal-close-btn]');
+const blogOverlay = document.querySelector('[data-blog-overlay]');
+
+const blogModalCategory = document.querySelector('[data-blog-modal-category]');
+const blogModalDate = document.querySelector('[data-blog-modal-date]');
+const blogModalTitle = document.querySelector('[data-blog-modal-title]');
+const blogModalText = document.querySelector('[data-blog-modal-text]');
+
+function blogModalToggle() {
+  blogModalContainer?.classList.toggle('active');
+  blogOverlay?.classList.toggle('active');
+}
+
+blogItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const category = item.querySelector('[data-blog-category]');
+    const date = item.querySelector('[data-blog-date]');
+    const title = item.querySelector('[data-blog-title]');
+    const content = item.querySelector('[data-blog-content]');
+
+    if (blogModalCategory && category) blogModalCategory.innerText = category.innerText;
+    if (blogModalDate && date) {
+      blogModalDate.innerText = date.innerText;
+      blogModalDate.setAttribute('datetime', date.getAttribute('datetime'));
+    }
+    if (blogModalTitle && title) blogModalTitle.innerText = title.innerText;
+    if (blogModalText && content) blogModalText.innerHTML = content.innerHTML;
+
+    blogModalToggle();
+  });
+});
+
+blogModalCloseBtn?.addEventListener('click', blogModalToggle);
+blogOverlay?.addEventListener('click', blogModalToggle);
+
+/* =====================
    Contact form validation
 ===================== */
 const formInputs = document.querySelectorAll('[data-form-input]');
