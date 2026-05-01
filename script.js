@@ -211,8 +211,10 @@ if (form) {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      // Using Formspree (placeholder endpoint - user should replace with their real ID)
-      const response = await fetch('https://formspree.io/f/clarklindleysuan@gmail.com', {
+      // Live Formspree ID
+      const FORMSPREE_ID = 'xrejbpno'; 
+      
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(data)
