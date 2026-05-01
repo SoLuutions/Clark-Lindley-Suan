@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://clark-lindley-suan.vercel.app/sitemap.xml
+Sitemap: https://clarklindleysuan.com/sitemap.xml
