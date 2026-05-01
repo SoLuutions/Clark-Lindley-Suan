@@ -190,3 +190,54 @@ navigationLinks.forEach(link => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   });
 });
+
+/* =====================
+   Contact form submission
+===================== */
+const form = document.querySelector('[data-form]');
+const toast = document.querySelector('[data-toast]');
+
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Start loading state
+    if (formBtn) {
+      formBtn.classList.add('loading');
+      formBtn.disabled = true;
+    }
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      // Using Formspree (placeholder endpoint - user should replace with their real ID)
+      const response = await fetch('https://formspree.io/f/clarklindleysuan@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        // Show success notification
+        if (toast) {
+          toast.classList.add('active');
+          setTimeout(() => toast.classList.remove('active'), 5000);
+        }
+        form.reset();
+        validateForm();
+      } else {
+        alert('Oops! There was a problem submitting your form. Please try again.');
+      }
+    } catch (error) {
+      alert('Oops! There was a problem submitting your form. Please try again.');
+    } finally {
+      // End loading state
+      if (formBtn) {
+        formBtn.classList.remove('loading');
+        validateForm();
+      }
+    }
+  });
+}
+
