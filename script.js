@@ -14,8 +14,7 @@ if (sidebar && sidebarBtn) {
 ===================== */
 const select = document.querySelector('[data-select]');
 const selectValue = document.querySelector('[data-select-value]');
-const selectList = select ? select.querySelector('.select-list') : null;
-const selectItems = select ? select.querySelectorAll('[data-select-item]') : [];
+const selectItems = document.querySelectorAll('[data-select-item]');
 const filterButtons = document.querySelectorAll('[data-filter-btn]');
 const filterItems = document.querySelectorAll('[data-filter-item]');
 
@@ -39,7 +38,7 @@ function applyFilter(value) {
 }
 
 /** Wire up custom select */
-if (select && selectValue && selectList) {
+if (select && selectValue) {
   // Toggle open/close
   select.addEventListener('click', () => {
     select.classList.toggle('active');
