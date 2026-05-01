@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    text { 
+      fill: #1a1a1a; 
+      font-family: 'Poppins', sans-serif; 
+      font-weight: 600; 
+    }
+    @media (prefers-color-scheme: dark) {
+      text { fill: #ffffff; }
+    }
+  </style>
+  <text x="50%" y="55%" dominant-baseline="central" text-anchor="middle" font-size="24">C</text>
+</svg>
