@@ -200,7 +200,7 @@ const toast = document.querySelector('[data-toast]');
 if (form) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     // Start loading state
     if (formBtn) {
       formBtn.classList.add('loading');
@@ -210,31 +210,44 @@ if (form) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
+    // Web3Forms expects 'name', not 'fullname'
+    if (data.fullname) {
+      data.name = data.fullname;
+      delete data.fullname;
+    }
+
     try {
-      // Live Formspree ID
-      const FORMSPREE_ID = 'xrejbpno'; 
-      
-      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(data)
       });
 
-      if (response.ok) {
-        // Show success notification
+      const json = await response.json();
+
+      if (response.ok && json.success) {
+        // Show success toast
         if (toast) {
+          toast.querySelector('span').textContent = 'Message sent successfully!';
           toast.classList.add('active');
           setTimeout(() => toast.classList.remove('active'), 5000);
         }
         form.reset();
         validateForm();
       } else {
-        alert('Oops! There was a problem submitting your form. Please try again.');
+        if (toast) {
+          toast.querySelector('span').textContent = json.message || 'Something went wrong. Please try again.';
+          toast.classList.add('active');
+          setTimeout(() => toast.classList.remove('active'), 5000);
+        }
       }
     } catch (error) {
-      alert('Oops! There was a problem submitting your form. Please try again.');
+      if (toast) {
+        toast.querySelector('span').textContent = 'Network error. Please check your connection.';
+        toast.classList.add('active');
+        setTimeout(() => toast.classList.remove('active'), 5000);
+      }
     } finally {
-      // End loading state
       if (formBtn) {
         formBtn.classList.remove('loading');
         validateForm();
