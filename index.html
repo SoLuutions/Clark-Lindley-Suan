@@ -82,7 +82,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">
     <link rel="preload" as="image" href="prfl_img.webp" fetchpriority="high">
-    <link rel="preload" as="style" href="style.css">
+    <link rel="preload" as="style" href="style.css?v=2">
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap"
         rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -90,7 +90,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&display=swap">
     </noscript>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
     <!-- Vercel Speed Insights -->
@@ -940,45 +940,17 @@
                     </figure>
                 </section>
 
-                <section class="cta-banner">
-                    <h3 class="h3 cta-banner-title">Ready to build, automate, or scale?</h3>
-                    <p class="cta-banner-text">Book a free 30-minute call and we'll map out exactly what your store or
-                        workflow needs — no pressure, no jargon.</p>
-                    <a href="https://calendly.com/clarklindleysuan/30min" target="_blank" rel="noopener"
-                        class="cta-btn">
-                        <ion-icon name="calendar-outline"></ion-icon>
-                        <span>Book a Free 30-min Call</span>
-                    </a>
-                </section>
-
-                <section class="contact-form">
-                    <h3 class="h3 form-title">Contact Form</h3>
-                    <form action="https://api.web3forms.com/submit" class="form" data-form>
-                        <input type="hidden" name="access_key" value="28c4ff76-b7a3-4062-beea-72f017238eb5">
-                        <div class="input-wrapper">
-                            <input type="text" name="fullname" class="form-input" placeholder="Full name" required
-                                data-form-input>
-                            <input type="email" name="email" class="form-input" placeholder="Email Address" required
-                                data-form-input>
-                        </div>
-                        <textarea name="message" class="form-input" placeholder="Your Message" required
-                            data-form-input></textarea>
-                        <button class="form-btn" type="submit" disabled data-form-btn>
-                            <ion-icon name="paper-plane"></ion-icon>
-                            <span>Send Message</span>
-                        </button>
-                    </form>
+                <section class="calendly-embed">
+                    <div class="calendly-inline-widget"
+                        data-url="https://calendly.com/clarklindleysuan/30min?hide_gdpr_banner=1&background_color=1e1e1f&text_color=fafafa&primary_color=ffdb70"
+                        style="min-width:320px;height:700px;"></div>
                 </section>
             </article>
         </div>
     </main>
 
-    <div class="toast" data-toast>
-        <ion-icon name="checkmark-circle-outline"></ion-icon>
-        <span>Message sent successfully!</span>
-    </div>
-
     <script src="script.js"></script>
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
