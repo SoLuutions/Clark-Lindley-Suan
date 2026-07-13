@@ -62,3 +62,143 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ===== CTA button (Calendly) ===== */
+.cta-btn {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  background: var(--text-gradient-yellow);
+  color: var(--smoky-black);
+  font-size: var(--fs6);
+  font-weight: var(--fw600);
+  padding: 13px 24px;
+  border-radius: 14px;
+  box-shadow: var(--shadow2);
+  transition: var(--transition1);
+}
+
+.cta-btn:hover,
+.cta-btn:focus {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow3);
+  filter: brightness(1.06);
+}
+
+.cta-btn ion-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.sidebar-cta {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Sidebar grows to fit the CTA when expanded on mobile/tablet */
+.sidebar.active { max-height: 480px; }
+
+@media (min-width: 580px) {
+  .sidebar.active { max-height: 660px; }
+}
+
+/* ===== CTA banner (end of About) ===== */
+.cta-banner {
+  position: relative;
+  background: var(--border-gradient-onyx);
+  border-radius: 14px;
+  box-shadow: var(--shadow2);
+  padding: 30px 20px;
+  text-align: center;
+  z-index: 1;
+  margin-bottom: 15px;
+}
+
+.cta-banner::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  background: var(--bg-gradient-jet);
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.cta-banner-title {
+  margin-bottom: 10px;
+}
+
+.cta-banner-text {
+  color: var(--light-gray);
+  font-size: var(--fs6);
+  font-weight: var(--fw300);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 20px;
+}
+
+.cta-banner .cta-btn {
+  margin: 0 auto;
+}
+
+@media (min-width: 580px) {
+  .cta-banner { padding: 40px 30px; }
+}
+
+/* ===== Video intro placeholder ===== */
+.video-intro {
+  margin-bottom: 35px;
+}
+
+.video-intro-title {
+  margin-bottom: 20px;
+}
+
+.video-placeholder {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--jet);
+  border-radius: 16px;
+  background: var(--bg-gradient-jet);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.video-play-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--text-gradient-yellow);
+  color: var(--smoky-black);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  box-shadow: var(--shadow2);
+}
+
+.video-play-icon ion-icon {
+  margin-left: 3px;
+}
+
+.video-placeholder-text {
+  color: var(--white2);
+  font-size: var(--fs5);
+  font-weight: var(--fw500);
+}
+
+.video-placeholder-subtext {
+  color: var(--light-gray70);
+  font-size: var(--fs7);
+  font-weight: var(--fw300);
+  max-width: 420px;
+  line-height: 1.5;
+}
