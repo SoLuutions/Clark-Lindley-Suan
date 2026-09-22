@@ -131,7 +131,7 @@ section{padding:var(--section) 0;position:relative}
 .set{display:flex;align-items:center;flex:0 0 auto}
 @keyframes marquee{to{transform:translateX(-50%)}}
 .ticker{background:var(--navy);color:var(--cream);border-top:var(--bw) solid var(--ink);border-bottom:var(--bw) solid var(--ink);padding:13px 0}
-.ticker .track{animation-duration:28s}
+.ticker .track{animation-duration:52s}
 .ticker li{font-family:var(--mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;padding:0 24px;display:flex;align-items:center;gap:24px;white-space:nowrap}
 .ticker li::after{content:"★";color:var(--orange);font-size:14px}
 .logos{padding:40px 0 10px}
@@ -301,7 +301,10 @@ section{padding:var(--section) 0;position:relative}
 .contact .ways{display:grid;gap:14px;margin-top:30px}
 .contact .ways a{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border:var(--bw) solid var(--cream);border-radius:var(--r);background:var(--navy);color:var(--cream);font-size:15px;font-weight:500;box-shadow:4px 4px 0 var(--teal);transition:transform .15s,box-shadow .15s;overflow:hidden}
 .contact .ways a:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--teal)}
-.contact .ways a span{font-family:var(--mono);font-size:11px;color:var(--orange);letter-spacing:.1em;text-transform:uppercase;flex:0 0 auto}
+.contact .ways a .lab{font-family:var(--mono);font-size:11px;color:var(--orange);letter-spacing:.1em;text-transform:uppercase;flex:0 0 auto}
+.contact .ways a .l{display:flex;align-items:center;gap:12px;min-width:0}
+.contact .ways a .l span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.contact .ways .ic{width:22px;height:22px;flex:0 0 auto;color:var(--orange);stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .cal{border:var(--bw) solid var(--ink);border-radius:var(--r-lg);background:var(--paper);color:var(--ink);box-shadow:10px 10px 0 var(--orange);overflow:hidden}
 .cal .calendly-inline-widget{min-width:300px;height:720px}
 @media(max-width:900px){.contact .wrap{grid-template-columns:1fr}}
