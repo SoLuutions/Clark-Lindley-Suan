@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /archive/
+Disallow: /design/
 
 Sitemap: https://clarklindleysuan.com/sitemap.xml

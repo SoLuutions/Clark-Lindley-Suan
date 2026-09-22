@@ -1,62 +1,24 @@
-# Clark Lindley Suan - Portfolio Website
+# Clark Lindley Suan — Portfolio Website
 
 ## Overview
-A professional portfolio website showcasing Clark Lindley Suan's work as a Full-Stack Web Developer & Digital Solutions Specialist. The site features a modern dark theme design with interactive elements and responsive layout.
-
-## Project Architecture
-- **Type**: Static website (HTML, CSS, JavaScript)
-- **Hosting**: Python HTTP Server on port 5000
-- **Deployment**: Configured for autoscale deployment on Replit
+Personal site for Clark Lindley Suan, AI Automation & Growth Systems Manager / full-stack developer. Redesigned September 2026 as a single long-scroll sales page (retro palette: navy, teal, cream, orange, rust; Fraunces + Work Sans + DM Mono). Hosted on Vercel with clean URLs.
 
 ## Structure
-- `index.html` - Main portfolio page with all sections
-- `style.css` - Complete styling and responsive design
-- `script.js` - Interactive functionality and navigation
-- `prfl_img.png` - Profile image
-- `prfl_img_gry.png` - Grayscale profile variant
+- `index.html`, `style.css`, `script.js` — the live homepage
+- `resume.html` + `Clark_Lindley_Suan_Resume.pdf` — résumé page (`/resume`) and its PDF export (generated from the HTML with headless Chromium `--print-to-pdf`)
+- `assets/shots/` — real screenshots of project pages (WebP, 1200×750)
+- `assets/logos/` — client logos normalised to single-colour PNGs (`navy/` set is what the site uses)
+- `projects/`, `blog-*.html`, `dannelson.html`, `dr.zrinka.html` — project and article pages (unchanged in the redesign)
+- `design/` — redesign mockups (`mockup-v1.html` dark editorial, `mockup-v2.html` retro, plus screenshots). Not linked from the site; blocked in `robots.txt`.
+- `archive/vcard-site/` — the previous dark "vCard" template site, kept for rollback. See `archive/README.md`.
 
-## Features
-- **Sections**: About, Resume, Portfolio, Blog, Contact
-- **Portfolio Categories**: 
-  - E-Commerce (3 projects)
-  - Learning Platforms (2 projects) 
-  - Web Development (3 projects)
-  - **AI/Automation (3 projects)** - NEW!
-- **Interactive Elements**: 
-  - Modal testimonials
-  - Portfolio filtering with 4 categories
-  - Mobile navigation
-  - Contact form validation
-- **Professional Content**:
-  - Service offerings
-  - Client testimonials  
-  - **11 total portfolio projects** showcasing full-stack and AI capabilities
-  - Skills showcase
-  - Work experience timeline
-- **AI/Automation Showcase**:
-  - Cold Call Dashboard with advanced features
-  - Garden Quote AI System
-  - Comprehensive AI automation demo platform
+## Homepage sections
+Nav → hero → skills ticker → client logo marquee → outcome stats → 4 featured case studies (Snac Fresh, Dead Threads, Garden Quote voice AI, job-fit classifier) → filterable project grid → services → process → testimonials → about + résumé links → writing → contact (Calendly inline) → footer. Mobile gets a hamburger menu and a sticky "Book a call" bar.
 
-## Setup Status
-- ✅ Static server running on port 5000
-- ✅ All assets and files accessible
-- ✅ Responsive design working
-- ✅ Interactive features functional
-- ✅ Deployment configuration complete
+## Behaviour (`script.js`)
+Scroll-reveal with stagger, count-up numbers, sticky nav state, mobile menu, soft parallax on case-study screenshots, project filters. Add `?static` to the URL to disable all motion (used for screenshot checks); `prefers-reduced-motion` is respected.
 
-## Recent Changes
-- **September 2025**: Added AI/Automation portfolio section as 4th category
-- **Enhanced Cold Call Dashboard**: Auto-end calls feature, expanded to 18 customers, manual customer addition
-- **Created AI Automation Showcase**: 6 interactive demos covering content generation, data processing, image analysis, workflow automation, chatbot, and business intelligence
-- **Portfolio Structure**: Now contains 4 categories (E-Commerce, Learning Platforms, Web Development, AI/Automation) with 11 total projects
-- **Generated Custom Images**: AI-themed project mockups for visual consistency
-- Configured Python HTTP server workflow
-- Set up deployment for production
-- All functionality tested and verified working
-
-## User Preferences
-- Professional portfolio presentation
-- Clean, modern design aesthetic
-- Fully responsive across devices
-- Interactive user experience
+## Regenerating the résumé PDF
+```
+chromium --headless=new --no-sandbox --no-pdf-header-footer --print-to-pdf=Clark_Lindley_Suan_Resume.pdf "file://$PWD/resume.html"
+```
