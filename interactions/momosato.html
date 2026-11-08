@@ -1,0 +1,1121 @@
+<!doctype html>
+<!--
+  桃里 (Momosato) — Peach Shop (Concept Study)
+  Single-canvas procedural pixel-rendered Japanese peach shop hero.
+-->
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#efe5d3">
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="桃里 (Momosato) — 旬の白桃・黄桃. Interactive procedural peach shop hero study.">
+  <title>桃里 (Momosato) — ピーチショップ</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <meta property="og:title" content="桃里 (Momosato): Peach Shop">
+  <meta property="og:description" content="Interactive procedural pixel-dithered peach shop hero with depth-of-field and jelly spring physics.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://clarklindleysuan.com/interactions/posters/momosato.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&text=%E6%A1%83%E9%87%8C%E3%83%94%E3%83%BC%E3%83%81%E3%82%B7%E3%83%A7%E3%83%83%E3%83%97%E6%97%AC%E3%81%AE%E7%99%BD%E6%A1%83%E3%83%BB%E9%BB%84%E6%A1%83&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #efe5d3;
+      --glow: #f6efe2;
+      --crimson: #b8132e;
+      --edge-inset: clamp(18px, 3.2vw, 48px);
+      --font-jp: 'Shippori Mincho B1', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--crimson);
+      font-family: var(--font-jp);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      overflow: hidden;
+      background-color: var(--bg);
+      background-image: radial-gradient(
+        70% 60% at 50% 42%,
+        var(--glow) 0%,
+        rgba(246, 239, 226, 0) 75%
+      );
+    }
+
+    #peach-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+      outline: none;
+      touch-action: manipulation;
+    }
+
+    #peach-canvas.over-peach {
+      cursor: pointer;
+    }
+
+    #peach-canvas:focus-visible {
+      box-shadow: inset 0 0 0 2px rgba(184, 19, 46, 0.35);
+    }
+
+    /* Paper grain overlay (200px noise tile in JS, multiply at 0.28) */
+    .paper-grain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      mix-blend-mode: multiply;
+      opacity: 0.28;
+      background-repeat: repeat;
+    }
+
+    /* Side Japanese vertical typography columns */
+    .side-col {
+      position: absolute;
+      top: var(--edge-inset);
+      bottom: var(--edge-inset);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .side-col--left {
+      left: var(--edge-inset);
+    }
+
+    .side-col--right {
+      right: var(--edge-inset);
+    }
+
+    .jp-top-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .jp-vertical {
+      margin: 0;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      color: var(--crimson);
+      text-shadow:
+        0 0 18px var(--glow),
+        0 0 36px var(--glow),
+        0 0 6px var(--glow);
+      line-height: 1;
+    }
+
+    .jp-big {
+      font-weight: 800;
+      font-size: clamp(64px, 10.5vh, 150px);
+      letter-spacing: 0.06em;
+    }
+
+    .jp-mid {
+      font-weight: 800;
+      font-size: clamp(30px, 5.4vh, 72px);
+      letter-spacing: 0.08em;
+    }
+
+    .jp-small {
+      font-weight: 600;
+      font-size: clamp(13px, 1.7vh, 18px);
+      letter-spacing: 0.5em;
+    }
+
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(-60px);
+      animation: char-drop 0.9s cubic-bezier(.25, 1.6, .45, 1) var(--char-delay, 0.25s) forwards;
+    }
+
+    @keyframes char-drop {
+      from {
+        opacity: 0;
+        transform: translateY(-60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hanko {
+      width: clamp(38px, 5vh, 56px);
+      height: clamp(38px, 5vh, 56px);
+      border-radius: 9px;
+      background: var(--crimson);
+      color: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: clamp(22px, 3vh, 34px);
+      line-height: 1;
+      box-shadow: 0 0 14px var(--glow);
+      opacity: 0;
+      transform: translateY(-40px) scale(1.22) rotate(-12deg);
+      animation: hanko-land 0.7s cubic-bezier(.25, 1.6, .45, 1) 0.65s forwards;
+    }
+
+    @keyframes hanko-land {
+      0% {
+        opacity: 0;
+        transform: translateY(-40px) scale(1.22) rotate(-12deg);
+      }
+      70% {
+        opacity: 1;
+        transform: translateY(2px) scale(0.96) rotate(-2deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(-3deg);
+      }
+    }
+
+    @media (max-width: 699px) {
+      .jp-big {
+        font-size: clamp(44px, 13vw, 64px);
+      }
+      .jp-mid {
+        font-size: clamp(22px, 6.6vw, 30px);
+      }
+      .jp-small {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .char {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      .hanko {
+        opacity: 1 !important;
+        transform: rotate(-3deg) !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="hero">
+    <canvas
+      id="peach-canvas"
+      tabindex="0"
+      role="application"
+      aria-label="桃里 (Momosato) ピーチショップ — Interactive table of fresh white and yellow peaches. Hover or tap a peach to make it hop, or use arrow keys to select a peach and press Space or Enter to bounce it."
+    ></canvas>
+
+    <div class="side-col side-col--left">
+      <div class="jp-top-group">
+        <h1 class="jp-vertical jp-big" data-split aria-label="桃里 (Momosato)">桃里</h1>
+        <p class="jp-vertical jp-small" data-split aria-label="旬の白桃">旬の白桃</p>
+      </div>
+      <div class="hanko" aria-hidden="true">桃</div>
+    </div>
+
+    <div class="side-col side-col--right" aria-hidden="true">
+      <p class="jp-vertical jp-mid" data-split>ピーチショップ</p>
+      <p class="jp-vertical jp-small" data-split>白桃・黄桃</p>
+    </div>
+
+    <div class="paper-grain" id="paper-grain" aria-hidden="true"></div>
+  </main>
+
+  <script>
+    // Split Japanese vertical lines into single-character staggered spans
+    (function setupTypeEntrance() {
+      const lines = document.querySelectorAll('[data-split]');
+      let charIndex = 0;
+      lines.forEach((el) => {
+        const text = el.textContent.trim();
+        el.textContent = '';
+        for (const ch of text) {
+          const span = document.createElement('span');
+          span.className = 'char';
+          span.textContent = ch;
+          span.setAttribute('aria-hidden', 'true');
+          span.style.setProperty('--char-delay', `${(0.25 + charIndex * 0.08).toFixed(2)}s`);
+          el.appendChild(span);
+          charIndex++;
+        }
+      });
+    })();
+
+    // Generate 200px warm paper grain tile in JS
+    (function buildPaperGrain() {
+      const size = 200;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const gctx = c.getContext('2d');
+      const img = gctx.createImageData(size, size);
+      const d = img.data;
+      let seed = 482719;
+      const rand = () => {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+      for (let i = 0; i < d.length; i += 4) {
+        if (rand() < 0.38) {
+          const g = 170 + rand() * 85;
+          d[i]     = Math.min(255, Math.round(g * 1.0));
+          d[i + 1] = Math.min(255, Math.round(g * 0.94));
+          d[i + 2] = Math.min(255, Math.round(g * 0.86));
+          d[i + 3] = 255;
+        }
+      }
+      gctx.putImageData(img, 0, 0);
+      document.getElementById('paper-grain').style.backgroundImage = `url(${c.toDataURL('image/png')})`;
+    })();
+
+    const canvas = document.getElementById('peach-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reducedMotion = reducedMotionQuery.matches;
+
+    // Exact colour ramp and lobe constants from the spec
+    const RAMP = [
+      [0.00, [160, 8, 24]],
+      [0.20, [212, 42, 60]],
+      [0.40, [235, 96, 108]],
+      [0.60, [246, 150, 150]],
+      [0.78, [250, 196, 172]],
+      [0.90, [252, 228, 178]],
+      [1.00, [254, 242, 198]]
+    ];
+
+    const VARIETIES = [
+      { hx: 0.26, hy: 0.46, spread: 0.26, glow: 0.32, bias: 0.00 },
+      { hx: 0.14, hy: 0.52, spread: 0.22, glow: 0.28, bias: -0.04 },
+      { hx: 0.32, hy: 0.40, spread: 0.32, glow: 0.36, bias: 0.03 }
+    ];
+
+    const FL = { cx: 0.2, cy: 0.06, rx: 0.8, ry: 0.92, rot: 0.32 };
+    const BL = { cx: -0.1, cy: -0.1, r: 0.87 };
+    const COS_FL = Math.cos(FL.rot);
+    const SIN_FL = Math.sin(FL.rot);
+
+    function clamp(v, lo, hi) {
+      return v < lo ? lo : v > hi ? hi : v;
+    }
+
+    // smooth(a, b, v): smoothstep from a to b (works with a > b too)
+    function smooth(a, b, v) {
+      const t = clamp((v - a) / (b - a), 0, 1);
+      return t * t * (3 - 2 * t);
+    }
+
+    function ramp(t) {
+      const c = clamp(t, 0, 1);
+      for (let i = 0; i < RAMP.length - 1; i++) {
+        const [t0, rgb0] = RAMP[i];
+        const [t1, rgb1] = RAMP[i + 1];
+        if (c <= t1) {
+          const u = (c - t0) / (t1 - t0 || 1);
+          return [
+            rgb0[0] + (rgb1[0] - rgb0[0]) * u,
+            rgb0[1] + (rgb1[1] - rgb0[1]) * u,
+            rgb0[2] + (rgb1[2] - rgb0[2]) * u
+          ];
+        }
+      }
+      return RAMP[RAMP.length - 1][1];
+    }
+
+    // Hand-written 3-pass separable box blur on premultiplied RGBA (no ctx.filter)
+    function boxBlurPremultipliedRGBA(data, width, height, radius) {
+      const r = Math.max(0, Math.round(radius));
+      if (r < 1) return;
+
+      const len = width * height * 4;
+      const pm = new Float32Array(len);
+      const tmp = new Float32Array(len);
+
+      // Premultiply RGB by alpha
+      for (let i = 0; i < len; i += 4) {
+        const a = data[i + 3] / 255;
+        pm[i]     = data[i] * a;
+        pm[i + 1] = data[i + 1] * a;
+        pm[i + 2] = data[i + 2] * a;
+        pm[i + 3] = data[i + 3];
+      }
+
+      const win = 2 * r + 1;
+      const invWin = 1 / win;
+
+      for (let pass = 0; pass < 3; pass++) {
+        // Horizontal pass: pm -> tmp
+        for (let y = 0; y < height; y++) {
+          const rowOff = y * width * 4;
+          let sr = 0, sg = 0, sb = 0, sa = 0;
+          for (let k = -r; k <= r; k++) {
+            const x = clamp(k, 0, width - 1);
+            const idx = rowOff + x * 4;
+            sr += pm[idx];
+            sg += pm[idx + 1];
+            sb += pm[idx + 2];
+            sa += pm[idx + 3];
+          }
+          for (let x = 0; x < width; x++) {
+            const outIdx = rowOff + x * 4;
+            tmp[outIdx]     = sr * invWin;
+            tmp[outIdx + 1] = sg * invWin;
+            tmp[outIdx + 2] = sb * invWin;
+            tmp[outIdx + 3] = sa * invWin;
+
+            const xOut = clamp(x - r, 0, width - 1);
+            const xIn  = clamp(x + r + 1, 0, width - 1);
+            const iOut = rowOff + xOut * 4;
+            const iIn  = rowOff + xIn * 4;
+            sr += pm[iIn]     - pm[iOut];
+            sg += pm[iIn + 1] - pm[iOut + 1];
+            sb += pm[iIn + 2] - pm[iOut + 2];
+            sa += pm[iIn + 3] - pm[iOut + 3];
+          }
+        }
+
+        // Vertical pass: tmp -> pm
+        for (let x = 0; x < width; x++) {
+          const colOff = x * 4;
+          let sr = 0, sg = 0, sb = 0, sa = 0;
+          for (let k = -r; k <= r; k++) {
+            const y = clamp(k, 0, height - 1);
+            const idx = y * width * 4 + colOff;
+            sr += tmp[idx];
+            sg += tmp[idx + 1];
+            sb += tmp[idx + 2];
+            sa += tmp[idx + 3];
+          }
+          for (let y = 0; y < height; y++) {
+            const outIdx = y * width * 4 + colOff;
+            pm[outIdx]     = sr * invWin;
+            pm[outIdx + 1] = sg * invWin;
+            pm[outIdx + 2] = sb * invWin;
+            pm[outIdx + 3] = sa * invWin;
+
+            const yOut = clamp(y - r, 0, height - 1);
+            const yIn  = clamp(y + r + 1, 0, height - 1);
+            const iOut = yOut * width * 4 + colOff;
+            const iIn  = yIn * width * 4 + colOff;
+            sr += tmp[iIn]     - tmp[iOut];
+            sg += tmp[iIn + 1] - tmp[iOut + 1];
+            sb += tmp[iIn + 2] - tmp[iOut + 2];
+            sa += tmp[iIn + 3] - tmp[iOut + 3];
+          }
+        }
+      }
+
+      // Un-premultiply back to straight RGBA
+      for (let i = 0; i < len; i += 4) {
+        const a255 = pm[i + 3];
+        if (a255 <= 0.5) {
+          data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 0;
+        } else {
+          const a = a255 / 255;
+          data[i]     = clamp(Math.round(pm[i] / a), 0, 255);
+          data[i + 1] = clamp(Math.round(pm[i + 1] / a), 0, 255);
+          data[i + 2] = clamp(Math.round(pm[i + 2] / a), 0, 255);
+          data[i + 3] = clamp(Math.round(a255), 0, 255);
+        }
+      }
+    }
+
+    const spriteCache = new Map();
+    let shadowCanvas = null;
+
+    function buildContactShadowSprite() {
+      const c = document.createElement('canvas');
+      c.width = 128;
+      c.height = 128;
+      const sctx = c.getContext('2d');
+      const g = sctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+      g.addColorStop(0, 'rgba(120, 60, 40, 0.55)');
+      g.addColorStop(0.5, 'rgba(120, 60, 40, 0.25)');
+      g.addColorStop(1, 'rgba(120, 60, 40, 0)');
+      sctx.fillStyle = g;
+      sctx.fillRect(0, 0, 128, 128);
+      shadowCanvas = c;
+    }
+
+    function quantizeBlur(blurPx) {
+      if (blurPx < 3) {
+        return Math.round(blurPx * 2) / 2;
+      }
+      return Math.round(blurPx);
+    }
+
+    function getOrBuildPeachSprite(row, varietyIdx, screenRadiusPx, rawBlurPx) {
+      const qBlur = quantizeBlur(rawBlurPx);
+      const key = `${row}:${varietyIdx}:${qBlur}`;
+      if (spriteCache.has(key)) return spriteCache.get(key);
+
+      const sres = clamp(0.8 / (1 + qBlur * 0.18), 0.3, 0.8);
+      const rSprite = Math.max(10, screenRadiusPx * sres);
+      const blurSprite = qBlur * sres;
+      const pad = Math.ceil(rSprite * 0.27 + blurSprite * 2.6);
+      const size = Math.ceil((rSprite + pad) * 2);
+      const half = size * 0.5;
+
+      const off = document.createElement('canvas');
+      off.width = size;
+      off.height = size;
+      const octx = off.getContext('2d');
+      const imgData = octx.createImageData(size, size);
+      const data = imgData.data;
+
+      const V = VARIETIES[varietyIdx];
+      const fuzz = 0.07;
+
+      // Deterministic PRNG per sprite key so grain looks organic and consistent
+      let seed = ((row + 1) * 73856093) ^ ((varietyIdx + 1) * 19349663) ^ (Math.round(qBlur * 10) * 83492791);
+      const rand = () => {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+
+      for (let py = 0; py < size; py++) {
+        const ny = (py - half) / rSprite;
+        for (let px = 0; px < size; px++) {
+          const nx = (px - half) / rSprite;
+
+          const dx = nx - FL.cx;
+          const dy = ny - FL.cy;
+          const u = dx * COS_FL + dy * SIN_FL;
+          const w = -dx * SIN_FL + dy * COS_FL;
+          const qF = Math.hypot(u / FL.rx, w / FL.ry);
+          const qB = Math.hypot(nx - BL.cx, ny - BL.cy) / BL.r;
+
+          // Smooth-min the two lobes
+          const kb = 0.03 + 0.4 * smooth(-0.5, 0.7, ny);
+          const hb = clamp(0.5 + 0.5 * (qB - qF) / kb, 0, 1);
+          let q = qB + (qF - qB) * hb - kb * hb * (1 - hb);
+
+          // Slightly flat base: smooth-max with a plane
+          const qBase = (ny + 0.02 * nx) / 0.88;
+          const hf = clamp(0.5 + 0.5 * (qBase - q) / 0.2, 0, 1);
+          q = q + (qBase - q) * hf + 0.2 * hf * (1 - hf);
+
+          if (q > 1 + fuzz) continue;
+
+          const a = smooth(1 + fuzz, 1 - fuzz * 0.6, q);
+          const alpha = (rand() < a ? 0.82 : 0) + a * 0.18;
+
+          let t = 0.04 + 0.6 * smooth(-0.7, 0.7, ny);
+          t += V.glow * Math.exp(-((nx - V.hx) ** 2 + (ny - V.hy) ** 2) / V.spread) + V.bias;
+          t -= 0.38 * Math.exp(-((nx - 0.22) ** 2 / 0.09 + (ny + 0.78) ** 2 / 0.05));
+          t -= 0.14 * smooth(-0.15, -0.85, ny);
+
+          if (qF < 1) {
+            const over = smooth(1.04, 0.92, qB) * (1 - smooth(0.25, 0.78, ny));
+            const rim = smooth(0.8, 0.995, qF) * over;
+            t = t * (1 - rim * 0.8) + (0.6 + 0.2 * smooth(-0.4, 0.8, ny)) * rim * 0.8;
+          } else {
+            t -= (0.06 + 0.16 * smooth(1.12, 1.0, qF)) * (1 - smooth(0.3, 0.8, ny));
+          }
+
+          const rimO = smooth(0.8, 1.0, q) * 0.62;
+          t = t * (1 - rimO) + (0.42 + 0.42 * smooth(-0.5, 0.6, ny)) * rimO;
+          t += (rand() - 0.5) * 0.32;
+
+          const [r, g, b] = ramp(t);
+          const n = (rand() - 0.5) * 18;
+          const idx = (py * size + px) * 4;
+          data[idx]     = clamp(Math.round(r + n), 0, 255);
+          data[idx + 1] = clamp(Math.round(g + n), 0, 255);
+          data[idx + 2] = clamp(Math.round(b + n), 0, 255);
+          data[idx + 3] = clamp(Math.round(alpha * 255), 0, 255);
+        }
+      }
+
+      if (blurSprite >= 0.6) {
+        boxBlurPremultipliedRGBA(data, size, size, blurSprite);
+      }
+
+      octx.putImageData(imgData, 0, 0);
+
+      const drawSizeScreen = size / sres;
+      const spriteObj = { canvas: off, drawSizeScreen };
+      spriteCache.set(key, spriteObj);
+      return spriteObj;
+    }
+
+    // Camera, layout & grid parameters
+    const R_CELL = 0.53;
+    const D0 = 2.6;
+    const FOCUS_Z = 2;
+
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let mobile = W < 700;
+    let sFocus = 1;
+    let F = 1;
+    let camH = 1;
+    let horizon = 0;
+    let dofK = 12;
+    let gridRows = 0;
+    let gridCols = 0;
+    let peaches = [];
+    let pendingRipples = [];
+    let hoveredPeach = null;
+    let selectedIndex = -1;
+    let keyboardMode = false;
+    let simTime = 0;
+    let rafId = null;
+    let lastFrameTime = 0;
+
+    function scaleAtZ(z) {
+      return F / (z + D0);
+    }
+
+    function entranceDelay(row, x, rows) {
+      const nearRows = FOCUS_Z + 2; // focusZ = 2; rows 3, 2, 1, 0 enter individually
+      const distantRows = Math.max(0, rows - nearRows);
+      const distantBatches = Math.ceil(distantRows / 3);
+      const batch = Math.floor((rows - 1 - row) / 3);
+      const start = row >= nearRows
+        ? 0.08 + batch * 0.09
+        : 0.08 + distantBatches * 0.09 + (nearRows - 1 - row) * 0.14;
+      const spread = row >= nearRows ? 0.006 : 0.012;
+      return start + Math.min(Math.abs(x), 4) * spread + Math.random() * 0.012;
+    }
+
+    function computeCameraMetrics() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      mobile = W < 700;
+
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+
+      sFocus = W / (mobile ? 3.3 : 6.2);
+      F = sFocus * (FOCUS_Z + D0);
+
+      const s0 = scaleAtZ(0);
+      const s1 = scaleAtZ(1);
+      const gap = 0.85 * 2 * R_CELL * s0;
+      camH = gap / (s0 - s1);
+
+      const focusCY = (mobile ? 0.46 : 0.43) * H;
+      horizon = focusCY + 0.9 * R_CELL * sFocus - camH * sFocus;
+      dofK = (mobile ? 10 : 16) * (s0 / 350);
+    }
+
+    function blurAtZ(z) {
+      const denom = Math.abs(1 / (FOCUS_Z + D0) - 1 / D0);
+      return Math.min(
+        dofK * 0.75,
+        dofK * Math.abs(1 / (FOCUS_Z + D0) - 1 / (z + D0)) / denom
+      );
+    }
+
+    function buildLayout(forceRegrid = false) {
+      computeCameraMetrics();
+      if (!shadowCanvas) buildContactShadowSprite();
+
+      // Determine row count until one row is fully past the top edge (cap at 18)
+      let rows = 0;
+      while (rows < 18) {
+        const s = scaleAtZ(rows);
+        const groundY = horizon + camH * s;
+        const topOfPeach = groundY - 2.1 * R_CELL * s;
+        rows++;
+        if (groundY + 0.4 * R_CELL * s < 0 && rows >= 8) break;
+        if (topOfPeach < -R_CELL * s * 2 && rows >= 12) break;
+      }
+      rows = Math.max(8, Math.min(18, rows));
+
+      const sLast = scaleAtZ(rows - 1);
+      const half = Math.ceil((W / 2) / sLast + 1);
+      const cols = 2 * half + 1;
+
+      const needRegrid = forceRegrid || rows !== gridRows || cols !== gridCols || peaches.length === 0;
+      gridRows = rows;
+      gridCols = cols;
+
+      spriteCache.clear();
+
+      if (needRegrid) {
+        peaches = [];
+        let seed = 135792468;
+        const rand = () => {
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          return seed / 4294967296;
+        };
+
+        // Generate back-to-front (row = rows - 1 down to 0)
+        for (let row = rows - 1; row >= 0; row--) {
+          const stagger = (row & 1) ? 0.5 : 0;
+          for (let c = -half; c <= half; c++) {
+            const jx = (rand() * 2 - 1) * 0.025;
+            const jz = (rand() * 2 - 1) * 0.025;
+            const x = c + stagger + jx;
+            const z = row + jz;
+            const s = scaleAtZ(z);
+            const sx = W * 0.5 + x * s;
+            const groundY = horizon + camH * s;
+            const rScreen = R_CELL * s;
+
+            // Culling: skip any peach fully off-screen sideways, or fully below the bottom edge
+            if (sx + rScreen * 1.35 < 0 || sx - rScreen * 1.35 > W) continue;
+            if (groundY - rScreen * 2.2 > H) continue;
+
+            const variety = Math.floor(rand() * 3);
+            const rot0 = (rand() * 2 - 1) * 0.11;
+            const flipped = rand() < 0.25;
+            const delay = entranceDelay(row, x, rows);
+            const startH = (groundY + 2.6 * R_CELL * s) / s + rand() * 0.14;
+
+            peaches.push({
+              row,
+              col: c,
+              x,
+              z,
+              variety,
+              rot0,
+              flipped,
+              delay,
+              startH,
+              h: reducedMotion ? 0 : startH,
+              v: 0,
+              bounced: reducedMotion,
+              landed: reducedMotion,
+              opacity: reducedMotion ? 1 : 0,
+              sq: 0,
+              sqv: 0,
+              wob: 0,
+              wobv: 0,
+              cooldownUntil: 0,
+              s,
+              screenX: sx,
+              groundY,
+              rScreen,
+              blur: 0,
+              sprite: null
+            });
+          }
+        }
+      }
+
+      // Update projection, depth-of-field blur, and cached sprites for all peaches
+      for (let i = 0; i < peaches.length; i++) {
+        const p = peaches[i];
+        p.s = scaleAtZ(p.z);
+        p.screenX = W * 0.5 + p.x * p.s;
+        p.groundY = horizon + camH * p.s;
+        p.rScreen = R_CELL * p.s;
+
+        const sxNorm = Math.abs(p.x * p.s) / W;
+        const edge = dofK * 0.7 * smooth(0.22, 0.56, sxNorm);
+        p.blur = Math.hypot(blurAtZ(p.row), edge);
+        p.sprite = getOrBuildPeachSprite(p.row, p.variety, p.rScreen * dpr, p.blur);
+      }
+
+      if (selectedIndex >= peaches.length) {
+        selectedIndex = Math.floor(peaches.length * 0.65);
+      }
+    }
+
+    function triggerHop(peach, multiplier = 1, ignoreCooldown = false) {
+      const now = simTime;
+      if (!ignoreCooldown && now < peach.cooldownUntil) return;
+      peach.cooldownUntil = now + 0.32;
+
+      if (reducedMotion) {
+        peach.sqv += 1.6 * multiplier;
+        peach.wobv += (Math.random() < 0.5 ? -1 : 1) * 3.2 * multiplier;
+      } else {
+        peach.v = 6.5 * multiplier;
+        peach.sqv -= 4.2 * multiplier;
+        peach.wobv += (Math.random() < 0.5 ? -1 : 1) * 7 * multiplier;
+        peach.landed = false;
+        peach.bounced = true;
+      }
+
+      // Schedule neighbour ripples within 1.3 cells
+      for (let i = 0; i < peaches.length; i++) {
+        const other = peaches[i];
+        if (other === peach) continue;
+        const d = Math.hypot(other.x - peach.x, other.z - peach.z);
+        if (d > 0.05 && d <= 1.3) {
+          const delay = 0.06 + d * 0.05;
+          const strength = (0.32 / Math.max(0.45, d)) * multiplier;
+          pendingRipples.push({
+            peach: other,
+            fireTime: now + delay,
+            strength
+          });
+        }
+      }
+
+      ensureLoopRunning();
+    }
+
+    function stepSubstep(dt) {
+      simTime += dt;
+
+      // Fire due neighbour ripples
+      for (let i = pendingRipples.length - 1; i >= 0; i--) {
+        const rip = pendingRipples[i];
+        if (simTime >= rip.fireTime) {
+          pendingRipples.splice(i, 1);
+          const p = rip.peach;
+          const s = rip.strength;
+          if (reducedMotion) {
+            p.sqv += 1.2 * s;
+            p.wobv += (Math.random() < 0.5 ? -1 : 1) * 2.5 * s;
+          } else {
+            if (p.h <= 0.02) {
+              p.v = Math.max(p.v, 6.5 * s);
+              p.sqv -= 4.2 * s;
+              p.wobv += (Math.random() < 0.5 ? -1 : 1) * 7 * s;
+              p.landed = false;
+              p.bounced = true;
+            }
+          }
+        }
+      }
+
+      let activeCount = pendingRipples.length;
+
+      for (let i = 0; i < peaches.length; i++) {
+        const p = peaches[i];
+
+        if (!reducedMotion && simTime < p.delay) {
+          activeCount++;
+          continue;
+        }
+
+        if (!reducedMotion) {
+          p.opacity = clamp((simTime - p.delay) / 0.16, 0, 1);
+          if (p.opacity < 1) activeCount++;
+        } else {
+          p.opacity = 1;
+        }
+
+        // Vertical fall / hop physics
+        if (!p.landed || p.h > 0 || p.v !== 0) {
+          p.v -= 34 * dt;
+          p.h += p.v * dt;
+
+          if (p.h <= 0) {
+            const impact = -p.v;
+            p.h = 0;
+            p.sqv += impact * 0.075;
+            p.wobv += (Math.random() * 2 - 1) * Math.min(6, impact * 0.32);
+
+            if (!p.bounced && impact > 3) {
+              p.v = impact * 0.28;
+              p.bounced = true;
+            } else {
+              p.v = 0;
+              p.landed = true;
+            }
+          }
+          activeCount++;
+        }
+
+        // Semi-implicit Euler jelly springs
+        p.sqv += (-320 * p.sq - 9 * p.sqv) * dt;
+        p.sq = clamp(p.sq + p.sqv * dt, -0.32, 0.36);
+
+        p.wobv += (-200 * p.wob - 7 * p.wobv) * dt;
+        p.wob = clamp(p.wob + p.wobv * dt, -0.5, 0.5);
+
+        if (
+          Math.abs(p.sq) > 0.0006 ||
+          Math.abs(p.sqv) > 0.002 ||
+          Math.abs(p.wob) > 0.0006 ||
+          Math.abs(p.wobv) > 0.002
+        ) {
+          activeCount++;
+        } else if (p.landed) {
+          p.sq = 0;
+          p.sqv = 0;
+          p.wob = 0;
+          p.wobv = 0;
+        }
+      }
+
+      return activeCount > 0;
+    }
+
+    function drawScene() {
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. Draw all contact shadows back-to-front first
+      for (let i = 0; i < peaches.length; i++) {
+        const p = peaches[i];
+        if (p.opacity <= 0.005) continue;
+
+        const liftFactor = clamp(1 - p.h / 2.6, 0.18, 1);
+        const shadowAlpha = p.opacity * liftFactor;
+        if (shadowAlpha <= 0.01) continue;
+
+        const sw = 2.3 * p.rScreen * (1 + 0.55 * p.sq) * (0.55 + 0.45 * liftFactor);
+        const sh = sw * 0.34;
+
+        ctx.save();
+        ctx.globalAlpha = shadowAlpha;
+        ctx.translate(p.screenX, p.groundY);
+        ctx.drawImage(shadowCanvas, -sw * 0.5, -sh * 0.5, sw, sh);
+        ctx.restore();
+      }
+
+      // 2. Draw all peaches back-to-front
+      for (let i = 0; i < peaches.length; i++) {
+        const p = peaches[i];
+        if (p.opacity <= 0.005 || !p.sprite) continue;
+
+        const contactX = p.screenX;
+        const contactY = p.groundY - p.h * p.s;
+        const fall = p.v < 0 && !p.landed ? clamp(-p.v * 0.006, 0, 0.12) : 0;
+        const scaleX = 1 + 0.75 * p.sq - 0.6 * fall;
+        const scaleY = 1 - p.sq + fall;
+        const drawDim = p.sprite.drawSizeScreen / dpr;
+
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(contactX, contactY);
+        ctx.rotate(p.wob * 0.35);
+        ctx.scale(scaleX, scaleY);
+        ctx.translate(0, -0.9 * p.rScreen);
+        ctx.rotate(p.rot0 + p.wob * 0.6);
+        if (p.flipped) ctx.scale(-1, 1);
+        ctx.drawImage(p.sprite.canvas, -drawDim * 0.5, -drawDim * 0.5, drawDim, drawDim);
+        ctx.restore();
+
+        // Discreet selection ring during keyboard navigation
+        if (keyboardMode && i === selectedIndex) {
+          ctx.save();
+          ctx.translate(contactX, contactY - 0.9 * p.rScreen);
+          ctx.strokeStyle = 'rgba(184, 19, 46, 0.72)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.arc(0, 0, p.rScreen * 1.04, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function frameLoop(now) {
+      rafId = null;
+      if (document.hidden) return;
+
+      const dt = Math.min(0.1, Math.max(0.001, (now - lastFrameTime) / 1000));
+      lastFrameTime = now;
+
+      // Run fixed substeps of <= 8ms per frame
+      const maxSub = 0.008;
+      let rem = dt;
+      let stillActive = false;
+      while (rem > 0) {
+        const step = Math.min(maxSub, rem);
+        if (stepSubstep(step)) stillActive = true;
+        rem -= step;
+      }
+
+      drawScene();
+
+      if (stillActive) {
+        rafId = requestAnimationFrame(frameLoop);
+      }
+    }
+
+    function ensureLoopRunning() {
+      if (rafId !== null || document.hidden) return;
+      lastFrameTime = performance.now();
+      rafId = requestAnimationFrame(frameLoop);
+    }
+
+    // Hit-test with circles, nearest rows first (end of peaches array = row 0)
+    function hitTestPeach(clientX, clientY) {
+      for (let i = peaches.length - 1; i >= 0; i--) {
+        const p = peaches[i];
+        if (p.opacity < 0.25) continue;
+        const cx = p.screenX;
+        const cy = p.groundY - p.h * p.s - 0.9 * p.rScreen;
+        const dx = clientX - cx;
+        const dy = clientY - cy;
+        if (dx * dx + dy * dy <= (p.rScreen * 0.95) ** 2) {
+          return { peach: p, index: i };
+        }
+      }
+      return null;
+    }
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      keyboardMode = false;
+      const hit = hitTestPeach(e.clientX, e.clientY);
+      const nextPeach = hit ? hit.peach : null;
+      canvas.classList.toggle('over-peach', Boolean(nextPeach));
+
+      if (nextPeach && nextPeach !== hoveredPeach) {
+        hoveredPeach = nextPeach;
+        if (nextPeach.landed && nextPeach.h <= 0.02) {
+          triggerHop(nextPeach, 1, false);
+        }
+      } else if (!nextPeach) {
+        hoveredPeach = null;
+      }
+    });
+
+    canvas.addEventListener('pointerleave', () => {
+      hoveredPeach = null;
+      canvas.classList.remove('over-peach');
+    });
+
+    canvas.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      keyboardMode = false;
+      const hit = hitTestPeach(e.clientX, e.clientY);
+      if (hit) {
+        selectedIndex = hit.index;
+        triggerHop(hit.peach, 1.5, true);
+      }
+    });
+
+    // Keyboard navigation: Arrow keys select nearby peach; Space / Enter trigger 1.5x hop
+    canvas.addEventListener('keydown', (e) => {
+      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'Enter'].includes(e.key)) {
+        e.preventDefault();
+        keyboardMode = true;
+
+        if (selectedIndex < 0 || selectedIndex >= peaches.length) {
+          // Pick a central peach on the focus row (row 2)
+          let bestIdx = 0;
+          let bestScore = Infinity;
+          for (let i = 0; i < peaches.length; i++) {
+            const p = peaches[i];
+            const score = Math.abs(p.row - FOCUS_Z) * 4 + Math.abs(p.x);
+            if (score < bestScore) {
+              bestScore = score;
+              bestIdx = i;
+            }
+          }
+          selectedIndex = bestIdx;
+          drawScene();
+          return;
+        }
+
+        if (e.key === ' ' || e.key === 'Enter') {
+          triggerHop(peaches[selectedIndex], 1.5, true);
+          return;
+        }
+
+        const curr = peaches[selectedIndex];
+        let dirX = 0, dirZ = 0;
+        if (e.key === 'ArrowLeft')  dirX = -1;
+        if (e.key === 'ArrowRight') dirX = 1;
+        if (e.key === 'ArrowUp')    dirZ = 1;
+        if (e.key === 'ArrowDown')  dirZ = -1;
+
+        let bestIdx = selectedIndex;
+        let bestDist = Infinity;
+        for (let i = 0; i < peaches.length; i++) {
+          if (i === selectedIndex) continue;
+          const cand = peaches[i];
+          const dx = cand.x - curr.x;
+          const dz = cand.z - curr.z;
+          const dot = dx * dirX + dz * dirZ;
+          if (dot <= 0.15) continue;
+          const ortho = Math.abs(dx * dirZ - dz * dirX);
+          const dist = Math.hypot(dx, dz) + ortho * 1.4;
+          if (dist < bestDist) {
+            bestDist = dist;
+            bestIdx = i;
+          }
+        }
+        selectedIndex = bestIdx;
+        drawScene();
+      }
+    });
+
+    canvas.addEventListener('blur', () => {
+      if (keyboardMode) {
+        keyboardMode = false;
+        drawScene();
+      }
+    });
+
+    // Debounced resize (120ms)
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        buildLayout(false);
+        drawScene();
+        ensureLoopRunning();
+      }, 120);
+    });
+
+    reducedMotionQuery.addEventListener('change', (e) => {
+      reducedMotion = e.matches;
+      if (reducedMotion) {
+        for (const p of peaches) {
+          p.h = 0;
+          p.v = 0;
+          p.landed = true;
+          p.bounced = true;
+          p.opacity = 1;
+        }
+        drawScene();
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      } else {
+        lastFrameTime = performance.now();
+        ensureLoopRunning();
+      }
+    });
+
+    buildLayout(true);
+    drawScene();
+    ensureLoopRunning();
+  </script>
+</body>
+</html>
+
