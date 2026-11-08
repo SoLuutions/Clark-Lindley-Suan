@@ -1,0 +1,80 @@
+{
+  "brand": "Corner Table Coffee",
+  "note": "Photorealistic transparent PNG cutouts (560x560 with generous transparent padding around each object and its 4-o'clock cast shadow) are installed in /interactions/assets/corner-table/. Use the prompts below if regenerating or swapping any item.",
+  "sharedCameraAndLightingPrompt": "Photorealistic studio product photograph from an elevated three-quarter orthographic/isometric camera angle (~35 degrees above horizontal), object physically upright, illuminated by distant directional sunlight from the upper left (10 o'clock), casting a complete long, dark, slightly soft shadow diagonally toward the lower right (4 o'clock). Isolated on a transparent background with generous transparent padding on all sides so neither the object nor its full cast shadow is cropped. No text, labels, or watermarks.",
+  "items": [
+    {
+      "id": "espresso",
+      "name": "Fluted Espresso",
+      "description": "Double shot of rich espresso with hazelnut crema in a sculptural fluted dusty-pink porcelain demitasse cup and organic matching saucer.",
+      "src": "assets/corner-table/01-espresso.png",
+      "alt": "Espresso in a dusty pink sculptural porcelain cup with fluted sides and matching saucer",
+      "placeholderGradient": "linear-gradient(135deg, #f3d1d7 0%, #c98a96 52%, #115847 100%)",
+      "prompt": "Photorealistic studio product cutout of an espresso with rich Tiger-striped crema in a dusty pink (#efc7ce) sculptural porcelain demitasse cup with vertical fluted sides, an angular architectural loop handle, sitting on an organic pebble-shaped matching dusty pink porcelain saucer. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock), complete soft cast shadow toward lower right (4 o'clock), generous transparent margin around object and shadow, PNG transparency."
+    },
+    {
+      "id": "iced-latte",
+      "name": "Layered Iced Latte",
+      "description": "Chilled whole milk and clear square ice cubes topped with a slow-poured double ristretto in a tall thin-walled glass.",
+      "src": "assets/corner-table/02-iced-latte.png",
+      "alt": "Iced latte in a tall clear glass with visible milk and coffee layers and ice",
+      "placeholderGradient": "linear-gradient(135deg, #f6ebe0 0%, #c89d7c 50%, #4a2c1d 100%)",
+      "prompt": "Photorealistic studio product cutout of an iced latte in a tall cylindrical clear borosilicate glass with visible swirling layers of cold white milk at the bottom, warm amber coffee in the middle, dark espresso on top, crystal-clear ice cubes, and realistic exterior glass condensation. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock) with glass refraction, complete soft cast shadow toward lower right (4 o'clock), generous transparent margin, PNG transparency."
+    },
+    {
+      "id": "moka-pot",
+      "name": "Octagonal Moka Pot",
+      "description": "Classic Italian faceted aluminium stovetop espresso maker with a geometric matte-black handle and lid knob.",
+      "src": "assets/corner-table/03-moka-pot.png",
+      "alt": "Silver octagonal moka pot with a matte black handle",
+      "placeholderGradient": "linear-gradient(135deg, #e4e9e7 0%, #8fa19c 52%, #1d2825 100%)",
+      "prompt": "Photorealistic studio product cutout of a classic silver brushed-aluminium octagonal stovetop moka pot with crisp faceted sides and an architectural matte-black bakelite handle and lid finial. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock) with realistic metallic specular highlights, complete soft cast shadow toward lower right (4 o'clock), generous transparent margin, PNG transparency."
+    },
+    {
+      "id": "cappuccino",
+      "name": "Scalloped Cappuccino",
+      "description": "Steamed silky microfoam poured into a crisp fern rosette inside a wide, low pink ceramic cup on a wavy saucer.",
+      "src": "assets/corner-table/04-cappuccino.png",
+      "alt": "Cappuccino with fern latte art in a wide low pink porcelain cup with scalloped fluting and wavy saucer",
+      "placeholderGradient": "linear-gradient(135deg, #f5d6dc 0%, #d49ba6 50%, #7a4b3a 100%)",
+      "prompt": "Photorealistic studio product cutout of a cappuccino with intricate Rosetta fern latte art in glossy microfoam, served in a wide, low dusty-pink (#efc7ce) glazed porcelain cup with scalloped fluting, a circular ring handle, and a wavy-rimmed matching porcelain saucer. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock), complete soft cast shadow toward lower right (4 o'clock), generous transparent margin, PNG transparency."
+    },
+    {
+      "id": "iced-matcha",
+      "name": "Iced Ceremonial Matcha",
+      "description": "Stone-milled Uji matcha whisked to a jade foam and floated over cold oat milk and clear ice.",
+      "src": "assets/corner-table/05-iced-matcha.png",
+      "alt": "Iced matcha latte in a clear glass with creamy green layers and ice",
+      "placeholderGradient": "linear-gradient(135deg, #eef3e8 0%, #78a86b 52%, #1a4d2e 100%)",
+      "prompt": "Photorealistic studio product cutout of an iced matcha latte in a clear glass tumbler showing creamy white milk at the base, marbled jade-green ceremonial matcha layers above, clear ice cubes, and subtle condensation droplets. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock), complete soft cast shadow toward lower right (4 o'clock), generous transparent margin, PNG transparency."
+    },
+    {
+      "id": "pour-over",
+      "name": "Pour-Over Carafe",
+      "description": "Fluted borosilicate glass dripper and unbleached paper cone resting on a server carafe with a dusty-pink collar.",
+      "src": "assets/corner-table/06-pour-over.png",
+      "alt": "Glass pour-over dripper with a paper filter on a coffee carafe with a pink collar",
+      "placeholderGradient": "linear-gradient(135deg, #f4d8de 0%, #b57c87 48%, #3c2218 100%)",
+      "prompt": "Photorealistic studio product cutout of a clear fluted glass pour-over coffee dripper lined with a damp paper filter holding dark blooming coffee grounds, seated atop a clear glass coffee server carafe wrapped with a matte dusty-pink (#efc7ce) silicone collar, half-filled with glowing amber filter coffee. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock), complete soft cast shadow toward lower right (4 o'clock), generous transparent margin, PNG transparency."
+    },
+    {
+      "id": "strawberry-matcha",
+      "name": "Strawberry Matcha",
+      "description": "Three-layer cold glass pairing house strawberry purée and creamy milk with brisk whisked green tea.",
+      "src": "assets/corner-table/07-strawberry-matcha.png",
+      "alt": "Strawberry matcha in a clear glass with pink strawberry milk below creamy milk and green matcha",
+      "placeholderGradient": "linear-gradient(135deg, #f2b8c4 0%, #f5ede6 50%, #5b9352 100%)",
+      "prompt": "Photorealistic studio product cutout of a layered strawberry matcha drink in a tall clear glass with three distinct strata: pastel pink crushed-strawberry milk at the bottom, creamy white milk in the middle with ice cubes, and vibrant green whisked matcha on top. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock), complete soft cast shadow toward lower right (4 o'clock), generous transparent margin, PNG transparency."
+    },
+    {
+      "id": "espresso-tonic",
+      "name": "Citrus Espresso Tonic",
+      "description": "Double espresso floated over effervescent botanical tonic, crystal ice, and a thin wheel of blood orange.",
+      "src": "assets/corner-table/08-espresso-tonic.png",
+      "alt": "Espresso tonic in a faceted clear tumbler with dark espresso over pale golden tonic, ice, and an orange slice",
+      "placeholderGradient": "linear-gradient(135deg, #fae2b8 0%, #d47a39 50%, #3a1f14 100%)",
+      "prompt": "Photorealistic studio product cutout of an espresso tonic in a low faceted Picardie-style clear glass tumbler, showing dark crema-topped espresso floating over effervescent pale golden tonic water with tiny bubbles, clear ice cubes, and a thin translucent orange slice tucked against the glass wall. Elevated 35-degree three-quarter orthographic/isometric angle, physically upright, directional sunlight from upper left (10 o'clock), complete soft cast shadow toward lower right (4 o'clock), generous transparent margin, PNG transparency."
+    }
+  ]
+}
+

@@ -1,0 +1,856 @@
+<!doctype html>
+<!--
+  Corner Table Coffee — Infinite Gallery (Concept Study)
+  Built against /interactions/assets/corner-table/assets.json.
+  Currently uses plain gradient placeholder PNGs (01-espresso.png – 08-espresso-tonic.png).
+  See /interactions/assets/corner-table/assets.json and INTERACTIONS.md for the exact
+  photorealistic image generation prompts to replace them.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#073e32">
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Corner Table Coffee — interactive infinite diagonal gallery of signature coffee drinks and tableware.">
+  <title>Corner Table Coffee — Infinite Gallery</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <meta property="og:title" content="Corner Table Coffee: Infinite Gallery">
+  <meta property="og:description" content="Interactive infinite diagonal gallery concept study for Corner Table Coffee.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://clarklindleysuan.com/interactions/posters/corner-table.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,SOFT,WONK,wght@9..144,100,1,900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --emerald: #073e32;
+      --pink: #efc7ce;
+      --serif: 'Fraunces', Georgia, serif;
+      --mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--emerald);
+      color: var(--pink);
+      font-family: var(--mono);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      html, body, .stage, .cell {
+        cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M4 3L23 12.5L14.2 15.2L18.5 23.5L14.8 25.3L10.5 17L4 21.5Z' fill='%23efc7ce' stroke='%23073e32' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E") 4 3, auto;
+      }
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+      outline: none;
+    }
+
+    .field {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    /* Stationary centered wordmark filling ~40% of desktop width */
+    .wordmark-wrap {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(240px, 40vw, 680px);
+      z-index: 10;
+      pointer-events: none;
+      text-align: center;
+      color: var(--pink);
+    }
+
+    .wordmark {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 900;
+      font-variation-settings: "SOFT" 100, "WONK" 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 0.84;
+      letter-spacing: -0.04em;
+    }
+
+    .wordmark-main {
+      display: block;
+      font-size: clamp(64px, 10.6vw, 180px);
+    }
+
+    .wordmark-sub {
+      display: block;
+      font-size: clamp(28px, 4.3vw, 74px);
+      margin-top: 0.18em;
+      letter-spacing: -0.025em;
+    }
+
+    /* Grid cell structure:
+       1. .cell: positioned on the 19-deg angled grid (translate3d)
+       2. .cell-entrance: plays initial load entrance once (opacity + translate(-95px, -75px) -> 0)
+       3. .cell-hover: deterministic scale + subtle hover lift */
+    .cell {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--cell-size, 280px);
+      height: var(--cell-size, 280px);
+      will-change: transform;
+      outline: none;
+    }
+
+    .cell-entrance {
+      width: 100%;
+      height: 100%;
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .cell-entrance.entering {
+      opacity: 0;
+      transform: translate3d(-95px, -75px, 0);
+    }
+
+    .cell-entrance.entered {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition:
+        opacity 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--enter-delay, 0ms),
+        transform 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--enter-delay, 0ms);
+    }
+
+    .cell-hover {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate3d(0, 0, 0) scale(var(--item-scale, 1));
+      transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cell.is-hovered .cell-hover,
+    .cell:focus-visible .cell-hover {
+      transform: translate3d(0, -10px, 0) scale(calc(var(--item-scale, 1) * 1.04));
+    }
+
+    .cell:focus-visible .art-box {
+      outline: 2px solid var(--pink);
+      outline-offset: 6px;
+    }
+
+    .art-box {
+      position: relative;
+      width: 88%;
+      height: 88%;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .art-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Single pink description card directly over the image */
+    .desc-card {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(268px, calc(100vw - 32px));
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: var(--pink);
+      color: var(--emerald);
+      font-family: var(--mono);
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0;
+      transform: translate3d(var(--card-x, 0px), calc(var(--card-y, 0px) + 20px), 0);
+      transition:
+        opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 14px 32px rgba(3, 25, 20, 0.38);
+    }
+
+    .desc-card.visible {
+      opacity: 1;
+      transform: translate3d(var(--card-x, 0px), var(--card-y, 0px), 0);
+    }
+
+    .desc-card-title {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+
+    .desc-card-body {
+      margin: 0;
+      font-size: 11.5px;
+      font-weight: 400;
+      line-height: 1.48;
+      opacity: 0.92;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cell-entrance,
+      .cell-entrance.entering,
+      .cell-entrance.entered {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .cell-hover,
+      .cell.is-hovered .cell-hover,
+      .cell:focus-visible .cell-hover {
+        transform: scale(var(--item-scale, 1)) !important;
+        transition: none !important;
+      }
+      .desc-card,
+      .desc-card.visible {
+        transition: none !important;
+        transform: translate3d(var(--card-x, 0px), var(--card-y, 0px), 0) !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" id="stage" tabindex="0" aria-label="Corner Table Coffee interactive drink and tableware gallery. Use arrow keys or drag to pan.">
+    <div class="field" id="field"></div>
+
+    <div class="wordmark-wrap" id="wordmark-wrap">
+      <h1 class="wordmark" aria-label="Corner Table Coffee">
+        <span class="wordmark-main">corner</span>
+        <span class="wordmark-main">table.</span>
+        <span class="wordmark-sub">coffee</span>
+      </h1>
+    </div>
+
+    <div class="desc-card" id="desc-card" role="status" aria-live="polite" aria-hidden="true">
+      <div class="desc-card-title" id="desc-card-title"></div>
+      <p class="desc-card-body" id="desc-card-body"></p>
+    </div>
+  </main>
+
+  <script>
+    // Editable array of the 8 coffee & tableware items (also loaded from assets/corner-table/assets.json)
+    let ITEMS = [
+      {
+        id: 'espresso',
+        name: 'Fluted Espresso',
+        description: 'Double shot of rich espresso with hazelnut crema in a sculptural fluted dusty-pink porcelain demitasse cup and organic matching saucer.',
+        src: 'assets/corner-table/01-espresso.png',
+        alt: 'Espresso in a dusty pink sculptural porcelain cup with fluted sides and matching saucer',
+        placeholderGradient: 'linear-gradient(135deg, #f3d1d7 0%, #c98a96 52%, #115847 100%)'
+      },
+      {
+        id: 'iced-latte',
+        name: 'Layered Iced Latte',
+        description: 'Chilled whole milk and clear square ice cubes topped with a slow-poured double ristretto in a tall thin-walled glass.',
+        src: 'assets/corner-table/02-iced-latte.png',
+        alt: 'Iced latte in a tall clear glass with visible milk and coffee layers and ice',
+        placeholderGradient: 'linear-gradient(135deg, #f6ebe0 0%, #c89d7c 50%, #4a2c1d 100%)'
+      },
+      {
+        id: 'moka-pot',
+        name: 'Octagonal Moka Pot',
+        description: 'Classic Italian faceted aluminium stovetop espresso maker with a geometric matte-black handle and lid knob.',
+        src: 'assets/corner-table/03-moka-pot.png',
+        alt: 'Silver octagonal moka pot with a matte black handle',
+        placeholderGradient: 'linear-gradient(135deg, #e4e9e7 0%, #8fa19c 52%, #1d2825 100%)'
+      },
+      {
+        id: 'cappuccino',
+        name: 'Scalloped Cappuccino',
+        description: 'Steamed silky microfoam poured into a crisp fern rosette inside a wide, low pink ceramic cup on a wavy saucer.',
+        src: 'assets/corner-table/04-cappuccino.png',
+        alt: 'Cappuccino with fern latte art in a wide low pink porcelain cup with scalloped fluting and wavy saucer',
+        placeholderGradient: 'linear-gradient(135deg, #f5d6dc 0%, #d49ba6 50%, #7a4b3a 100%)'
+      },
+      {
+        id: 'iced-matcha',
+        name: 'Iced Ceremonial Matcha',
+        description: 'Stone-milled Uji matcha whisked to a jade foam and floated over cold oat milk and clear ice.',
+        src: 'assets/corner-table/05-iced-matcha.png',
+        alt: 'Iced matcha latte in a clear glass with creamy green layers and ice',
+        placeholderGradient: 'linear-gradient(135deg, #eef3e8 0%, #78a86b 52%, #1a4d2e 100%)'
+      },
+      {
+        id: 'pour-over',
+        name: 'Pour-Over Carafe',
+        description: 'Fluted borosilicate glass dripper and unbleached paper cone resting on a server carafe with a dusty-pink collar.',
+        src: 'assets/corner-table/06-pour-over.png',
+        alt: 'Glass pour-over dripper with a paper filter on a coffee carafe with a pink collar',
+        placeholderGradient: 'linear-gradient(135deg, #f4d8de 0%, #b57c87 48%, #3c2218 100%)'
+      },
+      {
+        id: 'strawberry-matcha',
+        name: 'Strawberry Matcha',
+        description: 'Three-layer cold glass pairing house strawberry purée and creamy milk with brisk whisked green tea.',
+        src: 'assets/corner-table/07-strawberry-matcha.png',
+        alt: 'Strawberry matcha in a clear glass with pink strawberry milk below creamy milk and green matcha',
+        placeholderGradient: 'linear-gradient(135deg, #f2b8c4 0%, #f5ede6 50%, #5b9352 100%)'
+      },
+      {
+        id: 'espresso-tonic',
+        name: 'Citrus Espresso Tonic',
+        description: 'Double espresso floated over effervescent botanical tonic, crystal ice, and a thin wheel of blood orange.',
+        src: 'assets/corner-table/08-espresso-tonic.png',
+        alt: 'Espresso tonic in a faceted clear tumbler with dark espresso over pale golden tonic, ice, and an orange slice',
+        placeholderGradient: 'linear-gradient(135deg, #fae2b8 0%, #d47a39 50%, #3a1f14 100%)'
+      }
+    ];
+
+    const stage = document.getElementById('stage');
+    const field = document.getElementById('field');
+    const wordmarkWrap = document.getElementById('wordmark-wrap');
+    const descCard = document.getElementById('desc-card');
+    const descTitle = document.getElementById('desc-card-title');
+    const descBody = document.getElementById('desc-card-body');
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reducedMotion = reducedMotionQuery.matches;
+    reducedMotionQuery.addEventListener('change', (e) => {
+      reducedMotion = e.matches;
+    });
+
+    // Grid angle: 19 degrees upward to the right
+    const ANGLE_RAD = -19 * (Math.PI / 180);
+    const COS_A = Math.cos(ANGLE_RAD);
+    const SIN_A = Math.sin(ANGLE_RAD);
+
+    let vw = window.innerWidth;
+    let vh = window.innerHeight;
+    let colSpacing = 440;
+    let rowSpacing = 390;
+    let cellSize = 280;
+
+    function updateMetrics() {
+      vw = window.innerWidth;
+      vh = window.innerHeight;
+      if (vw <= 768) {
+        colSpacing = 250;
+        rowSpacing = 225;
+        cellSize = 172;
+      } else {
+        colSpacing = 440;
+        rowSpacing = 390;
+        cellSize = 280;
+      }
+      document.documentElement.style.setProperty('--cell-size', `${cellSize}px`);
+    }
+    updateMetrics();
+
+    // Deterministic integer hash for curated offsets & scales
+    function cellHash(col, row, salt = 0) {
+      let h = (col * 374761393) ^ (row * 668265263) ^ (salt * 1442695041);
+      h = (h ^ (h >> 13)) * 1274126177;
+      return ((h ^ (h >> 16)) >>> 0) / 4294967295;
+    }
+
+    function positiveMod(n, m) {
+      return ((n % m) + m) % m;
+    }
+
+    function getCellWorldCenter(col, row) {
+      const stagger = (row & 1) !== 0 ? 0.5 * colSpacing : 0;
+      const jitterRange = vw <= 768 ? 14 : 24;
+      const jx = (cellHash(col, row, 1) - 0.5) * 2 * jitterRange;
+      const jy = (cellHash(col, row, 2) - 0.5) * 2 * jitterRange;
+      const u = col * colSpacing + stagger + jx;
+      const v = row * rowSpacing + jy;
+      return {
+        wx: u * COS_A - v * SIN_A,
+        wy: u * SIN_A + v * COS_A
+      };
+    }
+
+    // Pan state & inertia
+    let panX = 0;
+    let panY = 0;
+    let velX = 0;
+    let velY = 0;
+    let isDragging = false;
+    let dragPointerId = null;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let lastPointerX = 0;
+    let lastPointerY = 0;
+    let lastPointerTime = 0;
+    let pointerScreenX = -9999;
+    let pointerScreenY = -9999;
+    let pointerActive = false;
+
+    // Active cells map ("col,row" -> cellRecord) and recycled pool
+    const activeCells = new Map();
+    const cellPool = [];
+    let initialEntrancePlayed = false;
+    let hoveredCellKey = null;
+    let focusedCellKey = null;
+
+    function createCellElement() {
+      const el = document.createElement('div');
+      el.className = 'cell';
+      el.tabIndex = 0;
+
+      const entrance = document.createElement('div');
+      entrance.className = 'cell-entrance';
+
+      const hover = document.createElement('div');
+      hover.className = 'cell-hover';
+
+      const artBox = document.createElement('div');
+      artBox.className = 'art-box';
+
+      const img = document.createElement('img');
+      img.className = 'art-img';
+      img.width = 560;
+      img.height = 560;
+      img.decoding = 'async';
+
+      artBox.appendChild(img);
+      hover.appendChild(artBox);
+      entrance.appendChild(hover);
+      el.appendChild(entrance);
+
+      el.addEventListener('focus', () => {
+        const key = el.dataset.key;
+        if (!key || !activeCells.has(key)) return;
+        focusedCellKey = key;
+        const rec = activeCells.get(key);
+        showDescriptionForRecord(rec);
+      });
+
+      el.addEventListener('blur', () => {
+        if (focusedCellKey === el.dataset.key) {
+          focusedCellKey = null;
+          if (!hoveredCellKey) hideDescriptionCard();
+        }
+      });
+
+      return { el, entrance, hover, artBox, img };
+    }
+
+    function assignCellData(rec, col, row, key, isInitialLoad) {
+      rec.col = col;
+      rec.row = row;
+      rec.key = key;
+      rec.el.dataset.key = key;
+
+      const itemIdx = positiveMod(col + row * 3, ITEMS.length);
+      const item = ITEMS[itemIdx];
+      rec.item = item;
+
+      // Scale 92% - 108%
+      const scale = 0.92 + cellHash(col, row, 3) * 0.16;
+      rec.el.style.setProperty('--item-scale', scale.toFixed(3));
+      rec.el.setAttribute('aria-label', `${item.name}: ${item.description}`);
+
+      if (rec.img.dataset.src !== item.src) {
+        rec.img.dataset.src = item.src;
+        rec.img.src = item.src;
+        rec.img.alt = item.alt || item.name;
+      }
+
+      // Reset entrance state cleanly so recycled cells never replay entrance
+      rec.entrance.classList.remove('entering', 'entered');
+      rec.entrance.style.removeProperty('--enter-delay');
+      if (isInitialLoad && !reducedMotion) {
+        rec.entrance.classList.add('entering');
+      }
+    }
+
+    function isInsideLogoSuppressionEllipse(x, y) {
+      const rect = wordmarkWrap.getBoundingClientRect();
+      const cx = rect.left + rect.width * 0.5;
+      const cy = rect.top + rect.height * 0.5;
+      const rx = rect.width * 0.58;
+      const ry = rect.height * 0.64;
+      if (rx <= 0 || ry <= 0) return false;
+      const nx = (x - cx) / rx;
+      const ny = (y - cy) / ry;
+      return (nx * nx + ny * ny) <= 1;
+    }
+
+    function showDescriptionForRecord(rec) {
+      if (!rec || !rec.item) return;
+      const cx = rec.screenX;
+      const cy = rec.screenY;
+
+      descTitle.textContent = rec.item.name;
+      descBody.textContent = rec.item.description;
+
+      const cardW = Math.min(268, vw - 32);
+      const cardH = descCard.offsetHeight || 96;
+      const margin = 16;
+
+      const clampedX = Math.max(margin, Math.min(vw - cardW - margin, cx - cardW * 0.5));
+      const clampedY = Math.max(margin, Math.min(vh - cardH - margin, cy - cardH * 0.5));
+
+      descCard.style.setProperty('--card-x', `${clampedX.toFixed(1)}px`);
+      descCard.style.setProperty('--card-y', `${clampedY.toFixed(1)}px`);
+      descCard.classList.add('visible');
+      descCard.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideDescriptionCard() {
+      descCard.classList.remove('visible');
+      descCard.setAttribute('aria-hidden', 'true');
+      if (hoveredCellKey && activeCells.has(hoveredCellKey)) {
+        activeCells.get(hoveredCellKey).el.classList.remove('is-hovered');
+      }
+      hoveredCellKey = null;
+    }
+
+    function updateHoverState() {
+      if (isDragging || !pointerActive) {
+        if (!focusedCellKey) hideDescriptionCard();
+        return;
+      }
+
+      if (isInsideLogoSuppressionEllipse(pointerScreenX, pointerScreenY)) {
+        hideDescriptionCard();
+        return;
+      }
+
+      const hitRadius = cellSize * 0.34;
+      let bestRec = null;
+      let bestDistSq = hitRadius * hitRadius;
+
+      for (const rec of activeCells.values()) {
+        // Also suppress if the cell's center sits inside the logo ellipse
+        if (isInsideLogoSuppressionEllipse(rec.screenX, rec.screenY)) continue;
+        const dx = pointerScreenX - rec.screenX;
+        const dy = pointerScreenY - rec.screenY;
+        const d2 = dx * dx + dy * dy;
+        if (d2 <= bestDistSq) {
+          bestDistSq = d2;
+          bestRec = rec;
+        }
+      }
+
+      if (!bestRec) {
+        if (!focusedCellKey) hideDescriptionCard();
+        return;
+      }
+
+      if (hoveredCellKey !== bestRec.key) {
+        if (hoveredCellKey && activeCells.has(hoveredCellKey)) {
+          activeCells.get(hoveredCellKey).el.classList.remove('is-hovered');
+        }
+        hoveredCellKey = bestRec.key;
+        bestRec.el.classList.add('is-hovered');
+      }
+      showDescriptionForRecord(bestRec);
+    }
+
+    function updateVisibleGrid(isInitialLoad = false) {
+      const buffer = cellSize * 1.35;
+      const corners = [
+        [-vw * 0.5 - panX - buffer, -vh * 0.5 - panY - buffer],
+        [ vw * 0.5 - panX + buffer, -vh * 0.5 - panY - buffer],
+        [-vw * 0.5 - panX - buffer,  vh * 0.5 - panY + buffer],
+        [ vw * 0.5 - panX + buffer,  vh * 0.5 - panY + buffer]
+      ];
+
+      let minU = Infinity, maxU = -Infinity;
+      let minV = Infinity, maxV = -Infinity;
+      for (const [wx, wy] of corners) {
+        const u = wx * COS_A + wy * SIN_A;
+        const v = -wx * SIN_A + wy * COS_A;
+        if (u < minU) minU = u;
+        if (u > maxU) maxU = u;
+        if (v < minV) minV = v;
+        if (v > maxV) maxV = v;
+      }
+
+      const minCol = Math.floor(minU / colSpacing) - 1;
+      const maxCol = Math.ceil(maxU / colSpacing) + 1;
+      const minRow = Math.floor(minV / rowSpacing) - 1;
+      const maxRow = Math.ceil(maxV / rowSpacing) + 1;
+
+      const neededKeys = new Set();
+      for (let r = minRow; r <= maxRow; r++) {
+        for (let c = minCol; c <= maxCol; c++) {
+          const { wx, wy } = getCellWorldCenter(c, r);
+          const sx = vw * 0.5 + panX + wx;
+          const sy = vh * 0.5 + panY + wy;
+          if (
+            sx >= -buffer && sx <= vw + buffer &&
+            sy >= -buffer && sy <= vh + buffer
+          ) {
+            neededKeys.add(`${c},${r}`);
+          }
+        }
+      }
+
+      // Recycle offscreen cells
+      for (const [key, rec] of activeCells.entries()) {
+        if (!neededKeys.has(key)) {
+          if (hoveredCellKey === key) hoveredCellKey = null;
+          if (focusedCellKey === key) focusedCellKey = null;
+          rec.el.classList.remove('is-hovered');
+          activeCells.delete(key);
+          cellPool.push(rec);
+        }
+      }
+
+      // Populate and position visible cells
+      for (const key of neededKeys) {
+        let rec = activeCells.get(key);
+        if (!rec) {
+          const [cStr, rStr] = key.split(',');
+          const c = Number(cStr);
+          const r = Number(rStr);
+          rec = cellPool.pop();
+          if (!rec) {
+            rec = createCellElement();
+            field.appendChild(rec.el);
+          }
+          assignCellData(rec, c, r, key, isInitialLoad);
+          activeCells.set(key, rec);
+        }
+
+        const { wx, wy } = getCellWorldCenter(rec.col, rec.row);
+        const sx = vw * 0.5 + panX + wx;
+        const sy = vh * 0.5 + panY + wy;
+        rec.screenX = sx;
+        rec.screenY = sy;
+
+        const tx = sx - cellSize * 0.5;
+        const ty = sy - cellSize * 0.5;
+        rec.el.style.transform = `translate3d(${tx.toFixed(1)}px, ${ty.toFixed(1)}px, 0)`;
+      }
+
+      if (hoveredCellKey && activeCells.has(hoveredCellKey)) {
+        showDescriptionForRecord(activeCells.get(hoveredCellKey));
+      } else if (focusedCellKey && activeCells.has(focusedCellKey)) {
+        showDescriptionForRecord(activeCells.get(focusedCellKey));
+      }
+    }
+
+    function playInitialEntrance() {
+      if (initialEntrancePlayed) return;
+      initialEntrancePlayed = true;
+      if (reducedMotion) return;
+
+      for (const rec of activeCells.values()) {
+        const nx = Math.max(0, Math.min(1, rec.screenX / Math.max(1, vw)));
+        const ny = Math.max(0, Math.min(1, rec.screenY / Math.max(1, vh)));
+        const delayMs = Math.round((nx * 0.55 + ny * 0.45) * 550);
+        rec.entrance.style.setProperty('--enter-delay', `${delayMs}ms`);
+      }
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          for (const rec of activeCells.values()) {
+            if (rec.entrance.classList.contains('entering')) {
+              rec.entrance.classList.add('entered');
+              rec.entrance.classList.remove('entering');
+            }
+          }
+        });
+      });
+    }
+
+    // Pointer panning & hover tracking
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      isDragging = true;
+      dragPointerId = e.pointerId;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      lastPointerX = e.clientX;
+      lastPointerY = e.clientY;
+      lastPointerTime = performance.now();
+      velX = 0;
+      velY = 0;
+      hideDescriptionCard();
+      try {
+        stage.setPointerCapture(e.pointerId);
+      } catch (_) {}
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'touch') {
+        pointerScreenX = e.clientX;
+        pointerScreenY = e.clientY;
+        pointerActive = true;
+      }
+
+      if (isDragging && e.pointerId === dragPointerId) {
+        const now = performance.now();
+        const dx = e.clientX - lastPointerX;
+        const dy = e.clientY - lastPointerY;
+        const dt = Math.max(1, now - lastPointerTime);
+
+        panX += dx;
+        panY += dy;
+        velX = 0.75 * (dx / dt * 16.67) + 0.25 * velX;
+        velY = 0.75 * (dy / dt * 16.67) + 0.25 * velY;
+
+        lastPointerX = e.clientX;
+        lastPointerY = e.clientY;
+        lastPointerTime = now;
+        updateVisibleGrid(false);
+      } else if (e.pointerType !== 'touch') {
+        updateHoverState();
+      }
+    });
+
+    function endDrag(e) {
+      if (!isDragging || (dragPointerId !== null && e.pointerId !== dragPointerId)) return;
+      isDragging = false;
+      try {
+        stage.releasePointerCapture(e.pointerId);
+      } catch (_) {}
+      if (performance.now() - lastPointerTime > 90) {
+        velX = 0;
+        velY = 0;
+      }
+      dragPointerId = null;
+      if (e.pointerType !== 'touch') {
+        updateHoverState();
+      }
+    }
+
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+    stage.addEventListener('pointerleave', () => {
+      pointerActive = false;
+      if (!focusedCellKey) hideDescriptionCard();
+    });
+
+    // Wheel / trackpad 2D panning
+    window.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      let dx = e.deltaX;
+      let dy = e.deltaY;
+      if (e.deltaMode === 1) {
+        dx *= 16;
+        dy *= 16;
+      }
+      panX -= dx;
+      panY -= dy;
+      hideDescriptionCard();
+      updateVisibleGrid(false);
+    }, { passive: false });
+
+    // Keyboard arrow-key navigation & Escape
+    const keysDown = new Set();
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hideDescriptionCard();
+        if (document.activeElement && document.activeElement !== stage) {
+          document.activeElement.blur();
+        }
+        return;
+      }
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        keysDown.add(e.key);
+        hideDescriptionCard();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      keysDown.delete(e.key);
+    });
+
+    window.addEventListener('resize', () => {
+      updateMetrics();
+      updateVisibleGrid(false);
+    });
+
+    // Main animation loop for inertia & keyboard arrow panning
+    function tick() {
+      let moved = false;
+      const keySpeed = reducedMotion ? 14 : 9;
+      if (keysDown.has('ArrowLeft'))  { panX += keySpeed; moved = true; }
+      if (keysDown.has('ArrowRight')) { panX -= keySpeed; moved = true; }
+      if (keysDown.has('ArrowUp'))    { panY += keySpeed; moved = true; }
+      if (keysDown.has('ArrowDown'))  { panY -= keySpeed; moved = true; }
+
+      if (!isDragging && !reducedMotion && (Math.abs(velX) > 0.08 || Math.abs(velY) > 0.08)) {
+        panX += velX;
+        panY += velY;
+        velX *= 0.92;
+        velY *= 0.92;
+        moved = true;
+      } else if (!isDragging) {
+        velX = 0;
+        velY = 0;
+      }
+
+      if (moved) {
+        updateVisibleGrid(false);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    async function init() {
+      try {
+        const res = await fetch('assets/corner-table/assets.json');
+        if (res.ok) {
+          const manifest = await res.json();
+          if (Array.isArray(manifest.items) && manifest.items.length === 8) {
+            ITEMS = manifest.items;
+          }
+        }
+      } catch (_) {}
+
+      updateVisibleGrid(true);
+
+      const preloadPromises = ITEMS.map((item) => {
+        const img = new Image();
+        img.src = item.src;
+        return img.decode ? img.decode().catch(() => {}) : Promise.resolve();
+      });
+
+      await Promise.race([
+        Promise.all([
+          document.fonts ? document.fonts.ready : Promise.resolve(),
+          ...preloadPromises
+        ]),
+        new Promise((resolve) => setTimeout(resolve, 1500))
+      ]);
+
+      playInitialEntrance();
+      requestAnimationFrame(tick);
+    }
+
+    init();
+  </script>
+</body>
+</html>
+
