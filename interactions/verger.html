@@ -1,0 +1,1332 @@
+<!doctype html>
+<!--
+  Verger — Peach Bag (Concept Study)
+  Dish photograph self-hosted at assets/verger/peach-dish.jpg
+  Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/peach/peach-dish.jpg
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7d3d6">
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Verger — From orchard to table. Interactive restaurant hero with spring-physics peaches and a translucent carrier bag.">
+  <title>Verger — From orchard to table.</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <meta property="og:title" content="Verger: Peach Bag">
+  <meta property="og:description" content="Interactive spring-physics peach bag hero concept study for Verger.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://clarklindleysuan.com/interactions/posters/verger.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #cf3a45;
+      --ink: #2b2a28;
+      --gutter: clamp(20px, 3.4vw, 52px);
+      --cursor-arrow: auto;
+      --cursor-hand: pointer;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      cursor: var(--cursor-arrow);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      overflow: hidden;
+      background-color: #f7d3d6;
+      background-image:
+        radial-gradient(55% 60% at 8% 12%, #ffd9e1 0%, transparent 70%),
+        radial-gradient(50% 55% at 92% 8%, #f6b3c3 0%, transparent 70%),
+        radial-gradient(60% 60% at 50% 48%, #fde6e8 0%, transparent 70%),
+        radial-gradient(55% 60% at 12% 92%, #f3a9ba 0%, transparent 70%),
+        radial-gradient(60% 65% at 90% 88%, #ffc6c4 0%, transparent 70%);
+    }
+
+    #stage-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 2;
+      touch-action: none;
+    }
+
+    #stage-canvas.over-bag {
+      cursor: var(--cursor-hand);
+    }
+
+    /* Film grain layer (220px JS noise tile, multiply at 0.32) */
+    .film-grain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 4;
+      mix-blend-mode: multiply;
+      opacity: 0.32;
+      background-repeat: repeat;
+    }
+
+    /* Print screen dot layer over the grain */
+    .print-screen {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.9) 0.6px, transparent 1.1px);
+      background-size: 3px 3px;
+      mix-blend-mode: soft-light;
+      opacity: 0.2;
+    }
+
+    /* UI chrome */
+    .logo {
+      position: absolute;
+      top: var(--gutter);
+      left: var(--gutter);
+      z-index: 6;
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 700;
+      font-size: 44px;
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      color: var(--pink);
+      text-decoration: none;
+      cursor: var(--cursor-hand);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: ui-rise 0.72s cubic-bezier(.2, .9, .3, 1) 0.08s forwards;
+    }
+
+    .bottom-left {
+      position: absolute;
+      left: var(--gutter);
+      bottom: var(--gutter);
+      z-index: 6;
+      max-width: min(760px, 50vw);
+      pointer-events: none;
+    }
+
+    .headline {
+      margin: 0;
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 500;
+      font-size: clamp(50px, 7vw, 115px);
+      line-height: 0.94;
+      letter-spacing: -0.035em;
+      color: var(--pink);
+    }
+
+    .headline-line {
+      display: block;
+    }
+
+    .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: ui-rise 0.72s cubic-bezier(.2, .9, .3, 1) var(--d, 0.2s) forwards;
+    }
+
+    .cta-btn {
+      pointer-events: auto;
+      margin-top: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px 24px;
+      border-radius: 999px;
+      border: 0;
+      background: var(--pink);
+      color: #fff3ef;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 1;
+      text-decoration: none;
+      cursor: var(--cursor-hand);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: ui-rise 0.72s cubic-bezier(.2, .9, .3, 1) 0.52s forwards;
+    }
+
+    .cta-label {
+      display: inline-block;
+      transition: transform 0.36s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cta-btn:hover .cta-label {
+      transform: scale(1.06, 0.94);
+    }
+
+    .dish-card {
+      position: absolute;
+      right: var(--gutter);
+      bottom: var(--gutter);
+      z-index: 6;
+      width: 300px;
+      padding: 8px;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 18px 42px rgba(207, 58, 69, 0.16), 0 4px 12px rgba(207, 58, 69, 0.08);
+      text-decoration: none;
+      color: #ffffff;
+      cursor: var(--cursor-hand);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: ui-rise 0.72s cubic-bezier(.2, .9, .3, 1) 0.6s forwards;
+      transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.38s ease;
+    }
+
+    .dish-card:hover {
+      transform: translateY(-4px) scale(1.015);
+      box-shadow: 0 24px 48px rgba(207, 58, 69, 0.22), 0 6px 16px rgba(207, 58, 69, 0.1);
+    }
+
+    .dish-media {
+      position: relative;
+      width: 100%;
+      height: 176px;
+      border-radius: 14px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 22% 22%, #fbe3d6 0%, transparent 48%),
+        radial-gradient(circle at 50% 50%, #f6c9c4 0%, #e9a9a6 100%);
+    }
+
+    .dish-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform-origin: 34% 32%;
+      transform: scale(1.5);
+      transition: transform 0.48s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    .dish-card:hover .dish-img {
+      transform: scale(1.58);
+    }
+
+    .dish-shade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(28, 12, 14, 0) 38%,
+        rgba(28, 12, 14, 0.72) 100%
+      );
+      pointer-events: none;
+    }
+
+    .dish-overlay {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .dish-title {
+      margin: 0 0 6px;
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+
+    .dish-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .dish-arrow {
+      display: inline-block;
+      transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    .dish-card:hover .dish-arrow {
+      transform: translateX(5px);
+    }
+
+    @keyframes ui-rise {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 759px), (orientation: portrait) {
+      .logo {
+        font-size: 34px;
+      }
+      .bottom-left {
+        left: var(--gutter);
+        right: var(--gutter);
+        max-width: none;
+        bottom: calc(var(--gutter) + 150px);
+      }
+      .cta-btn {
+        margin-top: 16px;
+      }
+      .dish-card {
+        left: var(--gutter);
+        right: var(--gutter);
+        width: auto;
+      }
+      .dish-media {
+        height: 118px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .logo,
+      .word,
+      .cta-btn,
+      .dish-card {
+        animation-duration: 0.01s !important;
+        animation-delay: 0s !important;
+        transition-duration: 0.01s !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="hero" id="hero">
+    <canvas id="stage-canvas" aria-label="Interactive translucent carrier bag holding five fuzzy red peaches"></canvas>
+    <div class="film-grain" id="film-grain" aria-hidden="true"></div>
+    <div class="print-screen" aria-hidden="true"></div>
+
+    <a href="#top" class="logo" aria-label="Verger home" onclick="return false;">VERGER</a>
+
+    <div class="bottom-left" id="headline-block">
+      <h1 class="headline" aria-label="From orchard to table.">
+        <span class="headline-line">
+          <span class="word" style="--d: 0.20s">From</span>
+          <span class="word" style="--d: 0.27s">orchard</span>
+        </span>
+        <span class="headline-line">
+          <span class="word" style="--d: 0.34s">to</span>
+          <span class="word" style="--d: 0.41s">table.</span>
+        </span>
+      </h1>
+      <button type="button" class="cta-btn">
+        <span class="cta-label">Reserve a table</span>
+      </button>
+    </div>
+
+    <a href="#menu" class="dish-card" onclick="return false;" aria-label="Featured dish: White peach, raspberry and honey. View the menu.">
+      <div class="dish-media">
+        <!-- Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/peach/peach-dish.jpg -->
+        <img
+          class="dish-img"
+          id="dish-img"
+          src="assets/verger/peach-dish.jpg"
+          alt="Sliced white peaches with raspberries, honey and pink peppercorns"
+          width="1000"
+          height="672"
+        >
+        <div class="dish-shade"></div>
+        <div class="dish-overlay">
+          <div class="dish-title">White peach, raspberry &amp; honey</div>
+          <div class="dish-link">
+            <span>VIEW THE MENU</span>
+            <span class="dish-arrow" aria-hidden="true">→</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </main>
+
+  <script>
+    // Hide dish image cleanly on error so fallback radial gradient shows without broken icon
+    const dishImg = document.getElementById('dish-img');
+    dishImg.addEventListener('error', () => {
+      dishImg.style.display = 'none';
+    });
+
+    // Generate 220px warm film grain noise tile in JS
+    (function buildFilmGrain() {
+      const size = 220;
+      const c = document.createElement('canvas');
+      c.width = size;
+      c.height = size;
+      const gctx = c.getContext('2d');
+      const img = gctx.createImageData(size, size);
+      const d = img.data;
+      let seed = 918273;
+      const rand = () => {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+      for (let i = 0; i < d.length; i += 4) {
+        if (rand() < 0.40) {
+          const v = 165 + Math.floor(rand() * 80);
+          d[i] = Math.min(255, Math.round(v * 1.02));
+          d[i + 1] = Math.round(v * 0.93);
+          d[i + 2] = Math.round(v * 0.90);
+          d[i + 3] = 95 + Math.floor(rand() * 95);
+        }
+      }
+      gctx.putImageData(img, 0, 0);
+      document.getElementById('film-grain').style.backgroundImage = `url(${c.toDataURL('image/png')})`;
+    })();
+
+    // Generate ASCII pixel-art cursors in JS and set CSS custom properties
+    (function buildPixelCursors() {
+      const ARROW_GRID = [
+        "X...........",
+        "XX..........",
+        "XWX.........",
+        "XWWX........",
+        "XWWWX.......",
+        "XWWWWX......",
+        "XWWWWWX.....",
+        "XWWWWWWX....",
+        "XWWWWWWWX...",
+        "XWWWWWWWWX..",
+        "XWWWWWWWWWX.",
+        "XWWWWWWXXXXX",
+        "XWWWXWWX....",
+        "XWWX.XWWX...",
+        "XWX..XWWX...",
+        "XX....XWWX..",
+        "X.....XWWX..",
+        ".......XWWX.",
+        ".......XXX.."
+      ];
+
+      const HAND_GRID = [
+        ".....XX..........",
+        "....XWWX.........",
+        "....XWWX.........",
+        "....XWWX.........",
+        "....XWWX.........",
+        "....XWWXXX.......",
+        "....XWWXWWXXX....",
+        "....XWWXWWXWWXX..",
+        "XX..XWWXWWXWWXWX.",
+        "XWX.XWWWWWWWWXWWX",
+        "XWWXXWWWWWWWWWWWX",
+        ".XWWXWWWWWWWWWWWX",
+        "..XWWWWWWWWWWWWWX",
+        "..XWWWWWWWWWWWWWX",
+        "...XWWWWWWWWWWWX.",
+        "...XWWWWWWWWWWWX.",
+        "....XWWWWWWWWWX..",
+        "....XWWWWWWWWWX..",
+        "....XXXXXXXXXXX.."
+      ];
+
+      function gridToCursorUrl(grid, pxScale, hotX, hotY) {
+        const rows = grid.length;
+        const cols = grid[0].length;
+        const step = Math.max(1, Math.round(pxScale));
+        const c = document.createElement('canvas');
+        c.width = cols * step;
+        c.height = rows * step;
+        const ctx = c.getContext('2d');
+        for (let y = 0; y < rows; y++) {
+          const row = grid[y];
+          for (let x = 0; x < cols; x++) {
+            const ch = row[x];
+            if (ch === '.') continue;
+            ctx.fillStyle = ch === 'X' ? '#cf3a45' : '#ffffff';
+            ctx.fillRect(x * step, y * step, step, step);
+          }
+        }
+        return `url("${c.toDataURL('image/png')}") ${hotX} ${hotY}`;
+      }
+
+      const root = document.documentElement;
+      root.style.setProperty('--cursor-arrow', `${gridToCursorUrl(ARROW_GRID, 4, 2, 2)}, auto`);
+      root.style.setProperty('--cursor-hand', `${gridToCursorUrl(HAND_GRID, 4.6, 23, 2)}, pointer`);
+    })();
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reducedMotion = reducedMotionQuery.matches;
+
+    // Two canvases: main stage canvas + offscreen fruit composition canvas
+    const stageCanvas = document.getElementById('stage-canvas');
+    const ctx = stageCanvas.getContext('2d');
+    const fruitCanvas = document.createElement('canvas');
+    const fruitCtx = fruitCanvas.getContext('2d');
+    const headlineBlock = document.getElementById('headline-block');
+
+    const PEACH_SPECS = [
+      { x: -95,  y: -40,  r: 128, rot: -0.35, pal: 0 },
+      { x: 104,  y: -118, r: 86,  rot: 0.55,  pal: 1 },
+      { x: 146,  y: 84,   r: 132, rot: 2.2,   pal: 2 },
+      { x: -62,  y: 226,  r: 130, rot: -2.3,  pal: 3 },
+      { x: -178, y: -196, r: 58,  rot: 1.1,   pal: 4 }
+    ];
+
+    const DROP_ORDER = [3, 2, 0, 1, 4];
+
+    const PALETTES = [
+      ['#d8102c', '#f0344a', '#ff7f96', '#ffd0dc'],
+      ['#ff1f6e', '#ff4a6a', '#ff8aa6', '#ffd6e2'],
+      ['#e3123f', '#fb3f63', '#ff90a8', '#ffd8e2'],
+      ['#cc0d27', '#ee2f45', '#ff7a92', '#ffcfdb'],
+      ['#f21d5c', '#ff4f75', '#ff98b0', '#ffdbe5']
+    ];
+
+    // Bag fixed geometry in cluster units
+    const MOUTH_Y = -262;
+    const MOUTH_L = [-212, -262];
+    const MOUTH_R = [210, -262];
+    const MOUTH_SAG = [2, -240];
+    const HANDLE_PIVOT = [18, -900];
+    const SWEEP_CENTER = [0, 20];
+
+    const RIGHT_OUTER_UP = [[153, -440], [96, -580], [46, -700]];
+    const RIGHT_INNER_DOWN = [[26, -700], [67, -580], [110, -440], [155, -262]];
+    const LEFT_INNER_UP = [[-154, -262], [-92, -440], [-33, -580], [18, -700]];
+    const LEFT_OUTER_DOWN = [[1, -700], [-62, -580], [-135, -440]];
+
+    const FRONT_TOP_EDGE = [
+      [210, -262], [153, -440], [96, -580], [46, -700], [26, -700],
+      [67, -580], [110, -440], [128, -300], [130, -190], [96, -96],
+      [-10, -58], [-120, -86], [-146, -200], [-128, -330], [-95, -460],
+      [-33, -580], [18, -700], [1, -700], [-62, -580], [-135, -440], [-212, -262]
+    ];
+
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let u2px = H / 1000;
+    let sc = 1;
+    let CX = 500;
+    let CY = 450;
+
+    // Pre-rendered peach sprites (one offscreen canvas per peach)
+    const peachSprites = new Array(5);
+
+    function buildPeachSprite(idx) {
+      const spec = PEACH_SPECS[idx];
+      const pal = PALETTES[spec.pal];
+      const rPx = Math.max(24, spec.r * sc * u2px * dpr);
+      const pad = Math.ceil(rPx * 0.28);
+      const dim = Math.ceil((rPx + pad) * 2);
+      const cx = dim * 0.5;
+      const cy = dim * 0.5;
+
+      // Scratch canvas for body + cheek before softening blur
+      const raw = document.createElement('canvas');
+      raw.width = dim;
+      raw.height = dim;
+      const rctx = raw.getContext('2d');
+
+      // 1. Body radial gradient disc
+      rctx.save();
+      rctx.beginPath();
+      rctx.arc(cx, cy, rPx, 0, Math.PI * 2);
+      rctx.closePath();
+      const bodyGrad = rctx.createRadialGradient(
+        cx + 0.22 * rPx, cy - 0.28 * rPx, 0.035 * rPx,
+        cx, cy, rPx
+      );
+      bodyGrad.addColorStop(0, pal[0]);
+      bodyGrad.addColorStop(0.5, pal[1]);
+      bodyGrad.addColorStop(0.84, pal[2]);
+      bodyGrad.addColorStop(1, pal[3]);
+      rctx.fillStyle = bodyGrad;
+      rctx.fill();
+
+      // 2. Cheek blush clipped with source-atop
+      rctx.globalCompositeOperation = 'source-atop';
+      const cheekX = cx - 0.57 * rPx;
+      const cheekY = cy - 0.17 * rPx;
+      const cheekR = 1.06 * rPx;
+      const cheekGrad = rctx.createRadialGradient(cheekX, cheekY, 0, cheekX, cheekY, cheekR);
+      cheekGrad.addColorStop(0, 'rgba(255, 214, 226, 0.62)');
+      cheekGrad.addColorStop(0.45, 'rgba(255, 214, 226, 0.24)');
+      cheekGrad.addColorStop(1, 'rgba(255, 214, 226, 0)');
+      rctx.fillStyle = cheekGrad;
+      rctx.fillRect(0, 0, dim, dim);
+      rctx.restore();
+
+      // 3. Soften: blur whole sprite by 0.085 * r into final sprite canvas
+      const out = document.createElement('canvas');
+      out.width = dim;
+      out.height = dim;
+      const octx = out.getContext('2d');
+
+      octx.save();
+      octx.filter = `blur(${(0.085 * rPx).toFixed(2)}px)`;
+      octx.drawImage(raw, 0, 0);
+      octx.restore();
+
+      // 4. Stem dimple near top at (+0.035r, -0.77r), stretched scale(0.8, 1.1) with blur 0.045r
+      octx.save();
+      octx.filter = `blur(${(0.045 * rPx).toFixed(2)}px)`;
+      octx.translate(cx + 0.035 * rPx, cy - 0.77 * rPx);
+      octx.scale(0.8, 1.1);
+      const dimpleR = 0.21 * rPx;
+      const dimpleGrad = octx.createRadialGradient(0, 0, 0, 0, 0, dimpleR);
+      dimpleGrad.addColorStop(0, 'rgba(62, 105, 83, 0.84)');
+      dimpleGrad.addColorStop(0.27, 'rgba(73, 115, 92, 0.68)');
+      dimpleGrad.addColorStop(0.62, 'rgba(105, 137, 112, 0.30)');
+      dimpleGrad.addColorStop(1, 'rgba(105, 137, 112, 0)');
+      octx.fillStyle = dimpleGrad;
+      octx.beginPath();
+      octx.arc(0, 0, dimpleR, 0, Math.PI * 2);
+      octx.fill();
+      octx.restore();
+
+      // 5. Suture line: rgba(160,20,60,.19) with width 0.043r and blur 0.027r
+      octx.save();
+      octx.filter = `blur(${(0.027 * rPx).toFixed(2)}px)`;
+      octx.strokeStyle = 'rgba(160, 20, 60, 0.19)';
+      octx.lineWidth = 0.043 * rPx;
+      octx.lineCap = 'round';
+      octx.beginPath();
+      octx.moveTo(cx + 0.10 * rPx, cy - 0.70 * rPx);
+      octx.bezierCurveTo(
+        cx + 0.10 * rPx, cy - 0.25 * rPx,
+        cx + 0.34 * rPx, cy + 0.15 * rPx,
+        cx + 0.30 * rPx, cy + 0.64 * rPx
+      );
+      octx.stroke();
+      octx.restore();
+
+      // 6. Per-pixel dither, edge speckle, colour grain (±13) & print screen
+      const imgData = octx.getImageData(0, 0, dim, dim);
+      const data = imgData.data;
+      let seed = (idx + 1) * 741103597;
+      const rand = () => {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+
+      for (let py = 0; py < dim; py++) {
+        const sinY = Math.sin(py * 1.25);
+        for (let px = 0; px < dim; px++) {
+          const p = (py * dim + px) * 4;
+          const origA = data[p + 3];
+          if (origA === 0) continue;
+
+          const a = origA / 255;
+          const edgeScatter = (rand() * 2 - 1) * (a * (1 - a) * 4) * 0.55;
+          const bodyAlphaNoise = (rand() * 2 - 1) * 0.04 * a;
+          const newA = Math.max(0, Math.min(1, a + edgeScatter + bodyAlphaNoise));
+          data[p + 3] = Math.round(newA * 255);
+
+          const grain = (rand() * 2 - 1) * 13 + Math.sin(px * 1.25) * sinY * 5;
+          data[p]     = Math.max(0, Math.min(255, Math.round(data[p] + grain)));
+          data[p + 1] = Math.max(0, Math.min(255, Math.round(data[p + 1] + grain * 0.85)));
+          data[p + 2] = Math.max(0, Math.min(255, Math.round(data[p + 2] + grain * 0.9)));
+        }
+      }
+      octx.putImageData(imgData, 0, 0);
+
+      return { canvas: out, dim, rPx };
+    }
+
+    function updateMetricsAndSprites() {
+      W = window.innerWidth;
+      H = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      stageCanvas.width = Math.round(W * dpr);
+      stageCanvas.height = Math.round(H * dpr);
+      fruitCanvas.width = stageCanvas.width;
+      fruitCanvas.height = stageCanvas.height;
+
+      u2px = H / 1000;
+      const Wu = W / u2px;
+      const isMobile = W < 760 || H > W;
+
+      if (isMobile) {
+        const titleRect = headlineBlock.getBoundingClientRect();
+        const titleTopUnits = titleRect.top / u2px;
+        sc = Math.min(1.03, Wu / 600, Math.max(0.38, (titleTopUnits - 90) / 600));
+        CX = Wu * 0.5;
+        CY = Math.max(210, Math.min(430, (titleTopUnits - 30) * 0.52));
+      } else {
+        sc = Math.min(1.27, Wu / 1008);
+        CX = Wu * 0.5;
+        CY = 500 - 47 * sc;
+      }
+
+      for (let i = 0; i < 5; i++) {
+        peachSprites[i] = buildPeachSprite(i);
+      }
+    }
+
+    // Spring helper: returns [newX, newV, acc]
+    function spring(x, v, target, k, c, dt) {
+      const acc = -k * (x - target) - c * v;
+      const nv = v + acc * dt;
+      const nx = x + nv * dt;
+      return [nx, nv, acc];
+    }
+
+    function smoothstep(t) {
+      const c = Math.max(0, Math.min(1, t));
+      return c * c * (3 - 2 * c);
+    }
+
+    // Bag physics state
+    const bag = {
+      dy: reducedMotion ? 0 : -150,
+      dyv: 0,
+      dya: 0,
+      th: reducedMotion ? 0 : 0.035,
+      thv: 0,
+      tha: 0,
+      s: 0,
+      sv: 0,
+      alpha: reducedMotion ? 1 : 0
+    };
+
+    // Peach physics state
+    const peaches = PEACH_SPECS.map((spec, idx) => {
+      const placeInOrder = DROP_ORDER.indexOf(idx);
+      const dropTime = 0.75 + 0.36 * placeInOrder;
+      if (reducedMotion) {
+        return {
+          idx,
+          spec,
+          dropTime: 0,
+          state: 'landed',
+          x: spec.x,
+          y: spec.y,
+          vx: 0,
+          vy: 0,
+          ox: 0,
+          oy: 0,
+          ovx: 0,
+          ovy: 0,
+          q: 0,
+          qv: 0,
+          spin: 0,
+          spinv: 0,
+          inc: 1,
+          incv: 0,
+          landOrder: placeInOrder
+        };
+      }
+      return {
+        idx,
+        spec,
+        dropTime,
+        state: 'waiting',
+        x: spec.x + (Math.random() * 2 - 1) * 15,
+        y: -700,
+        vx: 0,
+        vy: 300,
+        ox: 0,
+        oy: 0,
+        ovx: 0,
+        ovy: 0,
+        q: 0,
+        qv: 0,
+        spin: (Math.random() * 2 - 1) * 0.45,
+        spinv: 0,
+        inc: 0,
+        incv: 0,
+        landOrder: placeInOrder
+      };
+    });
+
+    let landedCount = reducedMotion ? 5 : 0;
+    let simTime = 0;
+
+    // Interaction state
+    let pointerClusterX = 9999;
+    let pointerClusterY = 9999;
+    let pointerClientX = 0;
+    let pointerClientY = 0;
+    let lastMoveTime = performance.now();
+    let pointerVx = 0;
+    let pointerVy = 0;
+    let isOverBag = false;
+    let isGrabbing = false;
+    let grabPointerId = null;
+    let grabStartX = 0;
+    let grabStartY = 0;
+    let dragTiltTarget = 0;
+    let dragLiftTarget = 0;
+    let latestHullScreen = [];
+
+    // Transform bag-local point (bx, by) -> cluster coordinates -> screen canvas pixels
+    function bagLocalToCluster(bx, by) {
+      // 1. Squash around cluster centre: scale x by (1 + 0.55*s), y by (1 - s)
+      let x = bx * (1 + 0.55 * bag.s);
+      let y = by * (1 - bag.s);
+      // 2. Drop offset: add dy to y
+      y += bag.dy;
+      // 3. Sway: rotate by th around handle pivot (18, -900)
+      const px = HANDLE_PIVOT[0];
+      const py = HANDLE_PIVOT[1];
+      const dx = x - px;
+      const dy = y - py;
+      const c = Math.cos(bag.th);
+      const s = Math.sin(bag.th);
+      return [
+        px + dx * c - dy * s,
+        py + dx * s + dy * c
+      ];
+    }
+
+    function clusterToCanvasPx(cxUnit, cyUnit) {
+      return [
+        (CX + cxUnit * sc) * u2px * dpr,
+        (CY + cyUnit * sc) * u2px * dpr
+      ];
+    }
+
+    function clientToCluster(clientX, clientY) {
+      const ux = clientX / u2px;
+      const uy = clientY / u2px;
+      return [
+        (ux - CX) / sc,
+        (uy - CY) / sc
+      ];
+    }
+
+    // 3 rounds of Chaikin corner-cutting on a closed polygon
+    function chaikinClosed(pts, rounds = 3) {
+      let curr = pts;
+      for (let r = 0; r < rounds; r++) {
+        const next = [];
+        const n = curr.length;
+        for (let i = 0; i < n; i++) {
+          const p0 = curr[i];
+          const p1 = curr[(i + 1) % n];
+          next.push([0.75 * p0[0] + 0.25 * p1[0], 0.75 * p0[1] + 0.25 * p1[1]]);
+          next.push([0.25 * p0[0] + 0.75 * p1[0], 0.25 * p0[1] + 0.75 * p1[1]]);
+        }
+        curr = next;
+      }
+      return curr;
+    }
+
+    // Draw closed Catmull-Rom-style Bézier curve with tension 0.36
+    function traceClosedCatmullRom(targetCtx, pts, tension = 0.36) {
+      const n = pts.length;
+      if (n < 3) return;
+      targetCtx.beginPath();
+      targetCtx.moveTo(pts[0][0], pts[0][1]);
+      const k = tension / 3;
+      for (let i = 0; i < n; i++) {
+        const p0 = pts[(i - 1 + n) % n];
+        const p1 = pts[i];
+        const p2 = pts[(i + 1) % n];
+        const p3 = pts[(i + 2) % n];
+        const cp1x = p1[0] + (p2[0] - p0[0]) * k;
+        const cp1y = p1[1] + (p2[1] - p0[1]) * k;
+        const cp2x = p2[0] - (p3[0] - p1[0]) * k;
+        const cp2y = p2[1] - (p3[1] - p1[1]) * k;
+        targetCtx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2[0], p2[1]);
+      }
+      targetCtx.closePath();
+    }
+
+    // Build bag body sweep (72 rays from Left mouth corner through bottom to Right mouth corner)
+    function computeBagOutlines() {
+      const N = 72;
+      const cx0 = SWEEP_CENTER[0];
+      const cy0 = SWEEP_CENTER[1];
+
+      const lx = MOUTH_L[0] - cx0;
+      const ly = MOUTH_L[1] - cy0;
+      const rx = MOUTH_R[0] - cx0;
+      const ry = MOUTH_R[1] - cy0;
+
+      const angleL = Math.atan2(ly, lx) + Math.PI * 2; // ~4.067 rad
+      const angleR = Math.atan2(ry, rx);               // ~-0.931 rad
+      const distL = Math.hypot(lx, ly);
+      const distR = Math.hypot(rx, ry);
+
+      let fill = 0;
+      for (let i = 0; i < 5; i++) fill += peaches[i].inc / 5;
+
+      const aSq = 196;
+      const bSq = 272 + 16 * fill;
+      const exp = 2.15;
+
+      const radii = new Float64Array(N);
+      const angles = new Float64Array(N);
+
+      for (let i = 0; i < N; i++) {
+        const u = i / (N - 1);
+        const phi = angleL + u * (angleR - angleL);
+        angles[i] = phi;
+        const dirX = Math.cos(phi);
+        const dirY = Math.sin(phi);
+
+        // 1. Limp empty bag superellipse
+        const denom = Math.pow(Math.abs(dirX) / aSq, exp) + Math.pow(Math.abs(dirY) / bSq, exp);
+        let rEmpty = Math.pow(denom, -1 / exp);
+
+        // Ease into the mouth corners over the first and last 22% of the sweep
+        if (u < 0.22) {
+          const w = smoothstep(u / 0.22);
+          rEmpty = distL * (1 - w) + rEmpty * w;
+        } else if (u > 0.78) {
+          const w = smoothstep((1 - u) / 0.22);
+          rEmpty = distR * (1 - w) + rEmpty * w;
+        }
+
+        let rMax = rEmpty;
+
+        // 2. Fruit pressing in: circle of radius (r + 26) * inc
+        for (let p = 0; p < 5; p++) {
+          const pch = peaches[p];
+          if (pch.inc <= 0.001) continue;
+          const px = (pch.state === 'landed' ? pch.spec.x + pch.ox : pch.x) - cx0;
+          const py = (pch.state === 'landed' ? pch.spec.y + pch.oy : pch.y) - cy0;
+          const R = (pch.spec.r + 26) * pch.inc;
+          const proj = px * dirX + py * dirY;
+          const perpSq = (px * px + py * py) - proj * proj;
+          if (perpSq < R * R) {
+            const hit = proj + Math.sqrt(R * R - perpSq);
+            if (hit > rMax) rMax = hit;
+          }
+        }
+
+        // Slight crinkle
+        rMax *= (1 + 0.012 * Math.sin(6 * phi + 1.3) + 0.007 * Math.sin(11 * phi + 0.4));
+        radii[i] = rMax;
+      }
+
+      // 14 passes of [1,4,6,4,1]/16 blur over the radii (pinning endpoints)
+      let tmp = new Float64Array(N);
+      for (let pass = 0; pass < 14; pass++) {
+        tmp[0] = radii[0];
+        tmp[1] = (radii[0] * 4 + radii[1] * 6 + radii[2] * 4 + radii[3] * 2) / 16;
+        for (let i = 2; i < N - 2; i++) {
+          tmp[i] = (
+            radii[i - 2] +
+            4 * radii[i - 1] +
+            6 * radii[i] +
+            4 * radii[i + 1] +
+            radii[i + 2]
+          ) / 16;
+        }
+        tmp[N - 2] = (radii[N - 4] * 2 + radii[N - 3] * 4 + radii[N - 2] * 6 + radii[N - 1] * 4) / 16;
+        tmp[N - 1] = radii[N - 1];
+        radii.set(tmp);
+      }
+
+      // Trim 4 samples at each end so straps flow into body in one soft shoulder
+      const trimmedSweep = [];
+      for (let i = 4; i < N - 4; i++) {
+        const phi = angles[i];
+        const r = radii[i];
+        trimmedSweep.push([cx0 + Math.cos(phi) * r, cy0 + Math.sin(phi) * r]);
+      }
+
+      // Full outline: trimmed sweep -> right handle -> mouth sag -> left handle
+      const fullLocal = [
+        ...trimmedSweep,
+        ...RIGHT_OUTER_UP,
+        ...RIGHT_INNER_DOWN,
+        MOUTH_SAG,
+        ...LEFT_INNER_UP,
+        ...LEFT_OUTER_DOWN
+      ];
+
+      // Front panel: trimmed sweep + front-panel top edge
+      const frontLocal = [
+        ...trimmedSweep,
+        ...FRONT_TOP_EDGE
+      ];
+
+      const fullScreen = fullLocal.map(([bx, by]) => {
+        const [cx, cy] = bagLocalToCluster(bx, by);
+        return clusterToCanvasPx(cx, cy);
+      });
+
+      const frontScreen = frontLocal.map(([bx, by]) => {
+        const [cx, cy] = bagLocalToCluster(bx, by);
+        return clusterToCanvasPx(cx, cy);
+      });
+
+      return {
+        fullSmooth: chaikinClosed(fullScreen, 3),
+        frontSmooth: chaikinClosed(frontScreen, 3)
+      };
+    }
+
+    function stepSubstep(dt) {
+      simTime += dt;
+
+      if (!reducedMotion) {
+        bag.alpha = smoothstep(Math.min(1, simTime / 0.9));
+      } else {
+        bag.alpha = 1;
+      }
+
+      // Idle breeze + drag targets
+      const breezeTh = 0.006 * Math.sin(0.8 * simTime) + 0.002 * Math.sin(1.9 * simTime);
+      const targetTh = breezeTh + (isGrabbing ? dragTiltTarget : 0);
+      const targetDy = isGrabbing ? dragLiftTarget : 0;
+      const dropDamp = simTime < 1.4 ? 13 : 8.5;
+
+      const [nextDy, nextDyv, nextDya] = spring(bag.dy, bag.dyv, targetDy, 150, dropDamp, dt);
+      bag.dy = nextDy;
+      bag.dyv = nextDyv;
+      bag.dya = nextDya;
+
+      const [nextTh, nextThv, nextTha] = spring(bag.th, bag.thv, targetTh, 18, 1.5, dt);
+      bag.th = nextTh;
+      bag.thv = nextThv;
+      bag.tha = nextTha;
+
+      const [nextS, nextSv] = spring(bag.s, bag.sv, 0, 240, 9, dt);
+      bag.s = nextS;
+      bag.sv = nextSv;
+
+      // Update peaches
+      for (let i = 0; i < 5; i++) {
+        const p = peaches[i];
+
+        if (p.state === 'waiting') {
+          if (simTime >= p.dropTime) {
+            p.state = 'falling';
+            // Spawn just above the top of the viewport (-r*sc - 40 in screen-top units)
+            const topClusterY = (-CY - p.spec.r * sc - 40) / sc;
+            p.y = topClusterY;
+            p.vy = 300;
+          } else {
+            continue;
+          }
+        }
+
+        if (p.state === 'falling') {
+          p.vy += 4200 * dt;
+          p.y += p.vy * dt;
+          p.x += (p.spec.x - p.x) * Math.min(1, dt * 6);
+          p.q = -Math.min(0.14, p.vy * 0.00005);
+
+          // Once it passes the mouth, inclusion springs toward 0.35
+          if (p.y >= MOUTH_Y) {
+            const [inc, incv] = spring(p.inc, p.incv, 0.35, 140, 10, dt);
+            p.inc = Math.max(0, inc);
+            p.incv = incv;
+          }
+
+          // Landing when reaching rest point
+          if (p.y >= p.spec.y) {
+            const impact = p.vy;
+            p.state = 'landed';
+            p.x = p.spec.x;
+            p.y = p.spec.y;
+            p.oy = 0;
+            p.ox = 0;
+            p.ovy = 0.13 * impact;
+            p.ovx = (Math.random() * 2 - 1) * 0.05 * impact;
+            p.qv += 0.0012 * impact;
+            p.spinv += (Math.random() * 2 - 1) * 2.4;
+            p.incv += 9;
+            p.landOrder = landedCount++;
+
+            // Bag reaction proportional to fruit mass (r / 130)
+            const m = p.spec.r / 130;
+            bag.dyv += 0.035 * impact * m;
+            bag.sv += 0.00028 * impact * m;
+            bag.thv += -Math.sign(p.spec.x || 1) * 0.00009 * impact * m;
+
+            // Push other fruit already in the bag within 420 units
+            for (let j = 0; j < 5; j++) {
+              if (j === i) continue;
+              const other = peaches[j];
+              if (other.state !== 'landed') continue;
+              const dx = other.spec.x - p.spec.x;
+              const dy = other.spec.y - p.spec.y;
+              const dist = Math.hypot(dx, dy);
+              if (dist < 420 && dist > 1) {
+                const factor = (1 - dist / 420) * m;
+                other.ovx += (dx / dist) * 0.08 * impact * factor;
+                other.ovy += Math.abs(0.06 * impact * factor);
+                other.qv += 0.00055 * impact * factor;
+              }
+            }
+          }
+        } else if (p.state === 'landed') {
+          // Inertia from bag rotational and vertical acceleration
+          p.ovx -= bag.tha * 180 * dt;
+          p.ovy -= bag.dya * 0.18 * dt;
+
+          const [ox, ovx] = spring(p.ox, p.ovx, 0, 130, 7, dt);
+          const [oy, ovy] = spring(p.oy, p.ovy, 0, 130, 7, dt);
+          p.ox = ox; p.ovx = ovx;
+          p.oy = oy; p.ovy = ovy;
+
+          const [q, qv] = spring(p.q, p.qv, 0, 300, 11, dt);
+          p.q = q; p.qv = qv;
+
+          const [sp, spv] = spring(p.spin, p.spinv, 0, 60, 5, dt);
+          p.spin = sp; p.spinv = spv;
+
+          const [inc, incv] = spring(p.inc, p.incv, 1, 170, 11, dt);
+          p.inc = Math.max(0, Math.min(1.18, inc));
+          p.incv = incv;
+        }
+      }
+    }
+
+    function renderScene() {
+      ctx.clearRect(0, 0, stageCanvas.width, stageCanvas.height);
+      fruitCtx.clearRect(0, 0, fruitCanvas.width, fruitCanvas.height);
+
+      const { fullSmooth, frontSmooth } = computeBagOutlines();
+      latestHullScreen = fullSmooth;
+
+      // 1. Back panel: rgba(255,252,251,.6) behind the fruit
+      ctx.save();
+      ctx.globalAlpha = bag.alpha;
+      traceClosedCatmullRom(ctx, fullSmooth, 0.36);
+      ctx.fillStyle = 'rgba(255, 252, 251, 0.6)';
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Draw peaches in landing order onto offscreen fruitCanvas, then composite onto stage
+      const activePeaches = peaches
+        .filter(p => p.state !== 'waiting')
+        .sort((a, b) => a.landOrder - b.landOrder);
+
+      for (const p of activePeaches) {
+        const sprite = peachSprites[p.idx];
+        if (!sprite) continue;
+
+        let cxUnit, cyUnit;
+        if (p.state === 'landed') {
+          [cxUnit, cyUnit] = bagLocalToCluster(p.spec.x + p.ox, p.spec.y + p.oy);
+        } else {
+          cxUnit = p.x;
+          cyUnit = p.y;
+        }
+
+        const [px, py] = clusterToCanvasPx(cxUnit, cyUnit);
+        const rot = p.spec.rot + bag.th + p.spin + 0.002 * p.ox;
+        const sx = 1 + 0.8 * p.q;
+        const sy = 1 - p.q;
+
+        fruitCtx.save();
+        fruitCtx.translate(px, py);
+        fruitCtx.rotate(rot);
+        fruitCtx.scale(sx, sy);
+        fruitCtx.drawImage(sprite.canvas, -sprite.dim * 0.5, -sprite.dim * 0.5);
+        fruitCtx.restore();
+      }
+
+      ctx.drawImage(fruitCanvas, 0, 0);
+
+      // 3. Front panel: rgba(255,250,248,.22) drawn over the fruit
+      ctx.save();
+      ctx.globalAlpha = bag.alpha;
+      traceClosedCatmullRom(ctx, frontSmooth, 0.36);
+      ctx.fillStyle = 'rgba(255, 250, 248, 0.22)';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Even-odd point-in-polygon hit-test on the hull polygon
+    function hitTestBag(clientX, clientY) {
+      const px = clientX * dpr;
+      const py = clientY * dpr;
+      const poly = latestHullScreen;
+      const n = poly.length;
+      if (n < 3) return false;
+      let inside = false;
+      for (let i = 0, j = n - 1; i < n; j = i++) {
+        const xi = poly[i][0], yi = poly[i][1];
+        const xj = poly[j][0], yj = poly[j][1];
+        const intersect = ((yi > py) !== (yj > py)) &&
+          (px < (xj - xi) * (py - yi) / ((yj - yi) || 1e-7) + xi);
+        if (intersect) inside = !inside;
+      }
+      return inside;
+    }
+
+    stageCanvas.addEventListener('pointermove', (e) => {
+      const now = performance.now();
+      const dt = Math.max(1, now - lastMoveTime) / 1000;
+      const rawVx = (e.clientX - pointerClientX) / dt;
+      const rawVy = (e.clientY - pointerClientY) / dt;
+      pointerVx = Math.max(-3000, Math.min(3000, pointerVx * 0.65 + rawVx * 0.35));
+      pointerVy = Math.max(-3000, Math.min(3000, pointerVy * 0.65 + rawVy * 0.35));
+      pointerClientX = e.clientX;
+      pointerClientY = e.clientY;
+      lastMoveTime = now;
+
+      const [cx, cy] = clientToCluster(e.clientX, e.clientY);
+      pointerClusterX = cx;
+      pointerClusterY = cy;
+
+      const over = hitTestBag(e.clientX, e.clientY);
+      isOverBag = over;
+      stageCanvas.classList.toggle('over-bag', over || isGrabbing);
+
+      if (isGrabbing && e.pointerId === grabPointerId) {
+        const dx = (e.clientX - grabStartX) / (u2px * sc);
+        const dy = (e.clientY - grabStartY) / (u2px * sc);
+        dragTiltTarget = -Math.tanh(dx / 520) * 0.06;
+        dragLiftTarget = Math.tanh(dy / 380) * 34;
+      } else if (over && !reducedMotion) {
+        // Brushing past: nudge bag sway by -0.00003 * pointerVx
+        bag.thv += -0.00003 * pointerVx * 0.12;
+
+        // Jiggle fruit near the pointer, within r*sc + 60
+        for (let i = 0; i < 5; i++) {
+          const p = peaches[i];
+          if (p.state !== 'landed') continue;
+          const [pcx, pcy] = bagLocalToCluster(p.spec.x + p.ox, p.spec.y + p.oy);
+          const distPx = Math.hypot((cx - pcx) * sc * u2px, (cy - pcy) * sc * u2px);
+          const radiusPx = p.spec.r * sc * u2px + 60;
+          if (distPx < radiusPx) {
+            const closeness = 1 - distPx / radiusPx;
+            p.ovx += pointerVx * 0.012 * closeness;
+            p.ovy += pointerVy * 0.012 * closeness;
+            p.qv += Math.hypot(pointerVx, pointerVy) * 0.00004 * closeness;
+          }
+        }
+      }
+    });
+
+    stageCanvas.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      if (!hitTestBag(e.clientX, e.clientY)) return;
+
+      isGrabbing = true;
+      grabPointerId = e.pointerId;
+      grabStartX = e.clientX;
+      grabStartY = e.clientY;
+      dragTiltTarget = 0;
+      dragLiftTarget = 0;
+      stageCanvas.classList.add('over-bag');
+
+      try {
+        stageCanvas.setPointerCapture(e.pointerId);
+      } catch (_) {}
+
+      // Grab squish reaction
+      bag.sv += 0.9;
+      for (let i = 0; i < 5; i++) {
+        const p = peaches[i];
+        if (p.state === 'landed') {
+          p.qv += 1.4;
+          p.ovy += 40;
+        }
+      }
+    });
+
+    function releaseBagGrab(e) {
+      if (!isGrabbing || (grabPointerId !== null && e.pointerId !== grabPointerId)) return;
+      isGrabbing = false;
+      dragTiltTarget = 0;
+      dragLiftTarget = 0;
+      try {
+        stageCanvas.releasePointerCapture(e.pointerId);
+      } catch (_) {}
+      grabPointerId = null;
+
+      // Release un-squish reaction
+      bag.sv -= 0.6;
+      for (let i = 0; i < 5; i++) {
+        const p = peaches[i];
+        if (p.state === 'landed') {
+          p.qv -= 1.0;
+        }
+      }
+      stageCanvas.classList.toggle('over-bag', hitTestBag(e.clientX, e.clientY));
+    }
+
+    stageCanvas.addEventListener('pointerup', releaseBagGrab);
+    stageCanvas.addEventListener('pointercancel', releaseBagGrab);
+
+    reducedMotionQuery.addEventListener('change', (e) => {
+      reducedMotion = e.matches;
+      if (reducedMotion) {
+        bag.alpha = 1;
+        bag.dy = 0;
+        bag.th = 0;
+        for (let i = 0; i < 5; i++) {
+          const p = peaches[i];
+          p.state = 'landed';
+          p.x = p.spec.x;
+          p.y = p.spec.y;
+          p.inc = 1;
+          p.ox = 0; p.oy = 0; p.q = 0; p.spin = 0;
+        }
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      updateMetricsAndSprites();
+    });
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        if (window.innerWidth < 760 || window.innerHeight > window.innerWidth) {
+          updateMetricsAndSprites();
+        }
+      });
+    }
+
+    updateMetricsAndSprites();
+
+    // Main loop with fixed 1/240s substeps, capping dt at 0.05s
+    let prevNow = performance.now();
+    let accumulator = 0;
+    const SUBSTEP = 1 / 240;
+
+    function animate(now) {
+      const dt = Math.min(0.05, Math.max(0, (now - prevNow) / 1000));
+      prevNow = now;
+      accumulator += dt;
+
+      while (accumulator >= SUBSTEP) {
+        stepSubstep(SUBSTEP);
+        accumulator -= SUBSTEP;
+      }
+
+      renderScene();
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame((t) => {
+      prevNow = t;
+      animate(t);
+    });
+  </script>
+</body>
+</html>
