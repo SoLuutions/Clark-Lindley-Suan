@@ -1,0 +1,563 @@
+<!doctype html>
+<!--
+  Maison Lorvert — Timeline Crawl (Concept Study)
+  Editorial images self-hosted in assets/maison-lorvert/01.jpg – 07.jpg
+  Original source URLs:
+  - https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/01.jpg
+  - https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/02.jpg
+  - https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/03.jpg
+  - https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/04.jpg
+  - https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/05.jpg
+  - https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/06.jpg
+  - https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/07.jpg
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#efe6d4">
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Maison Lorvert · 1962 — 2026. Interactive perspective timeline crawl for a French fashion house.">
+  <title>Maison Lorvert · 1962 — 2026</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <meta property="og:title" content="Maison Lorvert: Timeline Crawl">
+  <meta property="og:description" content="Interactive perspective timeline crawl for fictional French fashion house Maison Lorvert (1962–2026).">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://clarklindleysuan.com/interactions/posters/maison-lorvert.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --beige: #efe6d4;
+      --green: #13b33a;
+      --green-soft: #0e8c2d;
+      --speed: 70s;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--beige);
+      color: var(--green);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background: var(--green);
+      color: var(--beige);
+    }
+
+    body.dragging,
+    body.dragging .text-col {
+      cursor: grabbing;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .brand-line {
+      position: absolute;
+      top: 32px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.5em;
+      color: var(--green);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .stage {
+      width: 100%;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+    }
+
+    .text-col {
+      position: relative;
+      overflow: hidden;
+      perspective: 900px;
+      perspective-origin: 50% 50%;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .plane {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: min(560px, 40vw);
+      height: 100vh;
+      overflow: hidden;
+      transform: translateX(-50%) rotateY(35deg);
+      transform-origin: 50% 50%;
+    }
+
+    .track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      will-change: transform;
+    }
+
+    .copy {
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 72px;
+      padding: 36px 0;
+    }
+
+    .entry {
+      position: relative;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    .entry::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -36px;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 1px;
+      background: rgba(19, 179, 58, 0.4);
+      pointer-events: none;
+    }
+
+    .year {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 15px;
+      letter-spacing: 0.32em;
+      color: var(--green-soft);
+      margin: 0 0 14px;
+    }
+
+    .title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 500;
+      font-size: 44px;
+      line-height: 1.05;
+      color: var(--green);
+      margin: 0 0 16px;
+    }
+
+    .desc {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 400;
+      font-size: 23px;
+      line-height: 1.5;
+      color: var(--green);
+      margin: 0;
+    }
+
+    .haze {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      background:
+        linear-gradient(
+          to bottom,
+          var(--beige) 0%,
+          rgba(239, 230, 212, 0) 22%,
+          rgba(239, 230, 212, 0) 80%,
+          var(--beige) 100%
+        ),
+        linear-gradient(
+          to left,
+          rgba(239, 230, 212, 0.75) 0%,
+          rgba(239, 230, 212, 0) 40%
+        );
+    }
+
+    .gallery {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .frames {
+      position: relative;
+      width: min(420px, 36vw);
+      aspect-ratio: 3 / 4;
+    }
+
+    .frames img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: translateY(40px) scale(0.55);
+      transform-origin: 50% 100%;
+      transition: opacity 0.7s ease, transform 0.9s cubic-bezier(.2, .8, .2, 1);
+      pointer-events: none;
+    }
+
+    .frames img.active {
+      opacity: 1;
+      transform: none;
+      z-index: 1;
+    }
+
+    .frames img.leaving {
+      opacity: 0;
+      transform: scale(1.04);
+      transition-duration: 0.6s;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .frames img,
+      .frames img.leaving {
+        transition-duration: 0.3s;
+      }
+    }
+
+    @media (max-width: 800px) {
+      .stage {
+        grid-template-columns: 1fr;
+        grid-template-rows: 42vh 58vh;
+      }
+      .gallery {
+        order: -1;
+        padding-top: 64px;
+        padding-bottom: 12px;
+      }
+      .frames {
+        height: 100%;
+        width: auto;
+        max-width: 84vw;
+        aspect-ratio: 3 / 4;
+      }
+      .plane {
+        width: 78vw;
+      }
+      .title {
+        font-size: 32px;
+      }
+      .desc {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="brand-line">Maison Lorvert · 1962 — 2026</div>
+  <main class="stage">
+    <section class="text-col" id="text-col" aria-label="Maison Lorvert timeline">
+      <div class="plane">
+        <div class="track" id="track">
+          <div class="copy" id="copy-first"></div>
+        </div>
+      </div>
+      <div class="haze" aria-hidden="true"></div>
+    </section>
+    <section class="gallery" aria-label="Editorial archive photographs">
+      <div class="frames" id="frames"></div>
+    </section>
+  </main>
+
+  <script>
+    const TIMELINE = [
+      {
+        year: '1962',
+        title: 'A Single Room in Lyon',
+        text: 'Hélène Lorvert opens a one-room atelier above a bakery, cutting wool coats by hand for neighbours and friends. Every garment is finished with a thread of green silk at the hem.',
+        // Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/01.jpg
+        image: 'assets/maison-lorvert/01.jpg'
+      },
+      {
+        year: '1971',
+        title: 'The First Collection',
+        text: 'Forty looks, shown in a borrowed courtyard. The press calls the tailoring “quietly radical” — soft shoulders, deep pockets, clothes meant to be lived in.',
+        // Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/02.jpg
+        image: 'assets/maison-lorvert/02.jpg'
+      },
+      {
+        year: '1984',
+        title: 'Paris, Rue du Bac',
+        text: 'The house moves to Paris and opens its first boutique. The olive trench coat debuts and becomes the piece most people still picture when they hear the name.',
+        // Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/03.jpg
+        image: 'assets/maison-lorvert/03.jpg'
+      },
+      {
+        year: '1997',
+        title: 'A New Hand at the Table',
+        text: 'Hélène’s daughter Camille takes over design. She brings linen, undyed cotton and a lighter silhouette, and introduces the first menswear line.',
+        // Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/04.jpg
+        image: 'assets/maison-lorvert/04.jpg'
+      },
+      {
+        year: '2008',
+        title: 'Made to Last',
+        text: 'Lorvert launches free lifetime repairs on every coat. The workshop in Lyon reopens as a mending studio, handling more than ten thousand pieces a year.',
+        // Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/05.jpg
+        image: 'assets/maison-lorvert/05.jpg'
+      },
+      {
+        year: '2016',
+        title: 'From Field to Fabric',
+        text: 'Partnerships with regenerative wool farms in the Massif Central bring the whole supply chain within a day’s drive of the atelier.',
+        // Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/06.jpg
+        image: 'assets/maison-lorvert/06.jpg'
+      },
+      {
+        year: '2026',
+        title: 'Sixty-Four Years On',
+        text: 'The house marks its anniversary with an archive exhibition — and a green silk thread still finishes every hem.',
+        // Original source URL: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/07.jpg
+        image: 'assets/maison-lorvert/07.jpg'
+      }
+    ];
+
+    const textCol = document.getElementById('text-col');
+    const track = document.getElementById('track');
+    const firstCopy = document.getElementById('copy-first');
+    const frames = document.getElementById('frames');
+
+    // Render entries into the first copy (oldest -> newest in DOM) and images into .frames
+    TIMELINE.forEach((item, index) => {
+      const article = document.createElement('article');
+      article.className = 'entry';
+      article.dataset.i = String(index);
+      article.innerHTML = `
+        <div class="year">${item.year}</div>
+        <h2 class="title">${item.title}</h2>
+        <p class="desc">${item.text}</p>
+      `;
+      firstCopy.appendChild(article);
+
+      const img = document.createElement('img');
+      img.src = item.image;
+      img.alt = `${item.year} — ${item.title}`;
+      img.width = 1045;
+      img.height = 1400;
+      if (index === 0) img.classList.add('active');
+      frames.appendChild(img);
+    });
+
+    // Clone the first copy into the track to make the second copy
+    const secondCopy = firstCopy.cloneNode(true);
+    secondCopy.removeAttribute('id');
+    secondCopy.setAttribute('aria-hidden', 'true');
+    track.appendChild(secondCopy);
+
+    const allEntries = Array.from(track.querySelectorAll('.entry'));
+    const allImages = Array.from(frames.querySelectorAll('img'));
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reducedMotion = reducedMotionQuery.matches;
+    reducedMotionQuery.addEventListener('change', (e) => {
+      reducedMotion = e.matches;
+    });
+
+    function getBaseSpeedSeconds() {
+      const raw = getComputedStyle(document.documentElement).getPropertyValue('--speed').trim();
+      const parsed = parseFloat(raw);
+      return Number.isFinite(parsed) && parsed > 0 ? parsed : 70;
+    }
+
+    let offset = 0;
+    let boost = 0;
+    let initializedOffset = false;
+
+    function getCopyHeight() {
+      return track.offsetHeight / 2;
+    }
+
+    // Start with the first entry (1962) positioned near the vertical middle of the viewport
+    function initStartingPosition() {
+      const copyH = getCopyHeight();
+      if (copyH <= 0) return;
+      if (!initializedOffset) {
+        offset = window.innerHeight * 0.42;
+        offset = ((offset % copyH) + copyH) % copyH;
+        track.style.transform = `translateY(${offset}px)`;
+        initializedOffset = true;
+      }
+    }
+
+    initStartingPosition();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        const copyH = getCopyHeight();
+        if (copyH > 0) {
+          offset = ((offset % copyH) + copyH) % copyH;
+          track.style.transform = `translateY(${offset}px)`;
+        }
+      });
+    }
+
+    // Mouse wheel / trackpad boost
+    window.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      let dy = e.deltaY;
+      if (e.deltaMode === 1) dy *= 16;
+      boost = Math.max(-6000, Math.min(6000, boost + dy * 6));
+    }, { passive: false });
+
+    // Pointer drag (mouse, pen, touch)
+    let pointerDown = false;
+    let isDragging = false;
+    let activePointerId = null;
+    let startY = 0;
+    let lastY = 0;
+    let lastMoveTime = 0;
+    let dragVelocity = 0;
+
+    textCol.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      pointerDown = true;
+      isDragging = false;
+      activePointerId = e.pointerId;
+      startY = e.clientY;
+      lastY = e.clientY;
+      lastMoveTime = performance.now();
+      dragVelocity = 0;
+      boost = 0;
+    });
+
+    textCol.addEventListener('pointermove', (e) => {
+      if (!pointerDown || e.pointerId !== activePointerId) return;
+      const now = performance.now();
+      const totalDy = e.clientY - startY;
+
+      if (!isDragging && Math.abs(totalDy) > 4) {
+        isDragging = true;
+        const sel = window.getSelection();
+        if (sel) sel.removeAllRanges();
+        document.body.classList.add('dragging');
+        try {
+          textCol.setPointerCapture(e.pointerId);
+        } catch (_) {}
+      }
+
+      if (isDragging) {
+        const dy = e.clientY - lastY;
+        const dtMs = Math.max(1, now - lastMoveTime);
+        const instVel = (dy / dtMs) * 1000;
+        dragVelocity = 0.8 * instVel + 0.2 * dragVelocity;
+
+        const copyH = getCopyHeight();
+        if (copyH > 0) {
+          offset = (((offset + dy) % copyH) + copyH) % copyH;
+          track.style.transform = `translateY(${offset}px)`;
+        }
+        lastY = e.clientY;
+        lastMoveTime = now;
+      }
+    });
+
+    function endPointerDrag(e) {
+      if (!pointerDown || (activePointerId !== null && e.pointerId !== activePointerId)) return;
+      const wasDragging = isDragging;
+      pointerDown = false;
+      isDragging = false;
+      document.body.classList.remove('dragging');
+      if (wasDragging) {
+        try {
+          textCol.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+        if (performance.now() - lastMoveTime <= 100) {
+          boost = Math.max(-6000, Math.min(6000, dragVelocity));
+        }
+      }
+      activePointerId = null;
+    }
+
+    textCol.addEventListener('pointerup', endPointerDrag);
+    textCol.addEventListener('pointercancel', endPointerDrag);
+
+    // Loop 1: Motion loop driving track transform
+    let lastTime = performance.now();
+    function motionTick(now) {
+      const dt = Math.min(0.05, Math.max(0, (now - lastTime) / 1000));
+      lastTime = now;
+
+      const copyH = getCopyHeight();
+      if (copyH > 0) {
+        const baseSeconds = getBaseSpeedSeconds() * (reducedMotion ? 3 : 1);
+        let drift = copyH / baseSeconds;
+
+        // Pause on hover over .entry only, or while actively dragging
+        if (isDragging || textCol.querySelector('.entry:hover')) {
+          drift = 0;
+        }
+
+        if (!isDragging) {
+          offset += (drift + boost) * dt;
+          offset = ((offset % copyH) + copyH) % copyH;
+          track.style.transform = `translateY(${offset}px)`;
+        }
+
+        boost *= Math.pow(0.04, dt);
+        if (Math.abs(boost) < 0.05) boost = 0;
+      }
+
+      requestAnimationFrame(motionTick);
+    }
+    requestAnimationFrame(motionTick);
+
+    // Loop 2: Separate requestAnimationFrame loop for image switching
+    let activeIndex = 0;
+    function imageSwitchTick() {
+      const midY = window.innerHeight / 2;
+      let bestEntry = null;
+      let smallestBottom = Infinity;
+
+      for (let i = 0; i < allEntries.length; i++) {
+        const entry = allEntries[i];
+        const rect = entry.getBoundingClientRect();
+        if (rect.bottom >= midY && rect.bottom < smallestBottom) {
+          smallestBottom = rect.bottom;
+          bestEntry = entry;
+        }
+      }
+
+      if (bestEntry) {
+        const nextIndex = Number(bestEntry.dataset.i);
+        if (nextIndex !== activeIndex && allImages[nextIndex]) {
+          const prevIndex = activeIndex;
+          activeIndex = nextIndex;
+
+          for (let i = 0; i < allImages.length; i++) {
+            if (i !== prevIndex) {
+              allImages[i].classList.remove('leaving');
+            }
+          }
+
+          if (allImages[prevIndex]) {
+            allImages[prevIndex].classList.remove('active');
+            allImages[prevIndex].classList.add('leaving');
+          }
+          allImages[nextIndex].classList.remove('leaving');
+          allImages[nextIndex].classList.add('active');
+        }
+      }
+
+      requestAnimationFrame(imageSwitchTick);
+    }
+    requestAnimationFrame(imageSwitchTick);
+  </script>
+</body>
+</html>
+
