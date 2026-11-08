@@ -1,0 +1,841 @@
+<!doctype html>
+<!--
+  Atelier Rouge — Editorial Carousel (Concept Study)
+  Built against /interactions/assets/atelier-rouge/assets.json.
+  Currently uses plain gradient placeholder JPEGs (01-after-hours.jpg – 08-the-crimson-coat.jpg).
+  See /interactions/assets/atelier-rouge/assets.json and INTERACTIONS.md for the exact
+  photorealistic image generation prompts to replace them.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Atelier Rouge — endlessly looping 3D editorial gallery carousel.">
+  <title>Atelier Rouge — Editorial Carousel</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <meta property="og:title" content="Atelier Rouge: Editorial Carousel">
+  <meta property="og:description" content="Endlessly looping 3D luxury editorial carousel concept study for Atelier Rouge.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://clarklindleysuan.com/interactions/posters/atelier-rouge.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #000000;
+      --fallback-card: #1A0203;
+      --text: #F4ECE8;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .carousel-stage {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 520px;
+      overflow: hidden;
+      background: var(--bg);
+      perspective: 900px;
+      perspective-origin: 50% var(--baseline, 70%);
+      touch-action: pan-y;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      outline: none;
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        #000 20%,
+        #000 80%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        #000 20%,
+        #000 80%,
+        transparent 100%
+      );
+    }
+
+    .carousel-stage.is-dragging {
+      cursor: grabbing;
+    }
+
+    .carousel-stage:focus-visible::after {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 1px solid rgba(244, 236, 232, 0.42);
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    .carousel-track {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transform-origin: 50% var(--baseline, 70%);
+      will-change: transform;
+    }
+
+    .carousel-card {
+      position: absolute;
+      width: var(--card-w, 340px);
+      height: var(--card-h, 453px);
+      left: calc(50% - var(--card-w, 340px) / 2);
+      top: calc(50% - var(--card-h, 453px) / 2);
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--fallback-card);
+      will-change: transform, filter, opacity;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+    }
+
+    .card-media {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--fallback-card);
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* Overlay 1: vertical shade clear through top half, reaching rgba(10,0,0,0.75) at bottom */
+    .card-shade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10, 0, 0, 0) 0%,
+        rgba(10, 0, 0, 0) 50%,
+        rgba(10, 0, 0, 0.75) 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Overlay 2: soft radial vignette darkening outside edges */
+    .card-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at 50% 50%,
+        rgba(10, 0, 0, 0) 50%,
+        rgba(10, 0, 0, 0.46) 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .card-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: clamp(14px, 1.8vw, 26px);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 2;
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .card-category {
+      font-size: clamp(9px, 0.72vw, 11px);
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text);
+      opacity: 0.6;
+      line-height: 1.1;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: clamp(17px, 1.75vw, 26px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      color: var(--text);
+    }
+
+    .card-number {
+      font-size: clamp(9px, 0.72vw, 11px);
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      line-height: 1.1;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 639px) {
+      .carousel-stage {
+        -webkit-mask-image: linear-gradient(
+          to right,
+          transparent 0%,
+          #000 8%,
+          #000 92%,
+          transparent 100%
+        );
+        mask-image: linear-gradient(
+          to right,
+          transparent 0%,
+          #000 8%,
+          #000 92%,
+          transparent 100%
+        );
+      }
+
+      .card-caption {
+        padding: 14px;
+      }
+
+      .card-category,
+      .card-number {
+        font-size: 8px;
+      }
+
+      .card-title {
+        font-size: 15px;
+      }
+    }
+
+    /* Fallback finite gallery when JS is off */
+    noscript .fallback-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <section
+    class="carousel-stage"
+    id="carousel-stage"
+    tabindex="0"
+    role="region"
+    aria-roledescription="carousel"
+    aria-label="Atelier Rouge editorial collection"
+    aria-describedby="carousel-instructions"
+  >
+    <p class="sr-only" id="carousel-instructions">
+      Use Left and Right Arrow keys, drag horizontally, or click a neighboring card to browse the Atelier Rouge collection.
+    </p>
+    <div class="sr-only" id="carousel-live" aria-live="polite" aria-atomic="true"></div>
+    <div class="carousel-track" id="carousel-track"></div>
+  </section>
+
+  <script>
+    // Editable array of the 8 editorial items (also loaded from assets/atelier-rouge/assets.json)
+    let ITEMS = [
+      {
+        category: 'Ready-to-Wear',
+        title: 'After Hours',
+        src: 'assets/atelier-rouge/01-after-hours.jpg',
+        alt: 'Editorial portrait of a model in a draped crimson evening dress emerging from deep shadow',
+        placeholderGradient: 'linear-gradient(160deg, #160204 0%, #6e0a14 48%, #c9261d 78%, #090102 100%)'
+      },
+      {
+        category: 'Tailoring',
+        title: 'Noir Line',
+        src: 'assets/atelier-rouge/02-noir-line.jpg',
+        alt: 'Close architectural study of a sharp black wool blazer lapel lit by a narrow red beam',
+        placeholderGradient: 'linear-gradient(150deg, #060203 0%, #2a0408 42%, #8c111b 75%, #050102 100%)'
+      },
+      {
+        category: 'Eau de Parfum',
+        title: 'Lily Melt',
+        src: 'assets/atelier-rouge/03-lily-melt.jpg',
+        alt: 'Botanical still life of a crimson stargazer lily with dewdrops against a dark red background',
+        placeholderGradient: 'linear-gradient(165deg, #210306 0%, #9e1620 50%, #e04427 80%, #120103 100%)'
+      },
+      {
+        category: 'Jewellery',
+        title: 'Halo',
+        src: 'assets/atelier-rouge/04-halo.jpg',
+        alt: 'Sculptural gold and garnet cuff catching a curved reflection in dark red light',
+        placeholderGradient: 'linear-gradient(145deg, #0c0203 0%, #52090e 45%, #b82b1e 74%, #080102 100%)'
+      },
+      {
+        category: 'Parfum',
+        title: 'N°7 Sang',
+        src: 'assets/atelier-rouge/05-n7-sang.jpg',
+        alt: 'Heavy faceted glass flacon filled with ruby perfume glowing in chiaroscuro light',
+        placeholderGradient: 'linear-gradient(170deg, #1a0204 0%, #7d0c16 48%, #d42c20 76%, #070102 100%)'
+      },
+      {
+        category: 'Collection',
+        title: 'In Motion',
+        src: 'assets/atelier-rouge/06-in-motion.jpg',
+        alt: 'Blurred silhouette of a crimson pleated garment spinning across a dark stage',
+        placeholderGradient: 'linear-gradient(155deg, #0e0103 0%, #871219 46%, #e34a29 78%, #0a0102 100%)'
+      },
+      {
+        category: 'Silk',
+        title: 'Cherry Silk',
+        src: 'assets/atelier-rouge/07-cherry-silk.jpg',
+        alt: 'Macro folds of liquid cherry-red silk charmeuse with deep shadows',
+        placeholderGradient: 'linear-gradient(140deg, #1d0205 0%, #990f1d 52%, #cf2929 80%, #0d0102 100%)'
+      },
+      {
+        category: 'Outerwear',
+        title: 'The Crimson Coat',
+        src: 'assets/atelier-rouge/08-the-crimson-coat.jpg',
+        alt: 'Full-length study of an oversized double-breasted crimson wool coat in dramatic side light',
+        placeholderGradient: 'linear-gradient(160deg, #0b0102 0%, #630911 45%, #ba1e1e 76%, #050101 100%)'
+      }
+    ];
+
+    // Editable physics & geometry tuning values
+    const TUNING = {
+      perspective: 900,
+      springStiffness: 0.026,
+      springDamping: 0.89,
+      dragFollowRate: 0.20,
+      followerRates: [0.32, 0.20, 0.13, 0.10],
+      wheelDebounceMs: 350
+    };
+
+    const stage = document.getElementById('carousel-stage');
+    const track = document.getElementById('carousel-track');
+    const liveRegion = document.getElementById('carousel-live');
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reducedMotion = reducedMotionQuery.matches;
+
+    function positiveModulo(n, m) {
+      return ((n % m) + m) % m;
+    }
+
+    let W = window.innerWidth;
+    let H = window.innerHeight;
+    let isMobile = W < 640;
+    let C = 320;
+    let cardHeight = 426.67;
+    let B = H * 0.5 + cardHeight * 0.5;
+    let anchors = [0, 0, 0, 0, 0];
+    let spacing = 320;
+
+    function getScaleAt(a) {
+      const slope = isMobile ? 0.26 : 0.12;
+      return 1 - Math.min(a, 3) * slope;
+    }
+
+    function getRotationDegAt(a) {
+      return (12 * a + 5 * a * a) * 0.65;
+    }
+
+    function getDepthZAt(a) {
+      return -a * a * C * 0.12;
+    }
+
+    // Precompute inner-edge screen-space anchors A[0..4] for equal projected gaps
+    function recomputeGeometry() {
+      const rect = stage.getBoundingClientRect();
+      W = rect.width || window.innerWidth;
+      H = rect.height || window.innerHeight;
+      isMobile = W < 640;
+
+      C = isMobile
+        ? Math.min(W * 0.34, H * 0.56, 440)
+        : Math.min(W * 0.25, H * 0.56, 440);
+      cardHeight = (4 * C) / 3;
+      B = H / 2 + cardHeight / 2;
+
+      stage.style.setProperty('--card-w', `${C.toFixed(2)}px`);
+      stage.style.setProperty('--card-h', `${cardHeight.toFixed(2)}px`);
+      stage.style.setProperty('--baseline', `${B.toFixed(2)}px`);
+
+      const P = TUNING.perspective;
+      const gap = C * (isMobile ? 0.07 : 0.09);
+      anchors = new Array(5);
+      anchors[0] = -C / 2;
+
+      for (let n = 0; n < 4; n++) {
+        const F = anchors[n];
+        const s = getScaleAt(n);
+        const z = getDepthZAt(n);
+        const theta = getRotationDegAt(n) * (Math.PI / 180);
+        const w = C * s;
+        const Xh = F * (P - z) / P;
+        const projectedWidth = ((Xh + w * Math.cos(theta)) * P / (P - z + w * Math.sin(theta))) - F;
+        anchors[n + 1] = F + projectedWidth + gap;
+      }
+
+      spacing = anchors[1] + C / 2;
+    }
+
+    function getInterpolatedAnchor(a) {
+      if (a <= 0) return anchors[0];
+      if (a >= 4) {
+        const slope = anchors[4] - anchors[3];
+        return anchors[4] + (a - 4) * slope;
+      }
+      const n = Math.floor(a);
+      const t = a - n;
+      return anchors[n] + t * (anchors[n + 1] - anchors[n]);
+    }
+
+    let cards = [];
+    let pos = 0;
+    let target = 0;
+    let dragPos = 0;
+    let velocity = 0;
+    let followerPos = [];
+    let announcedIndex = -1;
+    let rafId = null;
+    let lastTickTime = 0;
+
+    function buildCards() {
+      track.innerHTML = '';
+      cards = [];
+      followerPos = [];
+
+      ITEMS.forEach((item, i) => {
+        const el = document.createElement('article');
+        el.className = 'carousel-card';
+        el.dataset.index = String(i);
+
+        const media = document.createElement('div');
+        media.className = 'card-media';
+        if (item.placeholderGradient) {
+          media.style.background = item.placeholderGradient;
+        }
+
+        const img = document.createElement('img');
+        img.className = 'card-img';
+        img.src = item.src;
+        img.alt = item.alt || `${item.category} — ${item.title}`;
+        img.width = 900;
+        img.height = 1200;
+        img.loading = i <= 2 || i >= ITEMS.length - 2 ? 'eager' : 'lazy';
+        img.addEventListener('error', () => {
+          img.style.display = 'none';
+        });
+
+        const shade = document.createElement('div');
+        shade.className = 'card-shade';
+
+        const vignette = document.createElement('div');
+        vignette.className = 'card-vignette';
+
+        const caption = document.createElement('div');
+        caption.className = 'card-caption';
+        const numStr = String(i + 1).padStart(2, '0');
+        caption.innerHTML = `
+          <div class="card-meta">
+            <span class="card-category">${item.category}</span>
+            <h2 class="card-title">${item.title}</h2>
+          </div>
+          <span class="card-number">${numStr}</span>
+        `;
+
+        media.appendChild(img);
+        el.appendChild(media);
+        el.appendChild(shade);
+        el.appendChild(vignette);
+        el.appendChild(caption);
+
+        track.appendChild(el);
+        cards.push({ el, caption, index: i });
+        followerPos.push(pos);
+      });
+    }
+
+    function announceActiveIfNeeded() {
+      const N = ITEMS.length;
+      const activeIdx = positiveModulo(Math.round(target), N);
+      if (activeIdx !== announcedIndex) {
+        announcedIndex = activeIdx;
+        const item = ITEMS[activeIdx];
+        liveRegion.textContent = `${item.category}: ${item.title}, ${activeIdx + 1} of ${N}`;
+      }
+    }
+
+    function renderFrame() {
+      const N = ITEMS.length;
+      if (cards.length < N) return;
+      const P = TUNING.perspective;
+
+      // Speed-driven subtle track press-back (up to 3.5%)
+      const trackScale = reducedMotion
+        ? 1
+        : 1 - Math.min(1, Math.abs(velocity) * 10) * 0.035;
+      track.style.transform = `scale(${trackScale.toFixed(4)})`;
+
+      for (let i = 0; i < N; i++) {
+        const card = cards[i];
+        const fPos = reducedMotion ? pos : followerPos[i];
+        const o = positiveModulo(i - fPos + N / 2, N) - N / 2;
+        const a = Math.abs(o);
+        const sign = o >= 0 ? 1 : -1;
+
+        // Card opacity: 1 until a = 2.2, then fades linearly to 0 by a = 2.8
+        let opacity = 1;
+        if (a >= 2.8) {
+          opacity = 0;
+        } else if (a > 2.2) {
+          opacity = 1 - (a - 2.2) / 0.6;
+        }
+
+        if (opacity <= 0.004) {
+          card.el.style.opacity = '0';
+          card.el.style.visibility = 'hidden';
+          card.el.style.pointerEvents = 'none';
+          card.el.setAttribute('aria-hidden', 'true');
+          continue;
+        }
+
+        const s = getScaleAt(a);
+        const rotDeg = getRotationDegAt(a);
+        const z = getDepthZAt(a);
+        const A_a = getInterpolatedAnchor(a);
+        const Xh = A_a * (P - z) / P;
+        const x = sign * (Xh + C / 2);
+
+        // Hinge at bottom inner corner: bottom-left for right side, bottom-right for left side
+        card.el.style.transformOrigin = o >= 0 ? '0% 100%' : '100% 100%';
+        card.el.style.transform = `translate3d(${x.toFixed(2)}px, 0px, ${z.toFixed(2)}px) rotateY(${(sign * rotDeg).toFixed(2)}deg) scale(${s.toFixed(4)})`;
+        card.el.style.opacity = opacity.toFixed(3);
+        card.el.style.visibility = 'visible';
+        card.el.style.pointerEvents = 'auto';
+        card.el.style.zIndex = String(Math.round(100 - a * 20));
+
+        // Depth blur & brightness
+        if (a < 0.5) {
+          card.el.style.filter = 'none';
+          card.el.removeAttribute('aria-hidden');
+        } else {
+          const clampedA = Math.min(a, 3);
+          const blurPx = a <= 1 ? clampedA * 1.8 : clampedA * 3.4;
+          const brightness = 1 - clampedA * 0.2;
+          card.el.style.filter = `blur(${blurPx.toFixed(2)}px) brightness(${brightness.toFixed(3)})`;
+          card.el.setAttribute('aria-hidden', 'true');
+        }
+
+        // Text focus: opacity = max(0, 1 - 1.8a), moves down up to 10px
+        const textOpacity = Math.max(0, 1 - 1.8 * a);
+        const textShiftY = (1 - textOpacity) * 10;
+        card.caption.style.opacity = textOpacity.toFixed(3);
+        card.caption.style.transform = `translateY(${textShiftY.toFixed(2)}px)`;
+      }
+    }
+
+    // Pointer dragging state
+    let isDragging = false;
+    let activePointerId = null;
+    let startClientX = 0;
+    let startPos = 0;
+    let lastClientX = 0;
+    let lastMoveTime = 0;
+    let pointerVelocity = 0; // px per ms
+    let maxDragTravelPx = 0;
+
+    function snapDirectlyForReducedMotion(newTarget) {
+      target = newTarget;
+      pos = newTarget;
+      dragPos = newTarget;
+      velocity = 0;
+      for (let i = 0; i < followerPos.length; i++) {
+        followerPos[i] = newTarget;
+      }
+      renderFrame();
+      announceActiveIfNeeded();
+    }
+
+    function startAnimationLoop() {
+      if (rafId !== null || document.hidden) return;
+      lastTickTime = performance.now();
+      rafId = requestAnimationFrame(stepLoop);
+    }
+
+    function stepLoop(now) {
+      rafId = null;
+      if (document.hidden) return;
+
+      if (reducedMotion) {
+        pos = target;
+        velocity = 0;
+        for (let i = 0; i < followerPos.length; i++) {
+          followerPos[i] = pos;
+        }
+        renderFrame();
+        announceActiveIfNeeded();
+        return;
+      }
+
+      const dtMs = Math.min(50, Math.max(1, now - lastTickTime));
+      lastTickTime = now;
+      // Convert elapsed time to 60Hz reference frames (16.6667ms per step)
+      const steps = dtMs / (1000 / 60);
+
+      if (isDragging) {
+        const prevPos = pos;
+        const alpha = 1 - Math.pow(1 - TUNING.dragFollowRate, steps);
+        pos += (dragPos - pos) * alpha;
+        velocity = (pos - prevPos) / Math.max(0.25, steps);
+      } else {
+        // Run fixed-reference substeps for consistent spring feel across refresh rates
+        let rem = steps;
+        while (rem > 0) {
+          const s = Math.min(1, rem);
+          velocity += (target - pos) * TUNING.springStiffness * s;
+          velocity *= Math.pow(TUNING.springDamping, s);
+          pos += velocity * s;
+          rem -= s;
+        }
+        if (Math.abs(target - pos) < 0.0003 && Math.abs(velocity) < 0.0003) {
+          pos = target;
+          velocity = 0;
+        }
+      }
+
+      // Update per-card follower positions
+      const N = ITEMS.length;
+      let maxFollowerDiff = 0;
+      for (let i = 0; i < N; i++) {
+        const dist = Math.abs(positiveModulo(i - pos + N / 2, N) - N / 2);
+        let rate = TUNING.followerRates[3];
+        if (dist < 0.5) rate = TUNING.followerRates[0];
+        else if (dist < 1.5) rate = TUNING.followerRates[1];
+        else if (dist < 2.5) rate = TUNING.followerRates[2];
+
+        const alpha = 1 - Math.pow(1 - rate, steps);
+        followerPos[i] += (pos - followerPos[i]) * alpha;
+        const diff = Math.abs(pos - followerPos[i]);
+        if (diff < 0.0003 && pos === target && !isDragging) {
+          followerPos[i] = pos;
+        } else if (diff > maxFollowerDiff) {
+          maxFollowerDiff = diff;
+        }
+      }
+
+      renderFrame();
+
+      const settled = !isDragging && pos === target && velocity === 0 && maxFollowerDiff < 0.0003;
+      if (settled) {
+        announceActiveIfNeeded();
+      } else {
+        rafId = requestAnimationFrame(stepLoop);
+      }
+    }
+
+    // Pointer events on stage
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      isDragging = true;
+      activePointerId = e.pointerId;
+      startClientX = e.clientX;
+      lastClientX = e.clientX;
+      lastMoveTime = performance.now();
+      startPos = pos;
+      dragPos = pos;
+      pointerVelocity = 0;
+      maxDragTravelPx = 0;
+      stage.classList.add('is-dragging');
+      try {
+        stage.setPointerCapture(e.pointerId);
+      } catch (_) {}
+      startAnimationLoop();
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+      if (!isDragging || e.pointerId !== activePointerId) return;
+      const now = performance.now();
+      const dxFromStart = e.clientX - startClientX;
+      maxDragTravelPx = Math.max(maxDragTravelPx, Math.abs(dxFromStart));
+
+      const stepDx = e.clientX - lastClientX;
+      const dt = Math.max(1, now - lastMoveTime);
+      const measuredVel = stepDx / dt; // px per ms
+      pointerVelocity = pointerVelocity * 0.6 + measuredVel * 0.4;
+
+      lastClientX = e.clientX;
+      lastMoveTime = now;
+
+      dragPos = startPos - dxFromStart / (spacing * 1.1);
+      if (reducedMotion) {
+        pos = dragPos;
+        renderFrame();
+      } else {
+        startAnimationLoop();
+      }
+    });
+
+    function finishPointerDrag(e) {
+      if (!isDragging || (activePointerId !== null && e.pointerId !== activePointerId)) return;
+      isDragging = false;
+      stage.classList.remove('is-dragging');
+      try {
+        stage.releasePointerCapture(e.pointerId);
+      } catch (_) {}
+      activePointerId = null;
+
+      // Decay pointerVelocity if pointer sat still before release
+      if (performance.now() - lastMoveTime > 80) {
+        pointerVelocity = 0;
+      }
+
+      const projected = dragPos - (pointerVelocity * 280) / spacing;
+      const clamped = Math.max(pos - 3, Math.min(pos + 3, projected));
+      target = Math.round(clamped);
+
+      if (reducedMotion) {
+        snapDirectlyForReducedMotion(target);
+      } else {
+        startAnimationLoop();
+      }
+    }
+
+    stage.addEventListener('pointerup', finishPointerDrag);
+    stage.addEventListener('pointercancel', finishPointerDrag);
+    stage.addEventListener('lostpointercapture', finishPointerDrag);
+
+    // Click visible side card to center it (suppressed if horizontal drag exceeded 4px)
+    stage.addEventListener('click', (e) => {
+      if (maxDragTravelPx > 4) return;
+      const cardEl = e.target.closest('.carousel-card');
+      if (!cardEl) return;
+      const idx = Number(cardEl.dataset.index);
+      if (!Number.isFinite(idx)) return;
+
+      const N = ITEMS.length;
+      const o = positiveModulo(idx - pos + N / 2, N) - N / 2;
+      if (Math.abs(o) < 0.15) return;
+
+      target = Math.round(pos + o);
+      if (reducedMotion) {
+        snapDirectlyForReducedMotion(target);
+      } else {
+        startAnimationLoop();
+      }
+    });
+
+    // Keyboard navigation when carousel region is focused
+    stage.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        target = Math.round(target) + 1;
+        if (reducedMotion) snapDirectlyForReducedMotion(target);
+        else startAnimationLoop();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        target = Math.round(target) - 1;
+        if (reducedMotion) snapDirectlyForReducedMotion(target);
+        else startAnimationLoop();
+      }
+    });
+
+    // Horizontal trackpad wheel gestures (debounced 350ms, leaving vertical scroll untouched)
+    let lastWheelNavTime = 0;
+    stage.addEventListener('wheel', (e) => {
+      const absX = Math.abs(e.deltaX);
+      const absY = Math.abs(e.deltaY);
+      if (absX > absY && absX >= 8) {
+        e.preventDefault();
+        const now = performance.now();
+        if (now - lastWheelNavTime < TUNING.wheelDebounceMs) return;
+        lastWheelNavTime = now;
+        target = Math.round(target) + (e.deltaX > 0 ? 1 : -1);
+        if (reducedMotion) snapDirectlyForReducedMotion(target);
+        else startAnimationLoop();
+      }
+    }, { passive: false });
+
+    reducedMotionQuery.addEventListener('change', (e) => {
+      reducedMotion = e.matches;
+      if (reducedMotion) {
+        snapDirectlyForReducedMotion(Math.round(target));
+      } else {
+        startAnimationLoop();
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      } else if (!document.hidden) {
+        startAnimationLoop();
+      }
+    });
+
+    const resizeObserver = new ResizeObserver(() => {
+      recomputeGeometry();
+      renderFrame();
+    });
+
+    async function init() {
+      try {
+        const res = await fetch('assets/atelier-rouge/assets.json');
+        if (res.ok) {
+          const manifest = await res.json();
+          if (Array.isArray(manifest.items) && manifest.items.length >= 5) {
+            ITEMS = manifest.items;
+          }
+        }
+      } catch (_) {}
+
+      recomputeGeometry();
+      buildCards();
+      renderFrame();
+      announceActiveIfNeeded();
+      resizeObserver.observe(stage);
+    }
+
+    init();
+  </script>
+</body>
+</html>

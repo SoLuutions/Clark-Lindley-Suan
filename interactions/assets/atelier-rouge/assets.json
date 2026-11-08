@@ -1,0 +1,80 @@
+{
+  "brand": "Atelier Rouge",
+  "note": "Photorealistic dark luxury editorial portrait JPEGs (3:4 portrait, 900x1200) are installed in /interactions/assets/atelier-rouge/. Use the prompts below if regenerating or swapping any item.",
+  "sharedArtDirectionPrompt": "High-fashion dark luxury editorial photography, 3:4 vertical portrait aspect ratio (900x1200 or 1200x1600), cohesive palette of deep crimson (#8c0d17), glowing orange-red (#d93223), oxblood (#2b0306), and obsidian black (#050203), dramatic chiaroscuro studio lighting, subtle 35mm film grain, rich shadow detail, no text or watermarks.",
+  "items": [
+    {
+      "index": 1,
+      "category": "Ready-to-Wear",
+      "title": "After Hours",
+      "src": "assets/atelier-rouge/01-after-hours.jpg",
+      "alt": "Editorial portrait of a model in a draped crimson evening dress emerging from deep shadow",
+      "placeholderGradient": "linear-gradient(160deg, #160204 0%, #6e0a14 48%, #c9261d 78%, #090102 100%)",
+      "prompt": "High-fashion dark luxury editorial portrait (3:4 vertical) of a model seen in three-quarter profile wearing an asymmetric floor-length crimson silk evening dress, dramatic rim light in glowing orange-red cutting across obsidian black studio shadows, subtle motion blur on the hem, 35mm medium-format film grain, no text."
+    },
+    {
+      "index": 2,
+      "category": "Tailoring",
+      "title": "Noir Line",
+      "src": "assets/atelier-rouge/02-noir-line.jpg",
+      "alt": "Close architectural study of a sharp black wool blazer lapel lit by a narrow red beam",
+      "placeholderGradient": "linear-gradient(150deg, #060203 0%, #2a0408 42%, #8c111b 75%, #050102 100%)",
+      "prompt": "High-fashion dark luxury editorial close-up (3:4 vertical) of sharp architectural black barathea wool tailoring—structured shoulder and peak lapel with a single scarlet silk lapel thread—illuminated by a narrow diagonal slash of warm crimson tungsten light against pure black shadow, tactile fabric weave, no text."
+    },
+    {
+      "index": 3,
+      "category": "Eau de Parfum",
+      "title": "Lily Melt",
+      "src": "assets/atelier-rouge/03-lily-melt.jpg",
+      "alt": "Botanical still life of a crimson stargazer lily with dewdrops against a dark red background",
+      "placeholderGradient": "linear-gradient(165deg, #210306 0%, #9e1620 50%, #e04427 80%, #120103 100%)",
+      "prompt": "High-fashion dark luxury botanical still life (3:4 vertical) of a sculptural deep-red lily petal glistening with translucent amber condensation droplets, dramatically backlit with fiery orange-red light against a velvety black-crimson background, macro editorial photography, no text."
+    },
+    {
+      "index": 4,
+      "category": "Jewellery",
+      "title": "Halo",
+      "src": "assets/atelier-rouge/04-halo.jpg",
+      "alt": "Sculptural gold and garnet cuff catching a curved reflection in dark red light",
+      "placeholderGradient": "linear-gradient(145deg, #0c0203 0%, #52090e 45%, #b82b1e 74%, #080102 100%)",
+      "prompt": "High-fashion dark luxury jewellery still life (3:4 vertical) of a minimal sculptural polished rose-gold and cabochon garnet ring resting on black obsidian glass, casting a luminous halo-like caustic reflection in deep crimson and ember orange-red, macro studio photography, no text."
+    },
+    {
+      "index": 5,
+      "category": "Parfum",
+      "title": "N°7 Sang",
+      "src": "assets/atelier-rouge/05-n7-sang.jpg",
+      "alt": "Heavy faceted glass flacon filled with ruby perfume glowing in chiaroscuro light",
+      "placeholderGradient": "linear-gradient(170deg, #1a0204 0%, #7d0c16 48%, #d42c20 76%, #070102 100%)",
+      "prompt": "High-fashion dark luxury perfume still life (3:4 vertical) of a heavy architectural cut-crystal flacon without labels, filled with deep ruby-red elixir, lit from behind so a glowing crimson and orange-red refraction projects across a matte black stone plinth, chiaroscuro lighting, no text."
+    },
+    {
+      "index": 6,
+      "category": "Collection",
+      "title": "In Motion",
+      "src": "assets/atelier-rouge/06-in-motion.jpg",
+      "alt": "Blurred silhouette of a crimson pleated garment spinning across a dark stage",
+      "placeholderGradient": "linear-gradient(155deg, #0e0103 0%, #871219 46%, #e34a29 78%, #0a0102 100%)",
+      "prompt": "High-fashion dark luxury editorial photograph (3:4 vertical) capturing a slow-shutter silhouette of a model turning in a pleated vermilion and oxblood organza gown, luminous trails of orange-red and deep crimson fabric suspended in pure black space, poetic motion blur, no text."
+    },
+    {
+      "index": 7,
+      "category": "Silk",
+      "title": "Cherry Silk",
+      "src": "assets/atelier-rouge/07-cherry-silk.jpg",
+      "alt": "Macro folds of liquid cherry-red silk charmeuse with deep shadows",
+      "placeholderGradient": "linear-gradient(140deg, #1d0205 0%, #990f1d 52%, #cf2929 80%, #0d0102 100%)",
+      "prompt": "High-fashion dark luxury textile study (3:4 vertical) of fluid heavyweight cherry-crimson silk charmeuse draped in sculptural folds, specular highlights in warm vermilion transitioning into cavernous oxblood and black shadows, tactile studio macro photography, no text."
+    },
+    {
+      "index": 8,
+      "category": "Outerwear",
+      "title": "The Crimson Coat",
+      "src": "assets/atelier-rouge/08-the-crimson-coat.jpg",
+      "alt": "Full-length study of an oversized double-breasted crimson wool coat in dramatic side light",
+      "placeholderGradient": "linear-gradient(160deg, #0b0102 0%, #630911 45%, #ba1e1e 76%, #050101 100%)",
+      "prompt": "High-fashion dark luxury editorial portrait (3:4 vertical) of a tall figure standing in shadow wearing an oversized floor-sweeping double-breasted crimson cashmere overcoat with upturned collar, dramatic low-key side lighting in ember red against a pitch-black void, 35mm editorial grain, no text."
+    }
+  ]
+}
+
