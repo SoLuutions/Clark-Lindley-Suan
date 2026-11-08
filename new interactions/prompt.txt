@@ -1,0 +1,718 @@
+Build a single-page interactive "Things I Love" portfolio as one self-contained `index.html` (no build step). Use three.js 0.169 for rendering and cannon-es 0.20 for physics, both loaded from jsDelivr through an import map.
+
+## Assets
+
+Download these five free low-poly GLB models from Poly Pizza, then embed each one in the page as a base64 `data:model/gltf-binary` URI. Poly Pizza doesn't allow cross-origin loading, and embedding lets the page work when opened straight from disk. Don't use any images.
+
+| Name | Model and credit | URL |
+|---|---|---|
+| rock | "Rock", Quaternius, CC0 | https://static.poly.pizza/87d3dfd2-de47-4b03-b9f1-4c84c2a605b0.glb |
+| boba | "Frappe", Kenney, CC0 (stands in for bubble tea) | https://static.poly.pizza/a3c0d8bc-884d-41b1-a0b3-1c2c01b65286.glb |
+| laptop | "Laptop / MacBook Pro", Alex Safayan, CC-BY 3.0 | https://static.poly.pizza/7528df1c-c611-4e42-9210-eba9fcaf4269.glb |
+| ramen | "Ramen", Quaternius, CC0 | https://static.poly.pizza/9be6aee1-5998-452d-ad1a-333b5c0ab03c.glb |
+| plane | "Airplane", Poly by Google, CC-BY 3.0 | https://static.poly.pizza/4754ce4b-40ec-4089-8be4-98ce7230bfe4.glb |
+
+Keep the model credits and licenses in HTML source comments and accompanying project documentation. Do not add a model-credits popup or model-credit footer line to the interface.
+
+## Look
+
+- **Viewport:** full-screen 100vh, no scrolling. Background is exactly #004FFF.
+- **Material:** every mesh uses one shared material: `MeshStandardMaterial` in #004FFF, flat shading, roughness 0.55. The objects read as blue-on-blue sculptures, where only the lighting changes the shade.
+- **Lighting:** a hemisphere light (#9fbcff sky, #001a80 ground, 1.6), a white key light from the top left (2.2), and a light-blue rim light from behind (1.4).
+- **Camera:** perspective, 30° field of view, at z = 24.
+- **Fonts:** "Silkscreen" (Google Fonts) for all UI labels, "Inter Tight" 500 for body copy.
+
+## Cursor
+
+- Hide the native cursor everywhere.
+- Draw a large pixel-art arrow cursor as an SVG made of 1×1 `rect`s from a 12×20 bitmap: white fill, #00123d outline, `shape-rendering: crispEdges`, 5px per pixel.
+- Its hotspot is the top-left pixel, and it follows the pointer exactly.
+- It scales to 0.85 while the mouse button is held down.
+- Hide it on touch devices.
+
+## Physics pile
+
+- **The space:** a cannon-es world with gravity −28, sleeping allowed, SAP broadphase and 20 solver iterations.
+- **Walls:** invisible static planes for the floor and the left and right edges of the screen. Add front and back walls at z = ±2.8 so the objects live in a thin slab. Reposition the walls when the window resizes.
+- **Objects:** 3 copies of each model (15 total), shuffled. They drop in one every 0.18 s from just above the top of the screen, at a random x, with a small random spin.
+- **Size:** each object's longest side is 30% of the window's larger dimension, nudged per type (rock 1.0, boba 0.9, laptop 1.08, ramen 0.97, plane 1.1). When the window is resized, re-fit the models and rebuild their colliders, debounced by 200 ms.
+- **Colliders:** build them from the mesh, not as boxes. Take the extreme vertex in each of 26 directions (a k-DOP), merge any points closer together than 8% of the object's size, wrap the rest in a convex hull (three's `ConvexHull`) and centre the hull on its centroid. Use the result as a `CANNON.ConvexPolyhedron` with an offset.
+- **Damping:** linear damping 0.18, angular damping 0.6. Clamp speed to 13 and spin to 5 every frame, so nothing gets flung wildly.
+
+## Cursor repel
+
+- Every frame, project the pointer onto the z = 0 plane. Push each object within reach away from it using a smoothstep falloff.
+  - **Reach:** 3.4 plus half the object's size.
+  - **Force:** (70 + 4 × cursor speed) × falloff, plus a lift of 0.3 × force.
+  - **Drag:** add 3 × the smoothed cursor velocity, so objects get swept along with the movement.
+- Smooth the cursor velocity and cap the speed term, so a gentle move still nudges the pile but a flick never launches it.
+- Clicking empty space sends out a stronger shockwave that fades quickly.
+- The cursor has no effect while it is over the nav bar or the panel.
+
+## Laptop lid
+
+- Re-parent the lid node (named `group256948792`) onto a hinge group at the back edge of the keyboard deck, so it rotates around that edge.
+- The lid angle runs from −0.3 (open and tilted back) to π/2 (shut).
+- Raise the hinge pivot as the lid closes, so the lid folds down onto the deck instead of passing through it.
+- Drive the lid angle with a spring. Closing is stiff (k 320, c 18) with a small bounce when it shuts. Opening is soft (k 60, c 9).
+- **Closing:** a hard impact (impact velocity above 6) slams the lid shut. When it's shut, swap the collider to a box.
+- **Opening:** while the laptop is in the air, open the lid in proportion to how high it has risen since leaving contact. It's fully open after rising 3 units.
+
+## Nav bar
+
+- A fixed bar, 48px tall, across the full width of the top, with a 1.5px white bottom stroke. It's split into cells with white vertical strokes.
+- The cells, in order:
+  1. A dot and "THINGS I LOVE". This cell is 420px wide, matching the panel. The dot is hollow and blinking until something is selected, then solid.
+  2. A counter showing `00/05`.
+  3. An arrow ↓ that rotates to ↙ when the panel is open.
+  4. A name cell showing "CLICK SOMETHING", which turns white with blue text when something is selected.
+  5. A flexible spacer.
+  6. A hint, "DRAG THROUGH THE PILE", hidden below 1000px wide.
+
+## Click to feature
+
+- Raycast the click against the objects. If nothing is hit directly, take the nearest object within a short distance, because the objects dodge the cursor.
+- **The panel:** under the brand cell, a white panel with #004FFF text drops down using a clip-path reveal, and its lines fade in with a stagger. It shows a short intro, then pixel-font sub-headings with lists. Keep the copy in an editable `INFO` object:
+  - laptop → Work
+  - plane → Travelling
+  - rock → Rock climbing
+  - boba → Bubble tea
+  - ramen → Ramen
+- **The highlight:** the picked object gets a lighter material with emissive #3d7bff.
+- **The motion:** the picked object switches to a kinematic body and is steered by velocity:
+  - It glides to the middle of the screen. Below 1100px wide it goes to the middle of the space right of the panel; on phones it sits below the panel.
+  - It floats forward to z = 2.8 + 0.3 + 0.55 × its featured size, so nothing can sit in front of it.
+  - It grows to the larger of 42% of the window's smaller side and 1.35× its pile size, capped at 70% of the smaller side.
+  - It turns to a pose that shows it off: ramen tipped up 1.05 rad to show inside the bowl, laptop open and facing you, boba upright, rock and plane at three-quarter views.
+  - It bobs and sways gently.
+- **Pushing the pile aside:** rebuild its collider at the growing scale every time it grows by 10% or more, so it eases the pile out of its way and nothing ever passes through it.
+- **Switching back:** clicking another object, the featured object itself, empty space, or pressing Esc returns the object to a dynamic body at its normal collider size. It shrinks back quickly and drops into the pile.
+- Pressing R clears everything and drops the pile again.
+
+
+Build “Ground Coffee — Japandi Collage” as a working, responsive café website hero. Recreate the centered two-line headline, seven asymmetrical media frames, staggered entrance and reversible hover interactions. The result should be a live webpage, not a video playing as a background or a screenshot with hotspots.
+
+START WITH THE WORKING SOURCE
+For the closest match, download the complete HTML source below. Save the text unchanged as index.html and render it as HTML. It already includes the styles, animation keyframes, JavaScript and permanent media URLs. If building in React or another framework, reproduce its DOM structure and CSS, initialize playback and readiness once, and clean up event listeners on unmount. Do not embed the example in an iframe.
+Single-file source: https://www.veronicag.com/experiment-assets/ground-coffee-japandi-collage/v1/hero.html.txt
+Editable starter with bundled media: https://www.veronicag.com/experiment-assets/ground-coffee-japandi-collage/v1/ground-coffee-starter.zip
+Live reference: https://www.veronicag.com/experiment-assets/ground-coffee-japandi-collage/v1/index.html
+Desktop reference image: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/poster.jpg
+Motion reference: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/preview.mp4
+The large cursor appears only in the recording to demonstrate hover. Use the visitor’s normal arrow cursor on the website. Google Fonts and the single-file starter’s Cloudflare media require internet access; the ZIP includes local copies of all hero images and clips.
+
+COPY AND ART DIRECTION
+Make a quiet, full-screen neighbourhood café hero. Use oatmeal paper #eee9df, olive-charcoal ink #393b30, muted #6a6b5c and a small clay-colored accent #9b583a. Layer the supplied grain.svg at 19% opacity above the design with pointer events disabled. No tagline, cards, rounded corners, drop shadows, added marketing copy, or invented navigation destinations.
+At 1440 × 900, center the headline exactly at (720, 450). First line: “Good coffee.” Second line: “At your pace.” Italicize only “pace.” Use Cormorant Garamond, weight 400, font-size clamp(79.2px, 7.65vw, 144px) — 110.16px at the reference width — line-height .82 and letter-spacing −.055em. Keep the copy container at 57% width, above the media, with no pointer events. The hero is position:relative, isolation:isolate, overflow:hidden, height:100svh, min-height:720px.
+Place “ground coffee.” as a lowercase serif wordmark at the upper left, 36px, weight 500, line-height 1, with the final period in clay. Use header padding 26px 3.4vw. At upper right, set the static labels “menu”, “locations”, “about” in Manrope at 11px with 52px gaps. These labels and the pictures are not buttons.
+
+COMPOSE THE SEVEN MEDIA FRAMES
+Percentages below are relative to the hero. Use sharp corners, object-fit:cover and the supplied assets. Under each frame, use the stated number in 8px muted Manrope and the caption in 13px Cormorant Garamond, separated by 10px with 8px top padding. Keep the center open; the two side frames intentionally extend beyond the viewport.
+01 / A good start — coffee.jpg, square. Left 4.2%, top 14%, width 15%. Entrance delay .28s.
+02 / The first pour — coffee-pour.mp4, portrait 3:4, poster coffee-pour-poster.jpg. Left 31%, top 10%, width 10.8%. Object-position center 55%; delay .46s.
+03 / A seat in the sun — window.jpg, landscape 1.35:1. Right 5%, top 14.5%, width 20.5%. Delay .20s.
+04 / On your way — takeaway.jpg, portrait 3:4. Left −2%, top 44.5%, width 15%. Inset its caption from the clipped edge. Delay .55s.
+05 / Worth a moment — espresso-pour.mp4, portrait 3:4, poster espresso-pour-poster.jpg. Right −1.4%, top 46.5%, width 15.5%. Delay .62s.
+06 / Something small — pastry.jpg, square. Left 16%, bottom 7.7%, width 16.5%. Delay .38s.
+07 / Common ground — beans.jpg, square. Right 25.5%, bottom 7%, width 11.7%. Delay .72s.
+
+RECREATE THE ENTRANCE
+Make every element visible by default when JavaScript is off. When JS is available, set the initial reveal states before the first paint. Wait for document.fonts.ready and decoded still images, with an 1800ms maximum wait. On the next animation frame, add the ready class and run the entrance once per load.
+Wrap each headline line in its own overflow:hidden mask. The inner text begins translated 135% below its resting position, then moves to translateY(0) over 1.1s with cubic-bezier(.22,1,.36,1). Start line one at .16s and line two at .30s. Use padding .08em .1em .21em and matching negative margins on each line mask so descending letters stay intact without adding a gap.
+For each image and video, animate an inner content layer from opacity 0, blur(8px), scale(1.035) to opacity 1, blur(0), scale(1). Duration 1.2s, easing cubic-bezier(.25,1,.5,1), staggered by the delays above. Fade the caption in over .7s, starting .2s after its frame’s entrance begins. Do not blur the headline or layout container.
+
+HOVER AND VIDEO BEHAVIOR
+Keep the outer media frame stationary. Inside it, nest a dedicated hover wrapper around the entrance layer. For devices that support hovering with a fine pointer, scale the hover wrapper to .85 and blur it to 10px over one second with cubic-bezier(.4,0,.2,1). Over that same second, fade only that frame’s caption number and text to opacity 0. Hold while the pointer is anywhere within the original frame, including the gap around the shrunken picture. On pointer exit, reverse smoothly from the current state to scale 1, blur 0 and fully visible text. The caption must keep its layout space. No click action, hand cursor, tooltip, or vertical lift. All seven frames use this behavior, including live videos.
+Both nine-second pouring clips loop silently, play inline, and use their supplied poster images. Apply saturate(.75) sepia(.14) to the videos. Keep the discreet “Pause videos” / “Play videos” control at bottom right. It controls both clips, updates its accessible state, and respects the user’s pause choice when the page regains focus. Pause videos on hidden tabs. Handle autoplay rejection without leaving an incorrect control state.
+
+RESPONSIVE AND ACCESSIBLE
+At widths up to 1000px, reduce the serif headline to clamp(64.8px,8.28vw,82.8px) and widen the copy container to 66%. At 600px and below, keep two lines at clamp(50.4px,12.78vw,75.6px), line-height .84; center the copy at 48.5% of the hero height in a 93%-wide container. Use 22px header insets and put the three nav labels in a second row. The hero has an 820px minimum height so the edge collage still has room. Follow the original mobile position rules in styles.css: group coffee, pour and window above the headline; place takeaway and espresso at the side edges below it; place pastry and beans near the bottom. Keep the pause control at bottom left. Small screens may scroll vertically; there must be no horizontal page overflow.
+Honor prefers-reduced-motion: show the final text, sharp media and visible captions immediately, skip decorative shrink/blur and start videos paused. Use descriptive alt text and video labels, a keyboard-accessible pause control, a skip link and the accessible headline “Good coffee. At your pace.” Do not make screen readers announce each animation.
+
+ASSETS
+Use these exact media files; do not use generated substitutes or temporary/private image links. Download them locally if the builder requires local files. Full manifest with URLs and checksums: https://www.veronicag.com/experiment-assets/ground-coffee-japandi-collage/v1/assets.json
+beans.jpg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/beans.jpg
+coffee-pour-poster.jpg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/coffee-pour-poster.jpg
+coffee-pour.mp4: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/coffee-pour.mp4
+coffee.jpg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/coffee.jpg
+espresso-pour-poster.jpg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/espresso-pour-poster.jpg
+espresso-pour.mp4: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/espresso-pour.mp4
+favicon.svg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/favicon.svg
+grain.svg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/grain.svg
+pastry.jpg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/pastry.jpg
+takeaway.jpg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/takeaway.jpg
+window.jpg: https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/assets/window.jpg
+The five original PNGs are also available under https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/experiments/ground-coffee-japandi-collage/v1/originals/ (coffee.png, window.png, takeaway.png, pastry.png, beans.png). Original image-generation briefs: https://www.veronicag.com/experiment-assets/ground-coffee-japandi-collage/v1/image-briefs.md. Video and image credits: https://www.veronicag.com/experiment-assets/ground-coffee-japandi-collage/v1/media-credits.md.
+
+VERIFY THE RESULT
+At 1440 × 900, reload and check the upward line masks, staggered focus reveal and complete descenders. Hover a still and a pouring video, hold past one second, then move away: only that item shrinks and its caption disappears; both return when you leave. Check all seven media loads, both clips loop, pause/play works, and the mobile and reduced-motion layouts remain legible. Deliver the working hero and its editable files.
+
+
+# Prompt: Recreate the "Maison Verdelle" timeline crawl
+
+Build a single self-contained HTML page (inline CSS and JS, no frameworks) for a fashion house timeline. The page fills the viewport with no page scroll. The left half holds text that drifts slowly from top to bottom on a plane turned in perspective. The right half shows one image per timeline entry. A new image fades and scales in each time the next timeline block reaches the middle of the screen.
+
+## Look
+
+- Background: flat beige `#efe6d4` (`--beige`).
+- Text: bright green `#13b33a` (`--green`). Years use a deeper green `#0e8c2d` (`--green-soft`).
+- Selected text: `::selection { background: var(--green); color: var(--beige); }`
+- Fonts (Google Fonts): **Cormorant Garamond** 400/500 for headings and body, **Inter** 400/500 for years and the brand line.
+- Keep it simple and minimal: no drop caps, ornaments, borders, frames, captions or color filters on the images.
+
+## Layout
+
+- `.stage` is `100vh` tall, a 2-column CSS grid (`1fr 1fr`) with `overflow: hidden` on `html, body`.
+- **Brand line:** absolutely positioned and centered across the full width, 32px from the top. Text: `Maison Verdelle · 1962 — 2026`, Inter 12px, uppercase, `letter-spacing: 0.5em`, green.
+- **Left column (`.text-col`):** `position: relative; overflow: hidden; perspective: 900px; perspective-origin: 50% 50%; cursor: grab; touch-action: none;`
+  - Inside it, `.plane` is centered horizontally, `top: 0`, `width: min(560px, 40vw)`, `height: 100vh`, `overflow: hidden`, `transform: translateX(-50%) rotateY(35deg)`, `transform-origin: 50% 50%`. The text should look nearer on the left and recede to the right.
+  - Inside the plane, `.track` is absolutely positioned (`left: 0; right: 0; bottom: 0`) and contains **two identical copies** of the timeline so it can loop seamlessly.
+  - Each copy is `display: flex; flex-direction: column-reverse; gap: 72px; padding: 36px 0`. Entries are written oldest → newest in the DOM. Because the text moves downward, `column-reverse` puts 1962 at the bottom so it enters first.
+  - A `.haze` overlay (`pointer-events: none`) covers the column with two gradients: top-to-bottom (solid beige at 0%, transparent from 22% to 80%, solid beige at 100%) and right-to-left (beige at 75% opacity on the right edge fading to transparent at 40%), so the far side melts into the background.
+- **Right column (`.gallery`):** flex, centered. `.frames` is `position: relative; width: min(420px, 36vw); aspect-ratio: 3 / 4`. All images are stacked absolutely inside it with `object-fit: cover`.
+
+## Entry typography
+
+Each entry is centered and contains:
+
+- **Year:** Inter 500, 15px, `letter-spacing: 0.32em`, `--green-soft`, 14px bottom margin.
+- **Title:** Cormorant Garamond 500, 44px, `line-height: 1.05`, 16px bottom margin.
+- **Paragraph:** Cormorant Garamond 400, 23px, `line-height: 1.5`.
+
+Between entries, add a thin rule: 40px wide, 1px tall, green at 40% opacity, centered.
+
+## Content
+
+Generate the entries and the images from one JS array:
+
+| Year | Title | Text | Image |
+|---|---|---|---|
+| 1962 | A Single Room in Lyon | Hélène Verdelle opens a one-room atelier above a bakery, cutting wool coats by hand for neighbours and friends. Every garment is finished with a thread of green silk at the hem. | https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/01.jpg |
+| 1971 | The First Collection | Forty looks, shown in a borrowed courtyard. The press calls the tailoring “quietly radical” — soft shoulders, deep pockets, clothes meant to be lived in. | https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/02.jpg |
+| 1984 | Paris, Rue du Bac | The house moves to Paris and opens its first boutique. The olive trench coat debuts and becomes the piece most people still picture when they hear the name. | https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/03.jpg |
+| 1997 | A New Hand at the Table | Hélène’s daughter Camille takes over design. She brings linen, undyed cotton and a lighter silhouette, and introduces the first menswear line. | https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/04.jpg |
+| 2008 | Made to Last | Verdelle launches free lifetime repairs on every coat. The workshop in Lyon reopens as a mending studio, handling more than ten thousand pieces a year. | https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/05.jpg |
+| 2016 | From Field to Fabric | Partnerships with regenerative wool farms in the Massif Central bring the whole supply chain within a day’s drive of the atelier. | https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/06.jpg |
+| 2026 | Sixty-Four Years On | The house marks its anniversary with an archive exhibition — and a green silk thread still finishes every hem. | https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/timeline-crawl/07.jpg |
+
+The images are 3:4 portrait fashion editorials that mix realism and Renaissance painting: realistic models in full-length green looks, set against painted Renaissance interiors and landscapes. Use each one's year and title as its alt text.
+
+After rendering the entries into the first copy, clone that copy into the track to make the second one.
+
+## Motion: drive it with JavaScript, not a CSS animation
+
+Keep an `offset` in pixels that runs from 0 to the height of one copy (`track.offsetHeight / 2`), and wrap it with `((offset % copyH) + copyH) % copyH`. On every `requestAnimationFrame`, apply `track.style.transform = translateY(offset px)`.
+
+- **Drift:** `copyH / 70` px per second, so one full pass takes 70s. Read this from a CSS variable `--speed: 70s`. With `prefers-reduced-motion`, make it 3× slower.
+- **Pause on hover:** if `textCol.querySelector('.entry:hover')` matches, drift is 0. Hovering anywhere else on the page does not pause.
+- **Mouse wheel / trackpad:** listen on `window` with `{ passive: false }` and call `preventDefault()`. Add `deltaY * 6` to a `boost` velocity in px/s, clamped to ±6000. Multiply `deltaY` by 16 when `deltaMode === 1`. Wheel down moves forward in time (the text moves down); wheel up moves back. Each frame, add `(drift + boost) * dt` to the offset, then decay the boost with `boost *= Math.pow(0.04, dt)` so it eases back to the drift in about a second. Clamp `dt` to 0.05s.
+- **Drag (mouse, pen, touch):** on `pointerdown` in the text column with the left button, start a drag and reset the boost.
+  - Once the pointer has moved more than 4px, treat it as a drag: clear any text selection, add `body.dragging` (which sets `cursor: grabbing` and `user-select: none`), and call `setPointerCapture`.
+  - While dragging, add the pointer's vertical delta straight to the offset, track a smoothed velocity (`0.8 * new + 0.2 * old`), and set drift to 0.
+  - On `pointerup` or `pointercancel`, if the last move was within 100ms, set the boost to that velocity (clamped to ±6000) so a flick keeps gliding.
+  - Simple clicks and double-clicks must still select text.
+
+## Image switching
+
+In a separate `requestAnimationFrame` loop, find the active entry. Because the text moves down, a block's leading edge is its **bottom**. Among all `.entry` elements in both copies, pick the one whose `getBoundingClientRect().bottom` is `>= window.innerHeight / 2` with the smallest such value. That is the block that most recently reached the middle of the viewport. Store each entry's index in `data-i`.
+
+When the index changes:
+
+- The previous image gets `.leaving` and loses `.active`.
+- The new image gets `.active`.
+- Clear `.leaving` from all other images first.
+
+CSS for the "small to large" entrance:
+
+```css
+.frames img {
+  opacity: 0;
+  transform: translateY(40px) scale(0.55);
+  transform-origin: 50% 100%;
+  transition: opacity 0.7s ease, transform 0.9s cubic-bezier(.2,.8,.2,1);
+}
+.frames img.active  { opacity: 1; transform: none; z-index: 1; }
+.frames img.leaving { opacity: 0; transform: scale(1.04); transition-duration: 0.6s; }
+```
+
+With reduced motion, shorten the image transitions to 0.3s.
+
+## Mobile (≤ 800px)
+
+- The grid becomes a single column with rows `42vh 58vh`.
+- The gallery moves on top (`order: -1; padding-top: 64px`) and `.frames` takes the full row height.
+- The plane is `78vw` wide.
+- Title 32px, paragraph 19px.
+
+## Acceptance checks
+
+- The text drifts down with a clear left-to-right perspective and loops with no visible jump.
+- Hovering over an entry pauses it; hovering over the image or the empty background does not.
+- The wheel speeds up the timeline in both directions. Dragging moves it 1:1, and a flick keeps it gliding.
+- The image changes exactly when each block's bottom edge reaches the vertical middle, and it grows in from small to full size.
+- Selected text is green with beige text.
+- No page scrollbars and no console errors.
+
+
+Create a full-screen interactive hero for Ground Floor Coffee, a design-focused neighbourhood café. Build it as a single HTML page with inline CSS and JavaScript, without a framework.
+
+## Visual direction
+Use a rich emerald background (#073e32) and dusty pink accents (#efc7ce). No navigation, buttons, drag instructions, product-name pills, or marketing paragraphs. Keep the viewport free of page scrollbars.
+
+Center a large, heavy, soft serif wordmark: “ground” on the first line, “floor.” on the second, and “coffee” smaller underneath. Use Fraunces 900 with soft, rounded letterforms, or a similar Cooper Black-style serif. The wordmark should fill approximately 40% of the desktop screen width. Keep it fixed above all coffee images as the gallery moves underneath it. The logo is immediately visible and has no entrance animation.
+
+## Generate the objects
+Create eight separate photorealistic transparent PNG cutouts, each with its own complete cast shadow. Do not combine them in a sprite sheet. Leave generous transparent padding so neither the objects nor their shadows are cropped.
+
+Use a consistent elevated, three-quarter orthographic/isometric camera angle, about 35 degrees above the objects. Keep the objects physically upright. Illuminate them with distant directional sunlight from the upper left, around 10 o’clock. Cast long, dark, slightly soft shadows diagonally toward the lower right, around 4 o’clock. Preserve realistic ceramic glaze, glass refraction, ice, condensation and coffee textures.
+
+Generate:
+1. Espresso in a dusty pink sculptural porcelain cup, with fluted sides, an angular loop handle and an organic matching saucer.
+2. Iced latte in a tall clear glass, with visible milk and coffee layers and ice.
+3. A silver octagonal moka pot with a black handle.
+4. Cappuccino with fern latte art in a wide, low pink porcelain cup, with scalloped fluting, a circular ring handle and a wavy matching saucer.
+5. Iced matcha latte in a clear glass with creamy green layers and ice.
+6. A glass pour-over dripper with a paper filter on a coffee carafe, with a pink collar.
+7. Strawberry matcha with pink strawberry milk below creamy milk and green matcha.
+8. Espresso tonic in a faceted clear tumbler, with dark espresso over pale golden tonic, ice and a thin orange slice.
+
+These should feel like premium café product photographs and collectible contemporary tableware, not flat icons or cartoon illustrations. No text baked into the images.
+
+## Infinite diagonal gallery
+Arrange the objects in spacious, staggered rows on a grid angled roughly 19 degrees upward to the right. Rotate the placement coordinates, not the images themselves. Vary object scale slightly, approximately 92–108%, and add small deterministic offsets so the arrangement feels curated rather than rigid.
+
+At desktop size, use roughly 440px column spacing, 390px row spacing and 280px image containers. Reduce the sizes and spacing on mobile. Show some objects partially cropped at the viewport edges to suggest the collection continues.
+
+Allow dragging or swiping in any direction, trackpad/wheel panning, and arrow-key navigation. Calculate which grid cells intersect the viewport, render a small buffer beyond its edges, and recycle offscreen cells. Panning must continue without reaching an edge or exposing a blank area. Reuse the eight object types across the field. Keep the centered wordmark stationary above the moving collection.
+
+## Cursor and hover cards
+Use a dusty pink arrow cursor with a dark emerald outline. Preserve normal touch interaction on phones.
+
+Suppress hover feedback within an elliptical area surrounding the logo so objects behind the lettering do not trigger descriptions. Objects outside that area should lift subtly on hover and reveal a single pink description card directly over the image itself, not beneath the transparent image boundary.
+
+The card contains the item name and a short inviting description, both in monospace typography, with emerald text. Give it comfortable padding and subtly rounded corners. Clamp its position inside the viewport. It fades in while moving upward 20px over about 260ms. Keep the card pointer-events:none so it cannot interrupt the underlying hover. Hide it when the pointer leaves, enters the logo area, or starts panning. Clicking never pins a card open. Offer the same descriptions on keyboard focus and dismiss them on blur or Escape. Do not add a separate name badge or pill.
+
+Keep the eight names and descriptions in an editable JavaScript array. Use concise descriptions of the actual drinks or brewing objects without inventing prices or café facts.
+
+## Entrance animation
+On initial page load, wait for the images and font to be ready, with a bounded fallback so loading cannot hide the page indefinitely. Stagger the initially visible coffee elements from the top left, combining opacity 0 → 1 with translate(-95px, -75px) → translate(0, 0), over about 800ms with a soft ease-out. Spread the delays over approximately 550ms according to their screen positions.
+
+Apply the entrance to a wrapper separate from both the grid-position transform and the hover transform. This avoids jumps or conflicts with panning. Play it once on load, not whenever recycled items enter the viewport. Keep the emerald background stable and the logo visible throughout.
+
+Respect prefers-reduced-motion: show everything immediately and disable the entrance, hover lift and card movement. Keep all content and navigation usable without animation.
+
+
+Build a reusable, endlessly looping 3D image carousel with the look and motion of a dark luxury editorial gallery. One portrait card is large, sharp, and readable in the center. The cards on either side become smaller, turn away in perspective, darken, and blur as they recede. Keep their bottom edges on one shared horizontal baseline. Dragging should feel weighted, with a subtle ripple between cards and a soft spring when the carousel settles. Implement this in the project's existing stack, with editable images and text and no dependency on an external demo or original ZIP.
+
+Composition and content
+Use a pure black #000 background with a full-width stage, approximately one viewport tall, and generous empty space above and below the cards. Hide overflow within the stage. Keep the default composition minimal: no heading, dots, arrows, or autoplay controls over the artwork. The carousel moves only when the visitor interacts.
+
+Start with eight portrait images in a cohesive crimson, orange-red, and black editorial palette. Use local assets, with object-fit: cover, a 3:4 card aspect ratio, 4px corners, and a dark red #1A0203 fallback background. Store image src, alt text, category, and title in one editable data array. Support at least five items without hardcoding the wrap logic to eight. If images are not supplied, create or select a coherent set of fashion silhouettes, tailoring details, lilies, jewellery, perfume still lifes, fabric, and coats. The effect must remain usable with any replacement portrait images.
+
+Use these optional demo category/title pairs in order:
+1. Ready-to-Wear / After Hours
+2. Tailoring / Noir Line
+3. Eau de Parfum / Lily Melt
+4. Jewellery / Halo
+5. Parfum / N°7 Sang
+6. Collection / In Motion
+7. Silk / Cherry Silk
+8. Outerwear / The Crimson Coat
+
+Center the first card initially. Put its category and title at the lower left, with a two-digit item number at the lower right. Use Inter or a similar clean sans-serif in warm off-white #F4ECE8. Category labels are uppercase, regular weight, approximately 9–11px, with 0.2em letter spacing and 60% text opacity. Titles are regular weight, approximately 17–26px, with -0.02em tracking and 1.05 line height. Numbers use tabular digits, about 9–11px, medium weight, and 0.14em tracking. Use roughly 14–26px text padding, 6px between category and title, and a 12px gap before the number.
+
+Add two subtle image overlays: a vertical shade that is clear through the top half and reaches rgba(10,0,0,0.75) at the bottom, and a soft radial vignette that darkens the outside edges. Keep the text above both. Text is visible only near the center and fades away as its card moves outward; side cards should read primarily as images.
+
+Responsive dimensions and shared baseline
+Let W and H be the stage width and height. On desktop use card width C = min(W * 0.25, H * 0.56, 440px). Below approximately 640px, use C = min(W * 0.34, H * 0.56, 440px). Card height is 4C/3. Position every card initially at the stage center, then transform it from that position. Define the common baseline B = H/2 + cardHeight/2.
+
+Use CSS perspective of 900px on the stage, with perspective-origin: 50% B. Keep transform-style: preserve-3d on the track. Hinge each side card at its bottom inner corner: bottom-left for cards on the right, bottom-right for cards on the left. This hinge and the shared perspective origin must keep the bottom edges aligned even as cards shrink and rotate away. Avoid centering the side cards vertically or arranging them on an arc.
+
+Fade the entire gallery smoothly into the black background at the viewport edges. On desktop, use a horizontal mask that is transparent at 0%, fully visible from 20% to 80%, and transparent again at 100%. On mobile, narrow those fade zones to approximately 0–8% and 92–100% so neighboring cards remain visible.
+
+Circular card positions and 3D geometry
+Keep a continuous, unbounded logical position pos and a target position in item units. For item i in a collection of N items, calculate its shortest signed circular offset o = positiveModulo(i - pos + N/2, N) - N/2. Use positive modulo so moving left through the first item works correctly. The absolute offset a = abs(o) is its distance from center, and its sign selects the left or right side. Wrap distant cards only while they are invisible, so the last-to-first transition has no visible reset.
+
+For each offset a, calculate:
+- scale = 1 - min(a, 3) * 0.12 on desktop; use 0.26 instead of 0.12 on mobile.
+- outward Y rotation in degrees = (12a + 5a²) * 0.65, multiplied by the side's sign.
+- depth z = -a² * C * 0.12.
+
+Use scale, depth, and rotation continuously during motion, rather than switching between a handful of fixed CSS classes. Rotation should accelerate toward the outer edges. At rest, the centered card stays flat and full size, and roughly two neighbors on each side are visible.
+
+Keep equal visible gaps between cards in screen space, even though perspective changes their projected width. Use gap = C * 0.09 on desktop and C * 0.07 on mobile. Do not use a simple flex row or equal world-space translateX distances, which create inconsistent visible spacing after rotation.
+
+A precise way to solve the spacing is to precompute inner-edge screen anchors A for slots 0 through 4. Begin with A[0] = -C/2. For each slot n, let F = A[n], P = 900, and calculate its scale, depth z, and positive rotation angle theta from the formulas above. Set w = C * scale and Xh = F * (P - z) / P. Its projected width is ((Xh + w * cos(theta)) * P / (P - z + w * sin(theta))) - F, with theta in radians for trigonometry. Then set A[n+1] = F + projectedWidth + gap.
+
+For a fractional distance a, linearly interpolate between the neighboring anchor values to get A(a). Convert this screen anchor back into world space at that depth: Xh = A(a) * (P - z) / P. Apply horizontal translation x = sign(o) * (Xh + C/2), using the right-side sign at zero. The card transform is translate3d(x, 0, z), then rotateY(sign(o) * rotation), then scale(scale), around its bottom inner corner. Recompute anchors when the stage dimensions change.
+
+Depth styling and text focus
+Keep the active card perfectly sharp and fully bright when a < 0.5. Outside this center zone, blur by min(a,3) * 1.8px for a up to 1, and min(a,3) * 3.4px farther away. Use brightness = 1 - min(a,3) * 0.2 for these side cards. Keep card opacity at 1 until a reaches 2.2, then fade linearly to 0 by a = 2.8. Hide cards once their opacity is effectively zero. Give cards closer to center the higher stacking priority.
+
+Set text opacity to max(0, 1 - 1.8a). As text fades out, move it down by up to 10px. Only the centered card's category, title, and number should be fully readable. Keep images and their overlays contained within each individual card; do not blur the whole track or the active image.
+
+Dragging and momentum
+Use pointer events for mouse, pen, and touch. Start dragging only from the primary pointer button, capture that pointer, show a grabbing cursor, and prevent image dragging or text selection inside the carousel. Preserve normal vertical page scrolling with touch-action: pan-y. Keep movement scoped to the stage rather than attaching a global page drag handler.
+
+Let spacing = A[1] + C/2. As the pointer moves horizontally by dx from its starting point, set dragPos = startPos - dx / (spacing * 1.1). Dragging left advances the carousel; dragging right reverses it. During drag, the logical position gently follows dragPos instead of being glued to the pointer. At a 60Hz reference rate, use pos += (dragPos - pos) * 0.2 and retain the change in pos as velocity for release.
+
+Track a smoothed horizontal pointer velocity in pixels per millisecond: retain 60% of the previous velocity and add 40% of the latest measured velocity. On release, project ahead using projected = dragPos - pointerVelocity * 280 / spacing. Clamp that projection to within three items of the current logical position, then round it to the nearest item to obtain the target. Handle pointerup, pointercancel, and lostpointercapture without getting stuck in dragging mode.
+
+After release, use a soft, slightly underdamped spring. A suitable 60Hz reference update is velocity += (target - pos) * 0.026; velocity *= 0.89; pos += velocity. Let it overshoot slightly and settle instead of ending with an abrupt snap or a long elastic bounce. Set position exactly to target when both the remaining distance and velocity are below roughly 0.0003. Use a fixed timestep or an equivalent delta-time-aware spring so the feel is consistent on different refresh rates.
+
+Give each card its own follower position to create the ripple. The centered card follows pos with a rate of 0.32, its nearest neighbors with 0.20, the next pair with 0.13, and the outer cards with 0.10 at the 60Hz reference rate. Derive each card's rendered circular offset from its individual follower position. The central card should feel responsive while outer cards trail slightly, not move as one rigid strip. Convert these rates consistently for frame time or run them in the same fixed-timestep simulation.
+
+While motion is fast, subtly press the entire track back by scaling it to 1 - min(1, abs(velocity) * 10) * 0.035. Use the shared baseline as the track's transform origin. Restore scale to 1 as movement settles. This is a small 3.5% maximum change, not a dramatic zoom.
+
+Other ways to navigate
+Clicking a visible side card centers that card using the nearest equivalent logical index and the same spring. Suppress this click after a drag once horizontal movement exceeds 4px, so releasing a swipe does not select the card under the pointer. A click should center the card rather than navigate away.
+
+When the carousel region is focused, ArrowRight advances one item and ArrowLeft moves back one. Horizontal trackpad gestures should also move one item in the gesture direction. Only intercept wheel input when abs(deltaX) is greater than abs(deltaY) and the horizontal amount is at least about 8px. Debounce navigation for roughly 350ms so a single gesture does not jump repeatedly. Leave vertical wheel scrolling to the page. Keep every navigation method circular in both directions.
+
+Accessibility, mobile, and resilience
+Give the stage a keyboard focus target, a visible focus indicator, an accessible collection name, and aria-roledescription="carousel". Include concise keyboard instructions for screen readers. Expose the active item title and its position, such as 3 of 8; announce changes politely only when navigation settles, not on every animation frame. Keep hidden/off-center decorative copies out of the tab order and prevent aria-hidden elements from retaining focus. Provide descriptive image alt text.
+
+With prefers-reduced-motion, update directly to the requested position without inertia, spring overshoot, per-card lag, or speed-driven track scaling. Keep drag, click, keyboard, and touch navigation available, with a stable selected card. Respond if the motion preference changes while the page is open.
+
+On phones, keep the portrait proportions, narrower edge masks, and stronger side-card shrink. Use about 15px titles and 8px category/number labels. Let the carousel fit short screens without clipping the active image or preventing access to the rest of the page. When embedded in a larger website, isolate overflow clipping to the carousel rather than disabling page scrolling.
+
+Use a ResizeObserver to recompute dimensions and screen-space anchors without resetting the current item. Load the active and nearby images promptly, reserve their aspect ratios to avoid layout jumps, and use appropriately compressed local assets. Pause animation when offscreen or the tab is hidden, and stop requesting frames once the position and all follower cards have settled. Resume only when input or a layout change needs an update. Clean up observers, listeners, pointer capture, and animation frames on unmount. Include an image-error fallback and a simple finite gallery when JavaScript or 3D transforms are unavailable.
+
+Deliver a complete reusable carousel with editable content and tuning values. Check dragging in both directions, gentle releases and fast flicks, clicking neighbors without accidental drag clicks, keyboard and horizontal trackpad navigation, last-to-first wrapping, consistent bottom alignment and projected gaps, resizing during motion, mobile vertical scrolling, reduced motion, and missing images.
+
+Build a single self-contained HTML file: a 100vh hero for a restaurant called Pêche. A translucent milky plastic carrier bag fades in at centre stage, five fluffy red peaches drop into it one by one, and the plastic stretches around them. Use vanilla JS and two canvases (the stage, plus an offscreen layer for the fruit), with no libraries. The only external resources are Google Fonts and the dish photo (a public link, below).
+Page and type
+Fonts: Inter Tight (500/700) for display, Inter (400–600) for UI.
+Colour tokens:
+--pink: #cf3a45 for the logo, headline, button and cursor outline
+--ink: #2b2a28
+--gutter: clamp(20px, 3.4vw, 52px)
+Hero background: a static pink mesh gradient made of five radial gradients over a base of #f7d3d6. Each fades to transparent at 70%:
+#ffd9e1, size 55%×60%, at 8% 12% (top left)
+#f6b3c3, size 50%×55%, at 92% 8% (top right)
+#fde6e8, size 60%×60%, at 50% 48% (centre)
+#f3a9ba, size 55%×60%, at 12% 92% (bottom left)
+#ffc6c4, size 60%×65%, at 90% 88% (bottom right)
+
+Lock the hero to 100svh with overflow: hidden.
+Film grain: a 220px noise tile generated in JS, slightly warm, with ~40% of pixels opaque. Apply it with mix-blend-mode: multiply at opacity 0.32.
+Print screen: a dot screen over the grain, radial-gradient(rgba(255,255,255,.9) .6px, transparent 1.1px) at 3px spacing, with soft-light blending at 0.2 opacity.
+Logo (top left): "PÊCHE" in Inter Tight 700, 44px, uppercase, letter-spacing 0.02em, pink.
+Headline (bottom left): "From orchard / to table." on two lines, max-width min(760px, 50vw).
+Inter Tight 500, clamp(50px, 7vw, 115px), line-height 0.94, letter-spacing −0.035em, pink.
+Each word rises in, staggered 70ms from 0.2s, with translateY(20px) → 0 and cubic-bezier(.2,.9,.3,1).
+Button: a pink pill, "Reserve a table", placed directly under the headline in the same bottom-left block, 24px below it (16px on mobile). There is nothing in the top right. Inter 500 at 14px with #fff3ef text and 15×24 padding. On hover the label squishes to scale(1.06, .94) with a springy ease.
+Dish card (bottom right):
+A 300px white card with 8px padding, 20px radius and a soft pink-tinted shadow.
+Inside: a 176px-tall image (see Dish image below), object-fit: cover, scaled 1.5 from origin 34% 32%, so the crop lands on the halved peach and its stone. Put a dark gradient over its bottom half.
+White text over the image: "White peach, raspberry & honey" (Inter Tight 500, 20px) and an uppercase "VIEW THE MENU →" row (11px, 0.16em tracking).
+On hover the card lifts 4px and scales 1.015, the image zooms to 1.58, and the arrow slides 5px.
+Entrance: all UI rises in with the same 0.72s rise animation, staggered.
+Mobile (<760px wide, or portrait): the bag sits up top. The headline and dish card stack underneath, and the card goes full-width with a 118px image.
+Reduced motion: all animations collapse to 0.01s.
+Dish image
+The photo: a 1000×672 JPG, 188 KB. It's a styled overhead food shot on a matte blush-pink plate on a pale pink linen surface:
+a halved white peach with its stone, top left of the plate
+fanned white-peach slices with red-blushed skin
+fresh raspberries, pink peppercorns and drizzled honey
+a dish of raspberries and a dish of pink peppercorns at the edges, and a pink cloth napkin on the left
+soft, diffuse daylight with an all-pink, low-contrast palette
+Source: load it straight from this public link. Don't ask for or expect a local file:
+https://pub-711c6e209da84280a051d7c71b64359e.r2.dev/peach/peach-dish.jpg
+If the link fails: never show a broken-image icon. Give the image box a soft pink fallback background behind the <img>, and hide the <img> on error. The fallback is a radial gradient: #f6c9c4 centre → #e9a9a6 edge, with a faint #fbe3d6 highlight top left. The card, its gradient and its text still render normally.
+Alt text: "Sliced white peaches with raspberries, honey and pink peppercorns".
+Pixel cursors
+Draw two pixel-art cursors from ASCII grids in JS, with X = pink outline #cf3a45, W = white and . = transparent. Convert each to a PNG data URL and set it as CSS custom properties. Snap each pixel to whole device pixels so fractional scales stay crisp.
+Arrow: 4px per pixel, hotspot (2, 2).
+X...........
+XX..........
+XWX.........
+XWWX........
+XWWWX.......
+XWWWWX......
+XWWWWWX.....
+XWWWWWWX....
+XWWWWWWWX...
+XWWWWWWWWX..
+XWWWWWWWWWX.
+XWWWWWWXXXXX
+XWWWXWWX....
+XWWX.XWWX...
+XWX..XWWX...
+XX....XWWX..
+X.....XWWX..
+.......XWWX.
+.......XXX..
+
+Pointing hand: 4.6px per pixel, hotspot (23, 2).
+.....XX..........
+....XWWX.........
+....XWWX.........
+....XWWX.........
+....XWWX.........
+....XWWXXX.......
+....XWWXWWXXX....
+....XWWXWWXWWXX..
+XX..XWWXWWXWWXWX.
+XWX.XWWWWWWWWXWWX
+XWWXXWWWWWWWWWWWX
+.XWWXWWWWWWWWWWWX
+..XWWWWWWWWWWWWWX
+..XWWWWWWWWWWWWWX
+...XWWWWWWWWWWWX.
+...XWWWWWWWWWWWX.
+....XWWWWWWWWWX..
+....XWWWWWWWWWX..
+....XXXXXXXXXXX..
+
+Use the arrow everywhere, and the hand over links, buttons and the bag.
+Coordinate system
+1 unit = viewport height / 1000. All bag and peach shapes are defined in units relative to the cluster centre, with y pointing down, and multiplied by a scale sc.
+Desktop: sc = min(1.27, viewportWidthInUnits / 1008). Centre the cluster horizontally, at CY = 500 − 47·sc.
+Mobile: fit the cluster above the headline block, with sc = min(1.03, Wu/600, (titleTop − 90)/600).
+Peach sprites
+There are five peaches, each pre-rendered once per resize into its own canvas. Rest positions are cluster-relative (x, y), followed by radius, resting rotation and palette:
+{ x: -95,  y: -40,  r: 128, rot: -0.35, pal: 0 }
+{ x: 104,  y: -118, r: 86,  rot: 0.55,  pal: 1 }
+{ x: 146,  y: 84,   r: 132, rot: 2.2,   pal: 2 }
+{ x: -62,  y: 226,  r: 130, rot: -2.3,  pal: 3 }
+{ x: -178, y: -196, r: 58,  rot: 1.1,   pal: 4 }
+
+Drop order: 3, 2, 0, 1, 4, so the bag fills from the bottom.
+Palettes (core, mid, edge, rim):
+['#d8102c','#f0344a','#ff7f96','#ffd0dc']
+['#ff1f6e','#ff4a6a','#ff8aa6','#ffd6e2']
+['#e3123f','#fb3f63','#ff90a8','#ffd8e2']
+['#cc0d27','#ee2f45','#ff7a92','#ffcfdb']
+['#f21d5c','#ff4f75','#ff98b0','#ffdbe5']
+
+Each sprite is drawn in these steps:
+Body: a radial-gradient disc running core → mid (0.5) → edge (0.84) → rim (1). Offset the gradient centre toward the upper right (+0.22r, −0.28r), with an inner radius of 0.035r, so the rim catches light low on the left. The peaches should read as full, softly shaded fuzzy spheres.
+Cheek: a broad light-pink blush on the upper-left side, clipped to the body with source-atop. Centre it at (−0.57r, −0.17r), with radius 1.06r. Use rgba(255,214,226,.62) at 0, rgba(255,214,226,.24) at 0.45, then transparent at 1.
+Soften: blur the whole sprite by 0.085·r. Use ctx.filter blur where it's supported. Otherwise, as a fallback, downsample and then upsample.
+Stem dimple: a broad, diffuse grey-green patch near the top at (+0.035r, −0.77r). Draw a radial gradient of radius 0.21r: rgba(62,105,83,.84) at 0, rgba(73,115,92,.68) at 0.27, rgba(105,137,112,.3) at 0.62, then transparent at 1. Stretch it to scale(0.8, 1.1), with blur 0.045r. It should look like a soft indentation through peach fuzz.
+Suture line: a subtle curved stroke rgba(160,20,60,.19) with width 0.043r and blur 0.027r. Start at (+0.1r, −0.7r), use Bézier controls (+0.1r, −0.25r) and (+0.34r, +0.15r), and end at (+0.3r, +0.64r). Keep it delicate, with no heavy crescent drawn across the cheek.
+Dither: go over every pixel.
+Scatter alpha near the edge by ±(a·(1−a)·4)·0.55, so the outline breaks into gritty speckle.
+Add a little alpha noise across the body.
+Add colour grain of ±13 plus a faint print screen, sin(x·1.25)·sin(y·1.25)·5.
+The bag
+Draw the bag as two milky fills with no strokes:
+Back panel: rgba(255,252,251,.6), drawn behind the fruit.
+Front panel: rgba(255,250,248,.22), drawn over the fruit. It washes the fruit lighter, except at the open mouth, where the fruit shows its true colour.
+Fixed points (cluster units):
+Mouth: MOUTH_Y = −262, with corners L (−212, −262) and R (210, −262).
+Mouth sag point: (2, −240).
+Handle pivot for the sway: (18, −900).
+Body sweep centre: (0, 20).
+Handle edges, gently bowed so they read as soft plastic. Each list runs from the top down to the mouth:
+Left outer: (1,−700), (−62,−580), (−135,−440)
+Left inner: (18,−700), (−33,−580), (−92,−440), (−154,−262)
+Right outer: (46,−700), (96,−580), (153,−440)
+Right inner: (26,−700), (67,−580), (110,−440), (155,−262)
+Front panel top edge. It runs up the right handle, down its inner edge, across the bottom of the open mouth, up the left handle's inner edge and down its outer edge:
+(210,-262) (153,-440) (96,-580) (46,-700) (26,-700) (67,-580) (110,-440) (128,-300) (130,-190)
+(96,-96) (-10,-58) (-120,-86) (-146,-200) (-128,-330) (-95,-460) (-33,-580) (18,-700)
+(1,-700) (-62,-580) (-135,-440) (-212,-262)
+
+Body outline: sweep 72 rays around the body centre, between the two mouth-corner angles, through the bottom. On each ray, take whichever is further out:
+The limp empty bag: a soft squircle with exponent 2.15, a = 196, b = 272 + 16·fill, so it sags a little as it fills. Ease into the mouth corners over the first and last 22% of the sweep.
+The fruit pressing in: for each peach, intersect the ray with a circle of radius (r + 26) × that peach's "inclusion" value (0 → 1), and push the outline out to it.
+Then add a slight crinkle to the radius: ×(1 + .012·sin(6φ+1.3) + .007·sin(11φ+.4)). Run 14 passes of a [1,4,6,4,1]/16 blur over the radii, so the plastic reads as stretched, not pinched between the fruit.
+Assembling the shapes:
+Full outline: the body sweep (minus 4 samples at each end, so each strap flows into the body in one soft shoulder, not a point), then the right handle, the mouth sag point and the left handle.
+Front panel: the same trimmed sweep plus the front-panel top edge.
+Smooth both outlines with 3 rounds of Chaikin corner-cutting. Draw them as closed Catmull-Rom-style Bézier curves with tension 0.36.
+Bag transform: apply this to every bag-local point.
+Squash: scale x by (1 + 0.55·s) and y by (1 − s) around the cluster centre.
+Drop offset: add dy to y.
+Sway: rotate by th around the handle pivot.
+Physics
+Run fixed 1/240s substeps, capping dt at 0.05. Use a spring(x, v, target, k, c, dt) helper that returns the new position, velocity and acceleration.
+Intro:
+The bag fades in over 0.9s with a smoothstep. It also settles from dy = −150 and th = 0.035, with a softer damping of 13 for the first 1.4s, then 8.5.
+Peaches: they drop in at 0.75s + 0.36s × their place in the drop order.
+Each one spawns just above the top of the viewport (−r·sc − 40) at its target x ± 15, with an initial downward speed of 300 and a random tilt (±0.45 rad).
+It falls with gravity 4200 units/s² and eases sideways toward its target.
+While falling it stretches vertically, with q = −min(.14, vy·.00005).
+Once it passes the mouth, its inclusion springs toward 0.35, so the plastic starts to bulge around it.
+Landing: when a peach reaches its rest point, it lands with impact = vy.
+The peach itself gets a wobble kick: offset velocity oy +0.13·impact, random ox, squash +0.0012·impact, a random spin, and inclusion velocity +9.
+The bag reacts in proportion to the fruit's mass (r/130): it dips (dyv += .035·impact·m), squashes (sv += .00028·impact·m) and tips away from the side the fruit landed on.
+Fruit already in the bag within 420 units gets pushed outward and down, with a little squash.
+Settled:
+Bag sway: targets an idle breeze, th = .006·sin(.8t) + .002·sin(1.9t). Springs: rotation k 18, damping 1.5; drop k 150, damping 8.5; squash k 240, damping 9.
+Peaches in the bag:
+Offset springs: k 130, damping 7.
+Squash spring: k 300, damping 11. Draw scale x = 1 + 0.8q, y = 1 − q.
+Spin spring: k 60, damping 5.
+Inclusion: springs to 1 (k 170, damping 11).
+Inertia: the bag's rotational and vertical acceleration feeds into each peach's offset velocity, so the fruit lags and settles as the bag moves.
+Draw order: in landing order. Draw rotation = rest rotation + bag rotation + spin + 0.002·ox.
+Interaction
+Hover: hit-test the pointer against the bag body (an even-odd test on the hull polygon). Show the hand cursor over the bag.
+Brushing past: moving over the bag nudges its sway by −0.00003 × pointer x-velocity (smoothed, capped at ±3000). It also jiggles fruit near the pointer, within r·sc + 60, in proportion to closeness and pointer velocity.
+Grab (pointer down on the bag):
+Capture the pointer.
+The bag squishes (sv += .9), and every peach squashes (qv += 1.4) and drops a little (ovy += 40).
+Drag:
+Horizontal drag tilts the bag by up to ±0.06 rad (−tanh(dx/520)·.06).
+Vertical drag lifts or lowers it by up to ±34 units (tanh(dy/380)·34).
+Release: the bag un-squishes (sv −= .6), and the peaches spring back (qv −= 1).
+Reduced motion: start with every peach already in the bag and the bag fully shown, with no drop.
+Resize: recompute the scale and placement, and rebuild the sprites. Also rerun this once document.fonts.ready resolves, because the title's height changes when the fonts load.
+
+Build a single self-contained HTML file: a 100vh hero for a Japanese peach shop. Fluffy, velvety red-to-cream peaches drop from above and land in a staggered grid on a beige table, seen through a camera lens with a shallow depth of field. Hovering a peach makes it hop and jiggle. Use vanilla JS and one <canvas>, with no libraries. The only external resource is Google Fonts.
+
+There are no grid lines on the table, just the fruit and soft contact shadows.
+
+Look
+Background: warm beige #efe5d3, with a soft lighter radial glow (#f6efe2, 70% × 60% at 50% 42%) fading out by 75%. The hero is 100svh with overflow: hidden.
+Paper grain: a 200px noise tile generated in JS, laid over everything.
+Each pixel has a grey value of 170–255, tinted warm with RGB multipliers (1, 0.94, 0.86). About 38% of pixels are opaque.
+Blend it with mix-blend-mode: multiply at opacity 0.28.
+Japanese type on the sides
+Font: Shippori Mincho B1, 800 for the big type and 600 for the small. Subset it with Google Fonts' &text= parameter so only these glyphs load: 桃屋ピーチショップ旬の白桃・黄桃.
+Style: all text is vertical (writing-mode: vertical-rl; text-orientation: upright) in crimson #b8132e. It sits in a column 3.2vw (18–48px) in from each edge, top to bottom. It gets a soft beige halo so it stays readable over the fruit: text-shadow: 0 0 18px #f6efe2, 0 0 36px #f6efe2, 0 0 6px #f6efe2.
+Left column:
+桃屋 — big, clamp(64px, 10.5vh, 150px), letter-spacing 0.06em
+旬の白桃 — small, clamp(13px, 1.7vh, 18px), letter-spacing 0.5em
+a crimson hanko stamp pinned to the bottom: a rounded square clamp(38px, 5vh, 56px) wide with a beige 桃 inside
+Right column:
+ピーチショップ — clamp(30px, 5.4vh, 72px)
+白桃・黄桃 — small, pinned to the bottom
+Entrance: split each line into single characters. Each one drops in from −60px with an overshoot ease, 0.9s cubic-bezier(.25,1.6,.45,1), starting at 0.25s and staggered 80ms. The hanko uses a 0.7-second landing animation starting at 0.65 seconds. Its final rotation is −3 degrees.
+Mobile (<700px wide): big type clamp(44px, 13vw, 64px) and mid type clamp(22px, 6.6vw, 30px). Hide the small lines.
+The peach sprite — the most important part
+Render every peach pixel by pixel into an offscreen canvas (ImageData), then cache it. Never draw peaches live.
+
+The peach is seen butt up. It's built as two overlapping lobes:
+
+Front lobe: a tilted oval covering the right ~¾ of the fruit.
+Back lobe: a circle that peeks out as a crescent on the left and top.
+The dip at the top is where the two outlines meet. The cleft is the front lobe's left edge, a long "(" curve, which glows with a pale gradient. The colour runs from a deep crimson top, through pink, to a cream glow low on the cheek. The bottom sits slightly flat, and the whole surface is heavily dithered grain like a stippled print.
+
+Use exactly this colour ramp and shading. Coordinates are normalised to the peach radius, with y pointing down.
+
+const RAMP = [ // t → RGB
+  [0.00,[160,8,24]], [0.20,[212,42,60]], [0.40,[235,96,108]], [0.60,[246,150,150]],
+  [0.78,[250,196,172]], [0.90,[252,228,178]], [1.00,[254,242,198]] ];
+const VARIETIES = [ // cream glow position / width / strength, warmth bias
+  { hx:0.26, hy:0.46, spread:0.26, glow:0.32, bias: 0.00 },
+  { hx:0.14, hy:0.52, spread:0.22, glow:0.28, bias:-0.04 },
+  { hx:0.32, hy:0.40, spread:0.32, glow:0.36, bias: 0.03 } ];
+const FL = { cx:0.2, cy:0.06, rx:0.8, ry:0.92, rot:0.32 };  // front lobe, tilted oval
+const BL = { cx:-0.1, cy:-0.1, r:0.87 };                     // back lobe, circle
+// smooth(a,b,v) = smoothstep from a to b (works with a > b too); clamp as usual
+
+// for every pixel (nx, ny):
+const dx = nx-FL.cx, dy = ny-FL.cy;
+const u = dx*cos(FL.rot) + dy*sin(FL.rot), w = -dx*sin(FL.rot) + dy*cos(FL.rot);
+const qF = hypot(u/FL.rx, w/FL.ry);                  // 1 = on the front lobe's outline
+const qB = hypot(nx-BL.cx, ny-BL.cy) / BL.r;         // 1 = on the back lobe's outline
+// one fruit: smooth-min the outlines, crisp at the top (keeps the dip), soft round the bottom
+const kb = 0.03 + 0.4*smooth(-0.5, 0.7, ny);
+const hb = clamp(0.5 + 0.5*(qB-qF)/kb, 0, 1);
+let q = qB + (qF-qB)*hb - kb*hb*(1-hb);
+// slightly flat base: smooth-max with a plane
+const qBase = (ny + 0.02*nx) / 0.88;
+const hf = clamp(0.5 + 0.5*(qBase-q)/0.2, 0, 1);
+q = q + (qBase-q)*hf + 0.2*hf*(1-hf);
+const fuzz = 0.07;
+if (q > 1+fuzz) skip;
+// thin speckled edge, not a halo
+const a = smooth(1+fuzz, 1-fuzz*0.6, q);
+const alpha = (Math.random() < a ? 0.82 : 0) + a*0.18;
+
+let t = 0.04 + 0.6*smooth(-0.7, 0.7, ny);           // red crown → cream base
+t += V.glow*exp(-((nx-V.hx)**2 + (ny-V.hy)**2)/V.spread) + V.bias;
+t -= 0.38*exp(-((nx-0.22)**2/0.09 + (ny+0.78)**2/0.05));   // deep crimson pools in the dip
+t -= 0.14*smooth(-0.15, -0.85, ny);                         // darker over the top third
+if (qF < 1) {   // front lobe: pale gradient along its edge where it overlaps the back lobe = the cleft
+  const over = smooth(1.04, 0.92, qB) * (1 - smooth(0.25, 0.78, ny));
+  const rim = smooth(0.8, 0.995, qF) * over;
+  t = t*(1-rim*0.8) + (0.6 + 0.2*smooth(-0.4, 0.8, ny))*rim*0.8;
+} else {        // back lobe: a shade deeper, with a soft contact shadow under the front lobe
+  t -= (0.06 + 0.16*smooth(1.12, 1.0, qF)) * (1 - smooth(0.3, 0.8, ny));
+}
+const rimO = smooth(0.8, 1.0, q)*0.62;              // fuzz catches light at the outline:
+t = t*(1-rimO) + (0.42 + 0.42*smooth(-0.5, 0.6, ny))*rimO;   // pink up top, cream at the base
+t += (Math.random()-0.5)*0.32;                       // heavy dither
+const [r,g,b] = ramp(t); const n = (Math.random()-0.5)*18;   // plus RGB grain
+pixel = [r+n, g+n, b+n, alpha*255];
+Sprite size: radius in pixels = peach radius on screen × sres. Pad the canvas by r·0.27 + blur·2.6.
+Coarse grain: keep sres below 1, sres = clamp(0.8 / (1 + blur·0.18), 0.3, 0.8). The grain then reads coarse like a print, and blurry sprites build fast.
+Blur: blur each sprite by its depth-of-field amount (see below) using a hand-written 3-pass box blur on premultiplied RGBA, with box radius ≈ blur. Don't use ctx.filter, because Safari doesn't support it.
+Cache: key the sprite cache by row, variety and blur. Round the blur to 0.5px under 3px, and to whole pixels above that. Build every sprite during layout, not mid-animation.
+Camera, layout and grid
+Coordinates: world x runs across, z runs into the screen (row 0 = front) and h is height. One grid cell is 1 unit, and the peach radius is R = 0.53 cells, so neighbours just touch.
+Perspective: s(z) = F / (z + D0) with D0 = 2.6, and screenX = W/2 + x·s, screenY = horizon + camH·s − h·s.
+Anchor everything to the in-focus row, z = 2:
+Its scale is sFocus = W / 6.2, which gives about six peaches across (W / 3.3 on mobile). So F = sFocus·(2 + D0).
+Row spacing comes from the front row: gap = 0.85 · 2R · s(0) and camH = gap / (s(0) − s(1)).
+The focus row's peach centres sit at focusCY = 0.43·H (0.46 on mobile), so horizon = focusCY + 0.9·R·sFocus − camH·sFocus.
+Rows: add rows until one is fully past the top edge (cap at 18). The two rows in front of the focus row are bigger and bleed off the bottom.
+Columns: enough to cover the back row's width: half = ceil((W/2)/s(last) + 1), cols = 2·half + 1.
+Stagger: honeycomb. Every other row shifts half a cell, with ±0.025 random jitter in x and z.
+Culling: skip any peach fully off-screen sideways, or fully below the bottom edge.
+Orientation: keep peaches upright with the butt up. Tilt only ±0.11 rad, and mirror 25% of them. Give each one a variety.
+Seating:
+Each peach sits on its flat base. Draw it at the contact point, then offset up by 0.9·R·s.
+Draw a soft contact shadow underneath. It's a cached radial gradient (rgba(120,60,40,.55) → .25 at 50% → 0), sized 2.3·R·s wide and 0.34 of that tall. It widens with squash, and shrinks and fades as the peach lifts.
+Draw order: back to front, all shadows first.
+Depth of field (lens)
+Each peach's blur combines two things:
+
+// depth: circle of confusion ∝ |1/Df − 1/D|, normalised so the front row gets dofK px, far rows capped
+const blurAt = z => Math.min(dofK*0.75,
+  dofK * Math.abs(1/(focusZ+D0) - 1/(z+D0)) / Math.abs(1/(focusZ+D0) - 1/D0));
+dofK = (mobile ? 10 : 16) * (s(0) / 350);
+// lens falloff: even the in-focus row softens toward the left and right edges
+const sx = Math.abs(x * s(z)) / W;
+const edge = dofK * 0.7 * smooth(0.22, 0.56, sx);
+peach.blur = Math.hypot(blurAt(row), edge);
+The middle four or so peaches of the focus row are crisp. The sides of every row go soft, the front rows are heavily blurred and the back rows melt away.
+
+Motion
+Intro — grouped perspective rows, then individual foreground rows:
+Preserve all the smaller distant rows: they create the camera perspective. Do not cut the grid down to four rows. The distant fruit should arrive quickly in groups of three; the four larger near rows should arrive one row at a time, back to front.
+Every peach starts fully above the top edge, at height (groundY + 2.6·R·s)/s + random·0.14 cells, with zero vertical velocity, and falls under gravity (34 cells/s²).
+Use this exact delay calculation in seconds, with row 0 nearest the camera and rows = the total row count:
+
+function entranceDelay(row, x, rows) {
+  const nearRows = focusZ + 2; // focusZ = 2; rows 3, 2, 1, 0 enter individually
+  const distantRows = Math.max(0, rows - nearRows);
+  const distantBatches = Math.ceil(distantRows / 3);
+  const batch = Math.floor((rows - 1 - row) / 3);
+  const start = row >= nearRows
+    ? 0.08 + batch * 0.09
+    : 0.08 + distantBatches * 0.09 + (nearRows - 1 - row) * 0.14;
+  const spread = row >= nearRows ? 0.006 : 0.012;
+  return start + Math.min(Math.abs(x), 4) * spread + Math.random() * 0.012;
+}
+
+The farthest three rows start together, then the next three 90ms later. After the distant groups, each of the four larger rows starts 140ms after the previous one. The tiny within-row variation keeps the fall natural without stretching it into a long procession. On typical desktop and mobile viewports, all visible peaches should make their first landing in about 1–1.6 seconds after the sprite cache is ready.
+Each fruit's opacity rises from 0 to 1 over 160ms after its start delay; apply the same opacity to its shadow. This mostly happens while it is still above the frame. Keep the actual fall from above, rather than fading a stationary grid into place.
+While falling fast, stretch vertically: fall = clamp(−v·0.006, 0, 0.12), so y grows by fall and x shrinks by 0.6·fall.
+On impact, add impact·0.075 to the squash velocity and a random wobble. Bounce once (restitution 0.28 if impact > 3), then rest.
+
+Jelly springs per peach (semi-implicit Euler):
+squash sq: sqv += (−320·sq − 9·sqv)·dt, clamped −0.32…0.36
+wobble wob: wobv += (−200·wob − 7·wobv)·dt, clamped ±0.5
+Drawing a peach:
+Translate to the contact point and rotate wob·0.35.
+Scale (1 + 0.75·sq − 0.6·fall, 1 − sq + fall).
+Translate up 0.9·R·s, rotate rot0 + wob·0.6, mirror if flipped, then draw the sprite.
+Hover:
+Hit-test with circles, nearest rows first. Show a pointer cursor over a peach.
+When the pointer enters a landed, resting peach, it hops: v = 6.5, sqv −= 4.2 (it stretches as it leaves) and wobv ±= 7. Give each peach a 0.32s cooldown.
+Neighbours within 1.3 cells give a smaller, delayed hop: after 0.06 + d·0.05 s, with strength 0.32/d (v, squash and wobble scaled by it), so it spreads like a ripple.
+Click: a 1.5× hop that ignores the cooldown.
+Physics: run fixed substeps of ≤8ms per frame and cap dt at 0.1s, so timing is correct at any frame rate.
+Reduced motion: peaches start already in place; hover only gives a gentle squash and wobble, no hop. The type appears without animation.
+Resize: debounce it (120ms), then rebuild the projection, blur and sprites. Only re-lay the grid if the row or column count changes.
+
+Accessibility and performance:
+Keep the Japanese branding as actual DOM text, with one meaningful H1. The visible canvas is focusable and has an accessible description explaining hover, tap and keyboard interaction. Arrow keys choose a nearby peach and Space/Enter produce the same larger hop as a click; show a discreet selection ring only during keyboard use.
+Pause requestAnimationFrame once all fruit and springs have settled; restart it for an interaction, pending ripple, resize, or return from a hidden tab. When the tab is hidden, stop rendering and discard the elapsed wall-clock gap on return. Cache all peach sprites and the contact shadow before animation begins. Never use external fruit images, WebGL, ctx.filter, particle libraries, or live per-pixel rendering in the frame loop.
+Return the complete working HTML file, including CSS and vanilla JavaScript. No reference images, attachments or previous conversation are needed.
