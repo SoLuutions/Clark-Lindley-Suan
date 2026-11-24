@@ -174,7 +174,7 @@ section{padding:var(--section) 0;position:relative}
 .case+.case{border-top:var(--bw) dashed rgba(0,21,36,.25)}
 .shot{position:relative;border-radius:var(--r);overflow:hidden;border:var(--bw) solid var(--ink);background:var(--cream-2);box-shadow:10px 10px 0 var(--orange);transition:transform .25s,box-shadow .25s}
 .case:hover .shot{transform:translate(-3px,-3px);box-shadow:13px 13px 0 var(--orange)}
-.shot .bar{height:32px;background:var(--navy);border-bottom:var(--bw) solid var(--ink);display:flex;align-items:center;gap:7px;padding:0 12px}
+.shot .bar{position:relative;z-index:2;height:32px;background:var(--navy);border-bottom:var(--bw) solid var(--ink);display:flex;align-items:center;gap:7px;padding:0 12px}
 .shot .bar i{width:10px;height:10px;border-radius:50%;display:block;border:2px solid var(--cream)}
 .shot .bar i:nth-child(1){background:var(--rust)}.shot .bar i:nth-child(2){background:var(--orange)}.shot .bar i:nth-child(3){background:var(--teal)}
 .shot .bar .url{margin-left:10px;font-family:var(--mono);font-size:11px;color:var(--cream);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

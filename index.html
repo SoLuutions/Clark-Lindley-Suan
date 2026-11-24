@@ -76,11 +76,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="image" href="prfl_img.webp" fetchpriority="high">
-    <link rel="preload" as="style" href="style.css?v=7">
+    <link rel="preload" as="style" href="style.css?v=8">
     <link
         href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,100,1;1,9..144,400..900,100,1&family=Work+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css?v=8">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
     <!-- Vercel Speed Insights -->
@@ -210,7 +210,7 @@
                         <div class="eyebrow"><span class="idx">1</span> Selected work</div>
                         <h2>Problem, build, <em>result.</em></h2>
                     </div>
-                    <p>Four projects that show the range: a live UK storefront I owned end to end, a store speed rescue, a voice AI receptionist, and a machine-learning side project that got me hired.</p>
+                    <p>Five projects that show the range: a live UK storefront I owned end to end, a store speed rescue, a voice AI receptionist, a machine-learning side project that got me hired, and a full 3D action game built in the browser.</p>
                 </div>
 
                 <article class="case" data-reveal>
@@ -285,6 +285,24 @@
                     </div>
                 </article>
 
+                <article class="case" data-reveal>
+                    <div class="shot">
+                        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span class="url">clarklindleysuan.com/projects/veilbreaker</span></div>
+                        <img src="assets/shots/veilbreaker.webp" alt="Veilbreaker: Ward 09 — real-time 3D browser action game running in Three.js" width="1200" height="750" loading="lazy" decoding="async">
+                    </div>
+                    <div>
+                        <p class="k">Three.js · WebGL2 · 3D browser game</p>
+                        <h3>Veilbreaker: Ward 09 — a full 3D action game in the browser.</h3>
+                        <div class="pbr">
+                            <b>Problem</b><span>Most browser 3D demos stop at a spinning object or drop frames on laptops and touch devices. Could a zero-build web page deliver a full third-person action game with skeletal combat, HDR lighting and responsive controls?</span>
+                            <b>Built</b><span>A complete midnight-occult 3D game in Three.js r164: meshopt-compressed GLB characters and weapons with animation crossfading, Poly Haven HDR PBR pipeline, selective UnrealBloom, instanced city architecture, 3-hit blade combos, counter-stagger gunplay, boss encounter and procedural Web Audio.</span>
+                            <b>Result</b><span class="result">A full playable 3D game running straight in the browser at ~225 draw calls, ~9.4 MB total asset footprint, and auto-scaled presets from 512px mobile textures to Ultra SMAA + HDR bloom.</span>
+                        </div>
+                        <div class="chips"><span class="chip">Three.js r164</span><span class="chip">WebGL2</span><span class="chip">Meshopt GLB</span><span class="chip">HDR PBR</span><span class="chip">Selective Bloom</span><span class="chip">InstancedMesh</span><span class="chip">Web Audio</span></div>
+                        <a class="more" href="projects/veilbreaker/" target="_blank" rel="noopener">Play in browser ↗</a>
+                    </div>
+                </article>
+
                 <div class="grid-more" id="more-work">
                     <div class="head">
                         <p class="mono">More work</p>
@@ -322,12 +340,21 @@
                         <div class="eyebrow"><span class="idx">2</span> Interactions</div>
                         <h2>Built to be <em>touched.</em></h2>
                     </div>
-                    <p>Seven concept studies in motion: physics, perspective, canvas and 3D. The brands are fictional; the engineering is real.</p>
+                    <p>Eight interactive builds in motion: a full 3D browser game plus seven concept studies in physics, perspective, canvas and 3D. The concept brands are fictional; the engineering is real.</p>
                 </div>
 
-                <p class="mono interactions-note" data-reveal>Concept studies · Fictional brands (Quiet Cup, Maison Lorvert, Corner Table Coffee, Atelier Rouge, Verger, 桃里 Momosato)</p>
+                <p class="mono interactions-note" data-reveal>Playable 3D game + concept studies · Fictional brands (Quiet Cup, Maison Lorvert, Corner Table Coffee, Atelier Rouge, Verger, 桃里 Momosato)</p>
 
                 <div class="tiles interactions-grid" data-stagger>
+                    <a class="rc tile interaction-card" href="projects/veilbreaker/" target="_blank" rel="noopener">
+                        <img src="interactions/posters/veilbreaker.webp" alt="Veilbreaker: Ward 09 — midnight occult 3D browser action game built with Three.js and WebGL2" width="1440" height="900" loading="lazy" decoding="async">
+                        <div class="b">
+                            <h3 class="t">Veilbreaker: Ward 09</h3>
+                            <div class="chips"><span class="chip">Three.js</span><span class="chip">WebGL2</span><span class="chip">3D game</span></div>
+                            <span class="more">Play game <span aria-hidden="true">↗</span></span>
+                        </div>
+                    </a>
+
                     <a class="rc tile interaction-card" href="interactions/things-i-love.html" target="_blank" rel="noopener">
                         <img src="interactions/posters/things-i-love.webp" alt="Things I Love — interactive 3D physics pile of low-poly objects on a Klein-blue stage" width="1440" height="900" loading="lazy">
                         <div class="b">
@@ -395,6 +422,7 @@
                 <details class="interactions-credits" data-reveal>
                     <summary>Credits</summary>
                     <div class="credits-body">
+                        <p><strong>Veilbreaker: Ward 09 (CC0 3D assets &amp; textures):</strong> Skinned characters and dungeon/city props by KayKit / Kay Lousberg (CC0) · Weapons and stylized environment props by Quaternius (CC0) · Night sky HDRI and PBR ground/wall texture sets from Poly Haven (CC0).</p>
                         <p><strong>Things I Love (3D models via Poly Pizza):</strong> Laptop by Alex Safayan (<a href="https://poly.pizza/m/27hcX1w4643" target="_blank" rel="noopener">CC-BY 3.0</a>) · Airplane by Poly by Google (<a href="https://poly.pizza/m/8ciDd9k8wha" target="_blank" rel="noopener">CC-BY 3.0</a>) · Rock by Poly by Google (<a href="https://poly.pizza/m/d241h9a3G5B" target="_blank" rel="noopener">CC0</a>) · Bubble Tea by Jarlan Perez (<a href="https://poly.pizza/m/3step41418" target="_blank" rel="noopener">CC0</a>) · Ramen Bowl by Hayden Lister (<a href="https://poly.pizza/m/a09H829X22" target="_blank" rel="noopener">CC0</a>).</p>
                         <p><strong>Quiet Cup (media):</strong> Coffee pouring video by Isabelli Pontes (<a href="https://www.pexels.com/video/pouring-coffee-closeup-5714708/" target="_blank" rel="noopener">Pexels license</a>) · Espresso pouring video by K (<a href="https://www.pexels.com/video/slow-motion-footage-of-freshly-brewed-coffee-dripping-into-a-cup-2853788/" target="_blank" rel="noopener">Pexels license</a>) · Still café photographs are AI-generated concept visuals.</p>
                     </div>

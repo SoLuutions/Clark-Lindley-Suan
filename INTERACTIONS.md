@@ -8,6 +8,7 @@ This document covers the seven standalone interactive concept pieces showcased i
 
 | # | Title on Site | Page | Assets Folder | Poster |
 |---|---|---|---|---|
+| 0 | **Veilbreaker: Ward 09** | `/projects/veilbreaker/` | `/projects/veilbreaker/assets/` | `/interactions/posters/veilbreaker.webp` |
 | 1 | **Things I Love** | `/interactions/things-i-love.html` | `/interactions/assets/things-i-love/` | `/interactions/posters/things-i-love.webp` |
 | 2 | **Quiet Cup: Japandi Collage** | `/interactions/quiet-cup.html` | `/interactions/assets/quiet-cup/` | `/interactions/posters/quiet-cup.webp` |
 | 3 | **Maison Lorvert: Timeline Crawl** | `/interactions/maison-lorvert.html` | `/interactions/assets/maison-lorvert/` | `/interactions/posters/maison-lorvert.webp` |
